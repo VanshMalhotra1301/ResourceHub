@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
 <head>
@@ -818,720 +818,6 @@
         }
 
         /* phosphor bookmark-simple-fill */
-
-        /* =========================
-   CRASH COURSE STRIP CARDS
-========================= */
-        .cc-strip-wrapper {
-            display: flex;
-            gap: 18px;
-            overflow-x: auto;
-            padding: 4px 4px 16px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .cc-strip-wrapper::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .cc-strip-wrapper::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .cc-strip-wrapper::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.3);
-            border-radius: 8px;
-        }
-
-        .cc-card {
-            flex: 0 0 280px;
-            background: rgba(18, 18, 28, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 18px;
-            padding: 22px;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-        }
-
-        .cc-card:hover {
-            border-color: rgba(99, 102, 241, 0.5);
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.18);
-            transform: translateY(-3px);
-        }
-
-        .cc-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 30%), rgba(99, 102, 241, 0.12), transparent 60%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .cc-card:hover::before {
-            opacity: 1;
-        }
-
-        .cc-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 99px;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }
-
-        .cc-badge-trending {
-            background: rgba(251, 191, 36, 0.12);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #fbbf24;
-        }
-
-        .cc-badge-loved {
-            background: rgba(244, 63, 94, 0.12);
-            border: 1px solid rgba(244, 63, 94, 0.3);
-            color: #fb7185;
-        }
-
-        .cc-badge-new {
-            background: rgba(34, 211, 238, 0.12);
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            color: #22d3ee;
-        }
-
-        .cc-badge-hot {
-            background: rgba(249, 115, 22, 0.12);
-            border: 1px solid rgba(249, 115, 22, 0.3);
-            color: #fb923c;
-        }
-
-        .cc-card h4 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #f8fafc;
-            margin-bottom: 8px;
-            line-height: 1.4;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .cc-card p {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 14px;
-            line-height: 1.5;
-        }
-
-        .cc-card .cc-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 11px;
-            color: #475569;
-            margin-bottom: 16px;
-        }
-
-        .cc-card .cc-meta span {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .cc-preview-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 9px 14px;
-            border-radius: 10px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            font-size: 12px;
-            font-weight: 700;
-            color: #818cf8;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            width: 100%;
-        }
-
-        .cc-preview-btn:hover {
-            background: rgba(99, 102, 241, 0.2);
-            color: #a5b4fc;
-            border-color: rgba(99, 102, 241, 0.4);
-        }
-
-        /* =========================
-   LOVED-BY-STUDENTS SECTION
-========================= */
-        .loved-card {
-            background: rgba(15, 15, 22, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 20px;
-            padding: 28px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
-        }
-
-        .loved-card:hover {
-            border-color: rgba(244, 63, 94, 0.4);
-            box-shadow: 0 12px 40px rgba(244, 63, 94, 0.12);
-            transform: translateY(-4px);
-        }
-
-        .love-count {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #fb7185;
-        }
-
-        .love-count .heart-icon {
-            animation: heartbeat 1.5s ease-in-out infinite;
-        }
-
-        @keyframes heartbeat {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-        }
-
-        /* =========================
-   RECOMMENDED FOR YOU
-========================= */
-        #recommended-section {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        #recommended-section.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .rec-card {
-            background: rgba(18, 18, 28, 0.7);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            transition: all 0.25s;
-        }
-
-        .rec-card:hover {
-            border-color: rgba(99, 102, 241, 0.5);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .rec-card .rec-label {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #6366f1;
-            margin-bottom: 8px;
-        }
-
-        /* =========================
-   SEMESTER ONBOARDING MODAL
-========================= */
-        #semester-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-            padding: 20px;
-        }
-
-        #semester-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .semester-modal-box {
-            background: rgba(12, 12, 20, 0.97);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            border-radius: 24px;
-            padding: 36px;
-            max-width: 460px;
-            width: 100%;
-            position: relative;
-            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04);
-            transform: scale(0.93) translateY(20px);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        #semester-modal.active .semester-modal-box {
-            transform: scale(1) translateY(0);
-        }
-
-        .semester-modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #71717a;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .semester-modal-close:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sem-select-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 6px;
-        }
-
-        .sem-option {
-            padding: 10px 4px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.03);
-            text-align: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .sem-option:hover,
-        .sem-option.selected {
-            background: rgba(99, 102, 241, 0.15);
-            border-color: rgba(99, 102, 241, 0.5);
-            color: #a5b4fc;
-        }
-
-        .year-option {
-            padding: 10px 4px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.03);
-            text-align: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .year-option:hover,
-        .year-option.selected {
-            background: rgba(168, 85, 247, 0.15);
-            border-color: rgba(168, 85, 247, 0.5);
-            color: #c4b5fd;
-        }
-
-        .modal-submit-btn {
-            width: 100%;
-            padding: 13px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            border: none;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 20px;
-            letter-spacing: 0.3px;
-        }
-
-        .modal-submit-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
-        }
-
-        .modal-skip-btn {
-            width: 100%;
-            padding: 10px;
-            background: none;
-            border: none;
-            color: #3f3f55;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: color 0.2s;
-        }
-
-        .modal-skip-btn:hover {
-            color: #71717a;
-        }
-
-        /* =========================
-   SMART TOAST NOTIFICATIONS
-========================= */
-        #toast-container {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            z-index: 500;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .smart-toast {
-            background: rgba(12, 12, 22, 0.97);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 14px;
-            padding: 14px 18px;
-            max-width: 300px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            transform: translateX(120%);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
-            opacity: 0;
-            pointer-events: auto;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            backdrop-filter: blur(12px);
-        }
-
-        .smart-toast.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .smart-toast .toast-icon {
-            font-size: 20px;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .smart-toast .toast-body p {
-            font-size: 13px;
-            font-weight: 600;
-            color: #f1f5f9;
-            margin: 0 0 3px;
-            line-height: 1.4;
-        }
-
-        .smart-toast .toast-body span {
-            font-size: 11px;
-            color: #64748b;
-        }
-
-        .toast-close-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: none;
-            border: none;
-            color: #3f3f55;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 2px;
-            transition: color 0.2s;
-        }
-
-        .toast-close-btn:hover {
-            color: #94a3b8;
-        }
-
-        /* =========================
-   STICKY EXPLORE CTA
-========================= */
-        #sticky-explore-cta {
-            position: fixed;
-            bottom: 28px;
-            left: 24px;
-            z-index: 190;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.95), rgba(168, 85, 247, 0.95));
-            border-radius: 99px;
-            padding: 12px 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
-            cursor: pointer;
-            transform: translateY(80px);
-            opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
-            backdrop-filter: blur(12px);
-            text-decoration: none;
-        }
-
-        #sticky-explore-cta.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        #sticky-explore-cta span {
-            font-size: 13px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 0.3px;
-        }
-
-        #sticky-explore-cta .cta-close {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 10px;
-            padding: 0;
-            transition: background 0.2s;
-        }
-
-        #sticky-explore-cta .cta-close:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        /* =========================
-   COURSE QUICK-PREVIEW POPUP
-========================= */
-        #course-preview-popup {
-            position: fixed;
-            z-index: 600;
-            background: rgba(10, 10, 18, 0.98);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 20px;
-            padding: 24px;
-            width: 300px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(16px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        #course-preview-popup.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .preview-tag {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 99px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            color: #818cf8;
-            margin-bottom: 10px;
-        }
-
-        .preview-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #f8fafc;
-            margin-bottom: 10px;
-            font-family: 'Space Grotesk', sans-serif;
-            line-height: 1.3;
-        }
-
-        .preview-topics {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 16px;
-        }
-
-        .preview-topics li {
-            font-size: 11.5px;
-            color: #64748b;
-            padding: 3px 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .preview-topics li::before {
-            content: 'â–¸';
-            color: #6366f1;
-            font-size: 10px;
-            flex-shrink: 0;
-        }
-
-        .preview-cta {
-            display: block;
-            text-align: center;
-            padding: 10px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 800;
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-
-        .preview-cta:hover {
-            opacity: 0.88;
-        }
-
-        /* =========================
-   LEARNING PATH BADGES
-========================= */
-        .lp-badge {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .lp-badge-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s;
-            position: relative;
-        }
-
-        .lp-badge-icon.locked {
-            filter: grayscale(100%) brightness(0.4);
-        }
-
-        .lp-badge-icon.unlocked {
-            animation: badgeGlow 2.5s ease-in-out infinite;
-        }
-
-        @keyframes badgeGlow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 transparent;
-            }
-
-            50% {
-                box-shadow: 0 0 16px 4px rgba(99, 102, 241, 0.35);
-            }
-        }
-
-        .lp-badge-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #64748b;
-            text-align: center;
-        }
-
-        .lp-badge-label.unlocked {
-            color: #a5b4fc;
-        }
-
-        .lp-progress-bar {
-            height: 3px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 99px;
-            overflow: hidden;
-            flex: 1;
-        }
-
-        .lp-progress-fill {
-            height: 100%;
-            border-radius: 99px;
-            background: linear-gradient(90deg, #6366f1, #a855f7);
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* =========================
-   SCROLL REVEAL
-========================= */
-        .reveal-up {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-
-        .reveal-up.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* =========================
-   SECTION LABEL CHIPS
-========================= */
-        .section-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            border-radius: 99px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-        }
-
-        .chip-trending {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.25);
-            color: #fbbf24;
-        }
-
-        .chip-loved {
-            background: rgba(244, 63, 94, 0.1);
-            border: 1px solid rgba(244, 63, 94, 0.25);
-            color: #fb7185;
-        }
-
-        .chip-recommended {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            color: #818cf8;
-        }
-
-        .chip-path {
-            background: rgba(34, 211, 238, 0.1);
-            border: 1px solid rgba(34, 211, 238, 0.25);
-            color: #22d3ee;
-        }
     </style>
 </head>
 
@@ -1583,27 +869,27 @@
     <!-- Announcement Banner -->
     <div id="announce-bar">
         <i class="ph-fill ph-megaphone-simple"></i>
-        <span>ðŸŽ“ Endsem 2026 resources are being added weekly â€” bookmark your subjects now!</span>
-        <button onclick="document.getElementById('announce-bar').style.display='none'" title="Dismiss">âœ•</button>
+        <span>🎓 Endsem 2026 resources are being added weekly — bookmark your subjects now!</span>
+        <button onclick="document.getElementById('announce-bar').style.display='none'" title="Dismiss">✕</button>
     </div>
 
     <!-- Study Tips Ticker -->
     <div id="tips-ticker">
         <div id="tips-ticker-inner">
-            <span>ðŸ’¡ Solve PYQs first, then revise theory â€” 80% of exam questions are repeated patterns.</span>
-            <span>ðŸ”¥ Study in 25-min Pomodoro sessions for maximum focus.</span>
-            <span>ðŸ“š Download all PYQs offline before your exam week â€” don't rely on internet.</span>
-            <span>ðŸŽ¯ Focus on high-weightage chapters: check the syllabus for marks distribution.</span>
-            <span>â° Start revision 2 weeks before exams â€” avoid last-minute panic.</span>
-            <span>ðŸ¤ Study groups work! Teach what you learn to retain 90% of information.</span>
-            <span>ðŸ“ Make short formula sheets for Calculus & P&S â€” review them daily.</span>
-            <span>ðŸš€ Use Skills Seekers crash courses for last-minute prep â€” highly effective!</span>
+            <span>💡 Solve PYQs first, then revise theory — 80% of exam questions are repeated patterns.</span>
+            <span>🔥 Study in 25-min Pomodoro sessions for maximum focus.</span>
+            <span>📚 Download all PYQs offline before your exam week — don't rely on internet.</span>
+            <span>🎯 Focus on high-weightage chapters: check the syllabus for marks distribution.</span>
+            <span>⏰ Start revision 2 weeks before exams — avoid last-minute panic.</span>
+            <span>🤝 Study groups work! Teach what you learn to retain 90% of information.</span>
+            <span>📝 Make short formula sheets for Calculus & P&S — review them daily.</span>
+            <span>🚀 Use Skills Seekers crash courses for last-minute prep — highly effective!</span>
         </div>
     </div>
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu">
-        <button id="menu-close" onclick="closeMobileMenu()">âœ•</button>
+        <button id="menu-close" onclick="closeMobileMenu()">✕</button>
         <a href="#sem1" onclick="closeMobileMenu()">Sem 1</a>
         <a href="#sem2" onclick="closeMobileMenu()">Sem 2</a>
         <a href="#sem3" onclick="closeMobileMenu()">Sem 3</a>
@@ -1611,88 +897,7 @@
         <a href="#prep" onclick="closeMobileMenu()" style="color:#fbbf24">Prep Guide</a>
         <a href="javascript:void(0)" onclick="closeMobileMenu();toggleModal('cgpaModal')" style="color:#818cf8">CGPA
             Calc</a>
-        <a href="https://www.skillsseekers.com" target="_blank" style="color:#6ee7b7">Skills Seekers â†—</a>
-    </div>
-
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         SEMESTER ONBOARDING MODAL
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <div id="semester-modal" role="dialog" aria-modal="true" aria-labelledby="sem-modal-title">
-        <div class="semester-modal-box">
-            <button class="semester-modal-close" onclick="closeSemesterModal()" aria-label="Close">âœ•</button>
-            <div style="margin-bottom:20px;">
-                <div
-                    style="display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:99px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#818cf8;margin-bottom:16px;">
-                    ðŸŽ¯ Personalize Your Experience
-                </div>
-                <h2 id="sem-modal-title"
-                    style="font-size:22px;font-weight:800;color:#fff;margin-bottom:8px;font-family:'Space Grotesk',sans-serif;line-height:1.2;">
-                    Which year &amp; semester are you in?</h2>
-                <p style="font-size:13px;color:#64748b;line-height:1.5;">We'll curate the best crash courses to match
-                    your syllabus â€” saving you hours of searching.</p>
-            </div>
-
-            <div style="margin-bottom:18px;">
-                <p
-                    style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:8px;">
-                    ðŸ“… Year</p>
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-                    <div class="year-option" data-year="1" onclick="selectYear(1)">Year 1</div>
-                    <div class="year-option" data-year="2" onclick="selectYear(2)">Year 2</div>
-                    <div class="year-option" data-year="3" onclick="selectYear(3)">Year 3</div>
-                    <div class="year-option" data-year="4" onclick="selectYear(4)">Year 4</div>
-                </div>
-            </div>
-
-            <div>
-                <p
-                    style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:8px;">
-                    ðŸ“š Current Semester</p>
-                <div class="sem-select-grid">
-                    <div class="sem-option" data-sem="1" onclick="selectSem(1)">Sem 1</div>
-                    <div class="sem-option" data-sem="2" onclick="selectSem(2)">Sem 2</div>
-                    <div class="sem-option" data-sem="3" onclick="selectSem(3)">Sem 3</div>
-                    <div class="sem-option" data-sem="4" onclick="selectSem(4)">Sem 4</div>
-                    <div class="sem-option" data-sem="5" onclick="selectSem(5)">Sem 5</div>
-                    <div class="sem-option" data-sem="6" onclick="selectSem(6)">Sem 6</div>
-                    <div class="sem-option" data-sem="7" onclick="selectSem(7)">Sem 7</div>
-                    <div class="sem-option" data-sem="8" onclick="selectSem(8)">Sem 8</div>
-                </div>
-            </div>
-
-            <button class="modal-submit-btn" onclick="saveSemesterChoice()">
-                âœ¨ Personalize My Dashboard
-            </button>
-            <button class="modal-skip-btn" onclick="closeSemesterModal()">
-                Maybe later â€” I'll explore on my own
-            </button>
-        </div>
-    </div>
-
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         SMART TOAST CONTAINER
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <div id="toast-container"></div>
-
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         STICKY EXPLORE CTA
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <div id="sticky-explore-cta">
-        <i class="ph-fill ph-graduation-cap" style="color:#fff;font-size:16px;"></i>
-        <a href="https://www.skillsseekers.com" target="_blank" style="text-decoration:none;">
-            <span>Explore Crash Courses</span>
-        </a>
-        <button class="cta-close" onclick="dismissExploreCTA(event)" aria-label="Dismiss">âœ•</button>
-    </div>
-
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         COURSE QUICK-PREVIEW POPUP
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <div id="course-preview-popup" role="tooltip">
-        <div class="preview-tag" id="pp-tag">Crash Course</div>
-        <div class="preview-title" id="pp-title">Course Title</div>
-        <ul class="preview-topics" id="pp-topics"></ul>
-        <a href="#" target="_blank" class="preview-cta" id="pp-link">Explore Full Course â†’</a>
+        <a href="https://www.skillsseekers.com" target="_blank" style="color:#6ee7b7">Skills Seekers ↗</a>
     </div>
 
     <canvas id="canvas-container"></canvas>
@@ -1745,7 +950,7 @@
                         </button>
 
                         <div id="streak-badge" onclick="showStreakInfo()" title="Your daily study streak">
-                            ðŸ”¥ <span id="streak-num">0</span> Day Streak
+                            🔥 <span id="streak-num">0</span> Day Streak
                         </div>
                         <div class="h-4 w-px bg-white/10 mx-3"></div>
 
@@ -1793,7 +998,7 @@
                         class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
                 </span>
-                âœ¨ Updated for 2026 Sessions
+                ✨ Updated for 2026 Sessions
             </div>
 
             <h1 class="text-5xl md:text-8xl font-display font-bold text-white tracking-tight mb-8 leading-[1.1]">
@@ -1864,44 +1069,7 @@
         </div>
     </section>
 
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         ðŸ”¥ TRENDING CRASH COURSES STRIP (JS-rendered)
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 reveal-up" id="trending-section">
-        <div class="flex items-end justify-between mb-6">
-            <div>
-                <div class="section-chip chip-trending">ðŸ”¥ Trending Right Now</div>
-                <h2 class="text-3xl font-display font-bold text-white" style="line-height:1.2;" id="trending-headline">
-                    Top Crash Courses This Week</h2>
-                <p class="text-slate-500 text-sm mt-1" id="trending-subtitle">Used by 2,400+ BU students ahead of their
-                    exams</p>
-            </div>
-            <a href="https://www.skillsseekers.com" target="_blank"
-                class="hidden md:flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
-                style="white-space:nowrap;">
-                View All <i class="ph-bold ph-arrow-right"></i>
-            </a>
-        </div>
-        <!-- Cards injected by JS -->
-        <div class="cc-strip-wrapper" id="trending-strip"></div>
-    </section>
-
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         ðŸ’› MOST LOVED BY STUDENTS (JS-rendered)
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 reveal-up" id="loved-section">
-        <div class="mb-8">
-            <div class="section-chip chip-loved">ðŸ’› Most Loved</div>
-            <h2 class="text-3xl font-display font-bold text-white" style="line-height:1.2;">Student Favourites</h2>
-            <p class="text-slate-500 text-sm mt-1" id="loved-subtitle">The courses BU students keep coming back to â€”
-                verified by real enrolment data.</p>
-        </div>
-        <!-- Cards injected by JS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="loved-grid"></div>
-    </section>
-
-
-
+    <!-- Exam Countdown + Filter Tabs -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <!-- Exam Countdown -->
         <div class="premium-card p-6 rounded-2xl mb-8 fade-in-section">
@@ -3046,7 +2214,7 @@
                         </h3>
 
                         <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">
-                            End-Term Crash Course â€¢ Theory â€¢ Practical â€¢ Exam Focused
+                            End-Term Crash Course • Theory • Practical • Exam Focused
                         </p>
 
                         <div class="mt-auto">
@@ -3232,93 +2400,6 @@
 
     </main>
 
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         ðŸŽ¯ RECOMMENDED FOR YOU (dynamic)
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <section id="recommended-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-        <div class="mb-8">
-            <div class="section-chip chip-recommended">ðŸŽ¯ Recommended for You</div>
-            <h2 class="text-3xl font-display font-bold text-white" style="line-height:1.2;" id="rec-headline">Courses
-                Matched to Your Semester</h2>
-            <p class="text-slate-500 text-sm mt-1" id="rec-subtitle">Tell us your semester using the onboarding popup to
-                unlock personalised picks.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="recommended-courses">
-            <!-- JS populates this -->
-            <div class="rec-card" style="grid-column:1/-1;text-align:center;padding:40px 20px;">
-                <div style="font-size:32px;margin-bottom:12px;">ðŸ“š</div>
-                <p style="font-size:14px;color:#475569;font-weight:600;">Your personalised recommendations will appear
-                    here.</p>
-                <p style="font-size:12px;color:#374151;margin-top:6px;">Scroll down or wait â€” we'll ask for your
-                    semester shortly!</p>
-                <button onclick="openSemesterModal()"
-                    style="margin-top:18px;padding:10px 22px;border-radius:99px;background:linear-gradient(135deg,#6366f1,#a855f7);border:none;color:#fff;font-size:13px;font-weight:800;cursor:pointer;transition:opacity 0.2s;"
-                    onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
-                    Set My Semester Now
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         ðŸ… LEARNING PATH BADGES
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24 reveal-up" id="learning-path-section">
-        <div class="mb-8">
-            <div class="section-chip chip-path">ðŸ… Your Learning Path</div>
-            <h2 class="text-3xl font-display font-bold text-white" style="line-height:1.2;">Unlock Milestones</h2>
-            <p class="text-slate-500 text-sm mt-1">Track your journey â€” earn badges as you explore the hub and engage
-                with resources.</p>
-        </div>
-
-        <div
-            style="background:rgba(14,14,22,0.7);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;">
-            <!-- Progress Bar Row -->
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
-                <span style="font-size:12px;font-weight:700;color:#475569;white-space:nowrap;">Learning Progress</span>
-                <div class="lp-progress-bar">
-                    <div class="lp-progress-fill" id="lp-progress-fill" style="width:0%"></div>
-                </div>
-                <span id="lp-progress-label" style="font-size:12px;font-weight:700;color:#64748b;white-space:nowrap;">0
-                    / 3</span>
-            </div>
-
-            <!-- Badges Grid -->
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-
-                <div style="text-align:center;">
-                    <div class="lp-badge-icon locked" id="badge-explorer"
-                        style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.2);margin:0 auto 10px;">
-                        ðŸ—ºï¸</div>
-                    <div class="lp-badge-label" id="badge-explorer-label">Explorer</div>
-                    <p style="font-size:11px;color:#374151;margin-top:4px;line-height:1.4;">Use the search bar or filter
-                        by semester</p>
-                </div>
-
-                <div style="text-align:center;">
-                    <div class="lp-badge-icon locked" id="badge-focused"
-                        style="background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.2);margin:0 auto 10px;">ðŸ…
-                    </div>
-                    <div class="lp-badge-label" id="badge-focused-label">Focused Learner</div>
-                    <p style="font-size:11px;color:#374151;margin-top:4px;line-height:1.4;">Start a Pomodoro focus
-                        session</p>
-                </div>
-
-                <div style="text-align:center;">
-                    <div class="lp-badge-icon locked" id="badge-crasher"
-                        style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.2);margin:0 auto 10px;">
-                        ðŸš€</div>
-                    <div class="lp-badge-label" id="badge-crasher-label">Crash Course Pro</div>
-                    <p style="font-size:11px;color:#374151;margin-top:4px;line-height:1.4;">Visit a crash course on
-                        Skills Seekers</p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-
-
     <!-- ===== BACK TO TOP ===== -->
     <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
         <i class="ph-bold ph-arrow-up"></i>
@@ -3340,7 +2421,7 @@
     <!-- ===== POMODORO PANEL ===== -->
     <div id="pomodoro-panel" class="side-panel" style="right:80px;">
         <div class="panel-header">
-            <h4>ðŸ… Pomodoro Focus Timer</h4>
+            <h4>🍅 Pomodoro Focus Timer</h4>
             <button class="panel-close" onclick="togglePanel('pomodoro-panel')"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="panel-body">
@@ -3359,8 +2440,8 @@
                     25:00</div>
             </div>
             <div class="flex gap-3 justify-center mt-4">
-                <button class="pomo-btn pomo-btn-start" id="pomo-start-btn" onclick="togglePomodoro()">â–¶ Start</button>
-                <button class="pomo-btn pomo-btn-reset" onclick="resetPomodoro()">â†º Reset</button>
+                <button class="pomo-btn pomo-btn-start" id="pomo-start-btn" onclick="togglePomodoro()">▶ Start</button>
+                <button class="pomo-btn pomo-btn-reset" onclick="resetPomodoro()">↺ Reset</button>
             </div>
             <div class="mt-4 text-center text-xs text-slate-500" id="pomo-sessions">Sessions today: <span
                     id="pomo-session-count">0</span></div>
@@ -3370,19 +2451,19 @@
     <!-- ===== STICKY NOTES PANEL ===== -->
     <div id="notes-panel" class="side-panel" style="right:80px;">
         <div class="panel-header">
-            <h4>ðŸ“ Quick Notes</h4>
+            <h4>📝 Quick Notes</h4>
             <button class="panel-close" onclick="togglePanel('notes-panel')"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="panel-body">
             <div id="notes-container"></div>
-            <button class="add-note-btn" onclick="addNote()">ï¼‹ Add Note</button>
+            <button class="add-note-btn" onclick="addNote()">＋ Add Note</button>
         </div>
     </div>
 
     <!-- ===== BOOKMARKS PANEL ===== -->
     <div id="bookmarks-panel" class="side-panel" style="right:80px;">
         <div class="panel-header">
-            <h4>ðŸ”– Saved Resources</h4>
+            <h4>🔖 Saved Resources</h4>
             <button class="panel-close" onclick="togglePanel('bookmarks-panel')"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="panel-body">
@@ -3455,7 +2536,7 @@
 
             <div class="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6">
                 <p class="text-sm text-zinc-600 text-center md:text-left">&copy; 2026 Bennett University Resource Hub.
-                    Built with â¤ï¸ by Skills Seekers.</p>
+                    Built with ❤️ by Skills Seekers.</p>
                 <div class="flex items-center gap-3 bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
                     <span class="text-xs text-zinc-500 uppercase tracking-widest font-bold">Powered By</span>
                     <span class="text-sm font-bold text-white flex items-center gap-2">
@@ -3787,7 +2868,7 @@
             let streak = parseInt(localStorage.getItem('bu_streak') || '0');
 
             if (lastVisit === today) {
-                // Already counted today â€” do nothing
+                // Already counted today — do nothing
             } else {
                 const yesterday = new Date(Date.now() - 86400000).toDateString();
                 if (lastVisit === yesterday) {
@@ -3809,7 +2890,7 @@
 
         function showStreakInfo() {
             const streak = localStorage.getItem('bu_streak') || 0;
-            alert(`ðŸ”¥ You're on a ${streak}-day study streak!\n\nVisit every day to keep your streak alive. Milestones at 7, 14, 30, 50, and 100 days!`);
+            alert(`🔥 You're on a ${streak}-day study streak!\n\nVisit every day to keep your streak alive. Milestones at 7, 14, 30, 50, and 100 days!`);
         }
 
         // ===========================================
@@ -3848,14 +2929,14 @@
         function startCountdown(dateStr, name) {
             if (countdownInterval) clearInterval(countdownInterval);
             const target = new Date(dateStr);
-            document.getElementById('cd-exam-label').textContent = 'â³ ' + (name || 'Exam');
+            document.getElementById('cd-exam-label').textContent = '⏳ ' + (name || 'Exam');
             countdownInterval = setInterval(() => {
                 const now = new Date();
                 const diff = target - now;
                 if (diff <= 0) {
                     clearInterval(countdownInterval);
                     ['cd-days', 'cd-hours', 'cd-mins', 'cd-secs'].forEach(id => document.getElementById(id).textContent = '00');
-                    document.getElementById('cd-exam-label').textContent = 'ðŸŽ¯ Exam Day is here!';
+                    document.getElementById('cd-exam-label').textContent = '🎯 Exam Day is here!';
                     return;
                 }
                 const d = Math.floor(diff / 86400000);
@@ -3944,24 +3025,24 @@
             if (pomoRunning) {
                 clearInterval(pomoInterval);
                 pomoRunning = false;
-                document.getElementById('pomo-start-btn').textContent = 'â–¶ Resume';
+                document.getElementById('pomo-start-btn').textContent = '▶ Resume';
             } else {
                 pomoRunning = true;
-                document.getElementById('pomo-start-btn').textContent = 'â¸ Pause';
+                document.getElementById('pomo-start-btn').textContent = '⏸ Pause';
                 pomoInterval = setInterval(() => {
                     pomoTimeLeft--;
                     updatePomoDisplay();
                     if (pomoTimeLeft <= 0) {
                         clearInterval(pomoInterval);
                         pomoRunning = false;
-                        document.getElementById('pomo-start-btn').textContent = 'â–¶ Start';
+                        document.getElementById('pomo-start-btn').textContent = '▶ Start';
                         if (pomoMode === 'work') {
                             pomoSessions++;
                             localStorage.setItem('bu_pomo_sessions_today', pomoSessions);
                             document.getElementById('pomo-session-count').textContent = pomoSessions;
                         }
                         new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA').play().catch(() => { });
-                        alert(pomoMode === 'work' ? 'âœ… Focus session complete! Take a break.' : 'â° Break over! Time to focus.');
+                        alert(pomoMode === 'work' ? '✅ Focus session complete! Take a break.' : '⏰ Break over! Time to focus.');
                     }
                 }, 1000);
             }
@@ -3972,7 +3053,7 @@
             pomoRunning = false;
             pomoTimeLeft = POMO_MODES[pomoMode];
             updatePomoDisplay();
-            document.getElementById('pomo-start-btn').textContent = 'â–¶ Start';
+            document.getElementById('pomo-start-btn').textContent = '▶ Start';
         }
 
         // ===========================================
@@ -3985,7 +3066,7 @@
             notes.forEach((text, i) => {
                 const div = document.createElement('div');
                 div.className = 'sticky-note';
-                div.innerHTML = `<button class="sticky-note-del" onclick="deleteNote(${i})">âœ•</button><textarea onchange="saveNote(${i}, this.value)" placeholder="Type your note...">${text}</textarea>`;
+                div.innerHTML = `<button class="sticky-note-del" onclick="deleteNote(${i})">✕</button><textarea onchange="saveNote(${i}, this.value)" placeholder="Type your note...">${text}</textarea>`;
                 container.appendChild(div);
             });
         }
@@ -4028,8 +3109,8 @@
                         <span>${bm.label}</span>
                         <span class="bookmark-sub">${bm.subject}</span>
                     </div>
-                    <a href="${bm.url}" target="_blank" title="Open">â†—</a>
-                    <button class="bookmark-del" onclick="deleteBookmark(${i})" title="Remove">âœ•</button>
+                    <a href="${bm.url}" target="_blank" title="Open">↗</a>
+                    <button class="bookmark-del" onclick="deleteBookmark(${i})" title="Remove">✕</button>
                 </div>`).join('');
         }
 
@@ -4083,11 +3164,11 @@
         })();
 
         // ===========================================
-        // AUTH GUARD â€” uses sessionStorage set by login page
+        // AUTH GUARD — uses sessionStorage set by login page
         // ===========================================
         const _ssUser = sessionStorage.getItem('ss_user');
         if (!_ssUser) {
-            // Not logged in â€” redirect to login
+            // Not logged in — redirect to login
             window.location.href = '/login';
         }
 
@@ -4173,507 +3254,7 @@
             }
         });
 
-// ==========================================================
-// REAL-TIME SEMESTER TYPE ENGINE
-// Jan-Jul  = EVEN sems (2,4,6,8)
-// Aug-Dec  = ODD  sems (1,3,5,7)
-// ==========================================================
-
-function getSemesterType() {
-    var month = new Date().getMonth() + 1; // 1-12
-    return (month >= 1 && month <= 7) ? 'even' : 'odd';
-}
-
-var _semType = getSemesterType();
-var _semLabel = _semType === 'even' ? 'Even Semester (Jan-Jul)' : 'Odd Semester (Aug-Dec)';
-
-// All trending data, tagged by semester type
-var TRENDING_DATA = {
-    even: [
-        { title: 'Data Structures Using C++ End Term', tag: 'Sem 2 Top Pick', desc: 'Express crash course built for the End Term â€” DSA + C++ patterns.', badge: 'Most Loved', badgeClass: 'cc-badge-loved', students: '1,240', stars: '4.9', hours: '10', topics: 'Arrays & Linked Lists|Stacks & Queues|Trees & Graphs|Sorting Algorithms|Memory Management', link: 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97' },
-        { title: 'Discrete Mathematics End Sem 2026', tag: 'Sem 2 Must-Have', desc: 'Theory Lectures + Tutorial Sheets + PYQs â€” complete End Sem sprint.', badge: 'Trending', badgeClass: 'cc-badge-trending', students: '380', stars: '4.8', hours: '9', topics: 'Logic & Proofs|Set Theory|Graph Theory|Combinatorics|Relations & Functions', link: 'https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad' },
-        { title: 'Linear Algebra End Sem 2026', tag: 'Sem 2 Essential', desc: 'Theory Lectures + Tutorial Sheets + PYQs â€” the complete LA package.', badge: 'Trending', badgeClass: 'cc-badge-trending', students: '310', stars: '4.8', hours: '9', topics: 'Matrices & Determinants|Vector Spaces|Eigenvalues|Linear Transformations|PYQ Patterns', link: 'https://www.skillsseekers.com/courses/Linear-Algebra-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2025-69c506916b8037fc81a925f6' },
-        { title: 'Operating Systems Mid + End Term', tag: 'Sem 4 Essential', desc: 'Full-semester crash course covering Mid and End term OS syllabus.', badge: 'Top Rated', badgeClass: 'cc-badge-hot', students: '430', stars: '4.9', hours: '12', topics: 'Process Management|Memory Management|File Systems|Deadlocks|I/O Systems', link: 'https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602' },
-        { title: 'Computer Networks End Sem', tag: 'Sem 4 Pick', desc: 'Theory, Practice & PYQs â€” everything you need for the CN paper.', badge: 'High Impact', badgeClass: 'cc-badge-new', students: '290', stars: '4.7', hours: '11', topics: 'OSI & TCP/IP Models|Subnetting|Routing Protocols|TCP vs UDP|Network Security', link: 'https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19' },
-        { title: 'Microprocessors Mid + End Term', tag: 'Sem 4 Course', desc: 'Complete crash course covering both Mid and End term MCA syllabus.', badge: 'High Impact', badgeClass: 'cc-badge-new', students: '210', stars: '4.7', hours: '11', topics: '8086 Architecture|Assembly Language|Interrupts|Memory Interfacing|IO Ports', link: 'https://www.skillsseekers.com/courses/Microprocessors-and-Computer-Architecture-Mid-Term-Express-Crash-Course-69628f196254b83697fd78e7' }
-    ],
-    odd: [
-        { title: 'Engineering Calculus End Sem 2026', tag: 'Sem 1 Must-Have', desc: 'Tutorial Sheets, PYQs, and pattern analysis for Sem 1 students.', badge: 'Trending', badgeClass: 'cc-badge-trending', students: '820', stars: '4.9', hours: '8', topics: 'Limits & Continuity|Differentiation Tricks|Integration Mastery|Series & Sequences|PYQ Deep Dive', link: 'https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4' },
-        { title: 'Electronics End Sem Preparation', tag: 'Sem 1 Course', desc: 'End Sem Tutorial Sheets & Solved PYQs for ECE fundamentals.', badge: 'High Impact', badgeClass: 'cc-badge-new', students: '340', stars: '4.8', hours: '9', topics: 'Basic Circuits|Diodes & BJTs|Op-Amps|Digital Logic|PYQ Solving', link: 'https://www.skillsseekers.com/courses/ECE-END-SEM-TUTORIAL-SHEETS--PYQ-SOLVED-2025-6904f0913315445bda01a275' },
-        { title: 'Probability & Statistics End Sem', tag: 'Sem 3 Shortcut', desc: 'End Term Express â€” formula sheets, solved problems, and PYQs.', badge: 'High Impact', badgeClass: 'cc-badge-new', students: '560', stars: '4.8', hours: '7', topics: 'Probability Fundamentals|Random Variables|Distributions|Hypothesis Testing|Regression', link: 'https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135' },
-        { title: 'Statistical Machine Learning End Sem', tag: 'Sem 3 Pick', desc: 'End Sem prep: regression, classification, clustering and more.', badge: 'Top Rated', badgeClass: 'cc-badge-hot', students: '280', stars: '4.8', hours: '10', topics: 'Regression Models|Classification|Clustering|SVM|Neural Net Basics', link: 'https://www.skillsseekers.com/courses/Statistical-Machine-Learning-End-Sem-Prep-68ca34cabec1a14e2a706d2b' },
-        { title: 'IMS End Sem Course', tag: 'Sem 5 / Sem 7', desc: 'Theory, practice questions, and video lectures â€” IMS all-in-one.', badge: 'Most Loved', badgeClass: 'cc-badge-loved', students: '190', stars: '4.7', hours: '8', topics: 'Information Systems|MIS Concepts|Decision Support|ERP|IT Strategy', link: 'https://www.skillsseekers.com/courses/IMS-End-Sem-Course--Theory--Questions-Practice-67499a62a0101406538b095b' },
-        { title: 'Digital Design Prep', tag: 'Sem 5 / Sem 7', desc: 'Lectures, notes, question banks, and PYPs for Digital Design.', badge: 'Trending', badgeClass: 'cc-badge-trending', students: '155', stars: '4.7', hours: '9', topics: 'Boolean Algebra|Combinational Circuits|Sequential Logic|FSM|VHDL Basics', link: 'https://www.skillsseekers.com/courses/Digital-Design--Lectures--Notes--Question-Banks--PYP--65f3c32854bc821a1192472f' }
-    ]
-};
-
-// Most Loved data, tagged by semester type
-var LOVED_DATA = {
-    even: [
-        { sem: 'Sem 2 Â· Data Structures', color: '#22d3ee', glowR: '34', glowG: '211', glowB: '238', ctaColor: '#fb7185', title: 'Data Structures Using C++ End Term Express', quote: '"Covered the entire syllabus in one weekend. Got a 9 in my paper." â€” Rishab, Sem 2', stars: '4.9', enrollment: '1,240 students enrolled', link: 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97' },
-        { sem: 'Sem 2 Â· Discrete Maths', color: '#f87171', glowR: '168', glowG: '85', glowB: '247', ctaColor: '#c084fc', title: 'Discrete Mathematics End Sem 2026', quote: '"Covered logic, sets and graphs perfectly. Cracked the paper with confidence." â€” Ananya, Sem 2', stars: '4.8', enrollment: '380 students enrolled', link: 'https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad' },
-        { sem: 'Sem 4 Â· OS', color: '#fbbf24', glowR: '251', glowG: '191', glowB: '36', ctaColor: '#fbbf24', title: 'Operating Systems Mid + End Term Express', quote: '"The only resource I used for OS and it worked brilliantly." â€” Aryan, Sem 4', stars: '4.9', enrollment: '430 students enrolled', link: 'https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602' }
-    ],
-    odd: [
-        { sem: 'Sem 1 Â· Calculus', color: '#818cf8', glowR: '99', glowG: '102', glowB: '241', ctaColor: '#818cf8', title: 'Engineering Calculus End Sem 2026', quote: '"Incredibly well-structured. Made calculus feel approachable before the exam." â€” Priya, Sem 1', stars: '4.9', enrollment: '820 students enrolled', link: 'https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4' },
-        { sem: 'Sem 3 Â· Probability', color: '#fb923c', glowR: '251', glowG: '146', glowB: '60', ctaColor: '#fb923c', title: 'Probability & Statistics End Sem', quote: '"Nailed the distributions and hypothesis testing. Scored a 9.5!" â€” Karan, Sem 3', stars: '4.8', enrollment: '560 students enrolled', link: 'https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135' },
-        { sem: 'Sem 1 Â· Electronics', color: '#fbbf24', glowR: '251', glowG: '191', glowB: '36', ctaColor: '#fbbf24', title: 'Electronics End Sem Preparation', quote: '"Super well-structured. Helped me clear all the tricky circuit questions." â€” Riya, Sem 1', stars: '4.8', enrollment: '340 students enrolled', link: 'https://www.skillsseekers.com/courses/ECE-END-SEM-TUTORIAL-SHEETS--PYQ-SOLVED-2025-6904f0913315445bda01a275' }
-    ]
-};
-
-// Render trending strip and most-loved grid based on current semester type
-function renderSeasonalSections() {
-    var type = getSemesterType();
-    var trendingCards = TRENDING_DATA[type] || [];
-    var lovedCards = LOVED_DATA[type] || [];
-    var periodLabel = type === 'even' ? 'Even Semester (Jan-Jul)' : 'Odd Semester (Aug-Dec)';
-
-    // Update section headings
-    var hl = document.getElementById('trending-headline');
-    var sub = document.getElementById('trending-subtitle');
-    var lovedSub = document.getElementById('loved-subtitle');
-    if (hl) hl.textContent = type === 'even' ? 'Top Even Semester Crash Courses' : 'Top Odd Semester Crash Courses';
-    if (sub) sub.textContent = 'Curated for ' + periodLabel + ' â€” used by 2,400+ BU students';
-    if (lovedSub) lovedSub.textContent = 'Most loved by BU students this ' + periodLabel + ' â€” verified by real enrolment data.';
-
-    // Render trending strip
-    var strip = document.getElementById('trending-strip');
-    if (strip) {
-        strip.innerHTML = trendingCards.map(function (c) {
-            return '<div class="cc-card" data-title="' + c.title + '" data-tag="' + c.tag + '" data-topics="' + c.topics + '" data-link="' + c.link + '" onmouseenter="showPreview(this,event)" onmouseleave="hidePreview()">' +
-                '<div class="cc-badge ' + c.badgeClass + '">&#x1F525; ' + c.badge + '</div>' +
-                '<h4>' + c.title + '</h4>' +
-                '<p>' + c.desc + '</p>' +
-                '<div class="cc-meta">' +
-                '<span><i class="ph-fill ph-users"></i> ' + c.students + ' students</span>' +
-                '<span><i class="ph-fill ph-star"></i> ' + c.stars + '</span>' +
-                '<span><i class="ph-fill ph-clock"></i> ' + c.hours + ' hrs</span>' +
-                '</div>' +
-                '<a href="' + c.link + '" target="_blank" class="cc-preview-btn" onclick="unlockBadge(\'crasher\')">Explore Course <i class="ph-bold ph-arrow-up-right"></i></a>' +
-                '</div>';
-        }).join('');
-
-        // Mouse-glow and badge triggers
-        strip.querySelectorAll('.cc-card').forEach(function (card) {
-            card.addEventListener('mousemove', function (e) {
-                var r = card.getBoundingClientRect();
-                card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-                card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-            });
-        });
-        strip.querySelectorAll('.cc-preview-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () { unlockBadge('crasher'); });
-        });
-    }
-
-    // Render most-loved grid
-    var grid = document.getElementById('loved-grid');
-    if (grid) {
-        grid.innerHTML = lovedCards.map(function (c) {
-            var rgb = c.glowR + ',' + c.glowG + ',' + c.glowB;
-            return '<div class="loved-card">' +
-                '<div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(' + rgb + ',0.08),transparent);border-radius:0 20px 0 0;pointer-events:none;"></div>' +
-                '<div class="love-count mb-4"><span class="heart-icon">&#x2764;&#xFE0F;</span><span>' + c.enrollment + '</span></div>' +
-                '<div style="display:inline-block;padding:3px 10px;border-radius:99px;background:rgba(' + rgb + ',0.1);border:1px solid rgba(' + rgb + ',0.2);font-size:10px;font-weight:800;color:' + c.color + ';text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">' + c.sem + '</div>' +
-                '<h3 style="font-size:18px;font-weight:800;color:#f8fafc;margin-bottom:8px;font-family:\'Space Grotesk\',sans-serif;line-height:1.3;">' + c.title + '</h3>' +
-                '<p style="font-size:13px;color:#64748b;margin-bottom:20px;line-height:1.5;">' + c.quote + '</p>' +
-                '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;"><span style="color:#fbbf24;font-size:14px;">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</span><span style="font-size:12px;color:#475569;">' + c.stars + ' / 5.0</span></div>' +
-                '<a href="' + c.link + '" target="_blank" onclick="unlockBadge(\'crasher\')" ' +
-                'style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-radius:12px;background:rgba(' + rgb + ',0.08);border:1px solid rgba(' + rgb + ',0.2);text-decoration:none;transition:all 0.2s;" ' +
-                'onmouseover="this.style.background=\'rgba(' + rgb + ',0.15)\'" onmouseout="this.style.background=\'rgba(' + rgb + ',0.08)\'">' +
-                '<span style="font-size:13px;font-weight:700;color:' + c.ctaColor + ';">Start Learning</span>' +
-                '<i class="ph-bold ph-arrow-up-right" style="color:' + c.ctaColor + ';"></i>' +
-                '</a>' +
-                '</div>';
-        }).join('');
-    }
-}
-
-// Run on load
-renderSeasonalSections();
-
-// Restrict semester modal options to current active sems and show season banner
-(function restrictModalSems() {
-    var evenSems = [2, 4, 6, 8], oddSems = [1, 3, 5, 7];
-    var activeSems = _semType === 'even' ? evenSems : oddSems;
-    document.querySelectorAll('.sem-option').forEach(function (el) {
-        var s = parseInt(el.dataset.sem);
-        if (activeSems.indexOf(s) === -1) {
-            el.style.opacity = '0.3';
-            el.style.pointerEvents = 'none';
-            el.title = 'Not active this semester period';
-        } else {
-            el.style.borderColor = 'rgba(99,102,241,0.4)';
-        }
-    });
-    var modalBox = document.querySelector('.semester-modal-box');
-    if (modalBox && !document.getElementById('sem-season-banner')) {
-        var banner = document.createElement('div');
-        banner.id = 'sem-season-banner';
-        banner.style.cssText = 'margin-bottom:14px;padding:8px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:8px;';
-        banner.innerHTML = '<span style="font-size:16px;">' + (_semType === 'even' ? '&#x1F4C5;' : '&#x1F342;') + '</span><span><strong style="color:#e2e8f0;">' + _semLabel + ' is underway.</strong> Only active semesters are enabled below.</span>';
-        modalBox.insertBefore(banner, modalBox.children[1]);
-    }
-})();
-
-        // ==========================================================
-        // â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  CRASH COURSE ENGAGEMENT ENGINE â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ
-        // ==========================================================
-
-        // â”€â”€ Personalization data: sem â†’ recommended courses â”€â”€â”€â”€â”€â”€â”€â”€
-        const COURSE_MAP = {
-            1: [
-                { title: 'Engineering Calculus End Sem 2026', desc: 'Tutorial Sheets, PYQs and pattern analysis â€” perfect for End Sem sprint.', link: 'https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4', color: '#818cf8', icon: 'âˆ«' },
-                { title: 'Electronics Preparation', desc: 'End Sem Tutorial Sheets & Solved PYQs for ECE fundamentals.', link: 'https://www.skillsseekers.com/courses/ECE-END-SEM-TUTORIAL-SHEETS--PYQ-SOLVED-2025-6904f0913315445bda01a275', color: '#fbbf24', icon: 'âš¡' },
-            ],
-            2: [
-                { title: 'Data Structures Using C++ End Term', desc: 'Express crash course covering arrays, stacks, trees, sorting algorithms.', link: 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97', color: '#22d3ee', icon: 'ðŸŒ²' },
-                { title: 'Discrete Mathematics End Sem 2026', desc: 'Logic, sets, graph theory, combinatorics â€” all in one comprehensive sprint.', link: 'https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad', color: '#f87171', icon: 'â—»' },
-                { title: 'Linear Algebra End Sem 2026', desc: 'Theory Lectures + Tutorial Sheets + PYQs â€” the complete LA package.', link: 'https://www.skillsseekers.com/courses/Linear-Algebra-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2025-69c506916b8037fc81a925f6', color: '#fbbf24', icon: 'âŠ•' },
-            ],
-            3: [
-                { title: 'Probability & Statistics End Sem', desc: 'Formula sheets, distributions, hypothesis testing and solved PYQs.', link: 'https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135', color: '#fb923c', icon: 'ðŸ“Š' },
-                { title: 'Statistical Machine Learning End Sem', desc: 'End Sem prep covering regression, classification, clustering and more.', link: 'https://www.skillsseekers.com/courses/Statistical-Machine-Learning-End-Sem-Prep-68ca34cabec1a14e2a706d2b', color: '#c4b5fd', icon: 'ðŸ¤–' },
-            ],
-            4: [
-                { title: 'Operating Systems Mid + End Term', desc: 'Processes, memory management, deadlocks, file systems â€” fully covered.', link: 'https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602', color: '#60a5fa', icon: 'ðŸ’»' },
-                { title: 'Computer Networks End Sem', desc: 'OSI model, routing, TCP/IP, subnetting, and security fundamentals.', link: 'https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19', color: '#22d3ee', icon: 'ðŸŒ' },
-                { title: 'Microprocessors Mid + End Term', desc: 'Complete crash course covering both Mid and End term MCA syllabus.', link: 'https://www.skillsseekers.com/courses/Microprocessors-and-Computer-Architecture-Mid-Term-Express-Crash-Course-69628f196254b83697fd78e7', color: '#a78bfa', icon: 'âš™ï¸' },
-            ],
-            5: [
-                { title: 'Statistical Machine Learning End Sem', desc: 'Advanced ML prep: regression, SVM, neural nets â€” exam focused.', link: 'https://www.skillsseekers.com/courses/Statistical-Machine-Learning-End-Sem-Prep-68ca34cabec1a14e2a706d2b', color: '#c4b5fd', icon: 'ðŸ¤–' },
-                { title: 'IMS Preparation', desc: 'IMS theory, practice questions, and video lectures â€” all in one.', link: 'https://www.skillsseekers.com/courses/IMS-End-Sem-Course--Theory--Questions-Practice-67499a62a0101406538b095b', color: '#f87171', icon: 'ðŸ“ˆ' },
-            ],
-            6: [
-                { title: 'Digital Design Prep', desc: 'Lectures, notes, question banks, and PYPs for Digital Design.', link: 'https://www.skillsseekers.com/courses/Digital-Design--Lectures--Notes--Question-Banks--PYP--65f3c32854bc821a1192472f', color: '#ec4899', icon: 'ðŸ”Œ' },
-            ],
-            7: [
-                { title: 'Computer Networks End Sem', desc: 'Deep dive into networking â€” perfect for final year advanced prep.', link: 'https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19', color: '#22d3ee', icon: 'ðŸŒ' },
-            ],
-            8: [
-                { title: 'IMS Preparation', desc: 'Final semester: sharpen management and systems skills with IMS.', link: 'https://www.skillsseekers.com/courses/IMS-End-Sem-Course--Theory--Questions-Practice-67499a62a0101406538b095b', color: '#f87171', icon: 'ðŸ“ˆ' },
-            ],
-        };
-
-        // â”€â”€ Semester/Year state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        let _selectedSem = null;
-        let _selectedYear = null;
-
-        function selectSem(n) {
-            _selectedSem = n;
-            document.querySelectorAll('.sem-option').forEach(el => el.classList.remove('selected'));
-            document.querySelectorAll(`.sem-option[data-sem="${n}"]`).forEach(el => el.classList.add('selected'));
-        }
-        function selectYear(n) {
-            _selectedYear = n;
-            document.querySelectorAll('.year-option').forEach(el => el.classList.remove('selected'));
-            document.querySelectorAll(`.year-option[data-year="${n}"]`).forEach(el => el.classList.add('selected'));
-        }
-
-        // â”€â”€ Open / Close semester modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        function openSemesterModal() {
-            const modal = document.getElementById('semester-modal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // Pre-select stored values
-            const storedSem = localStorage.getItem('bu_semester');
-            const storedYear = localStorage.getItem('bu_year');
-            if (storedSem) selectSem(parseInt(storedSem));
-            if (storedYear) selectYear(parseInt(storedYear));
-        }
-        function closeSemesterModal() {
-            document.getElementById('semester-modal').classList.remove('active');
-            document.body.style.overflow = '';
-            // Mark as seen so we don't auto-show again for 24h
-            localStorage.setItem('bu_modal_seen', Date.now());
-        }
-
-        function saveSemesterChoice() {
-            if (!_selectedSem) {
-                showSmartToast('ðŸ‘†', 'Pick your semester first!', 'Tap one of the semester bubbles above.');
-                return;
-            }
-            const sem = _selectedSem;
-            const year = _selectedYear || Math.ceil(sem / 2);
-            localStorage.setItem('bu_semester', sem);
-            localStorage.setItem('bu_year', year);
-            closeSemesterModal();
-            renderRecommendations(sem, year);
-            setTimeout(() => {
-                showSmartToast('ðŸš€', `Based on Sem ${sem}, these crash courses can boost your performance!`, 'Curated just for you â€” scroll to explore.');
-            }, 800);
-            setTimeout(() => {
-                showSmartToast('ðŸ“š', 'Did you know?', `Skills Seekers students in Sem ${sem} see a 1.2 GPA boost on average!`);
-            }, 6000);
-        }
-
-        // â”€â”€ Render recommendations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        function renderRecommendations(sem, year) {
-            const courses = COURSE_MAP[sem] || COURSE_MAP[1];
-            const container = document.getElementById('recommended-courses');
-            const headline = document.getElementById('rec-headline');
-            const subtitle = document.getElementById('rec-subtitle');
-
-            headline.textContent = `Best Crash Courses for Semester ${sem}`;
-            subtitle.textContent = `Year ${year} students: These are your most impactful preparation resources right now.`;
-
-            container.innerHTML = courses.map(c => `
-                <div class="rec-card">
-                    <div class="rec-label">ðŸŽ¯ Recommended for Sem ${sem}</div>
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-                        <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">
-                            ${c.icon}
-                        </div>
-                        <h4 style="font-size:15px;font-weight:700;color:#f8fafc;line-height:1.3;font-family:'Space Grotesk',sans-serif;">${c.title}</h4>
-                    </div>
-                    <p style="font-size:12px;color:#64748b;line-height:1.5;margin-bottom:16px;">${c.desc}</p>
-                    <a href="${c.link}" target="_blank"
-                       onclick="unlockBadge('crasher')"
-                       style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);text-decoration:none;transition:all 0.2s;"
-                       onmouseover="this.style.background='rgba(99,102,241,0.15)'" onmouseout="this.style.background='rgba(99,102,241,0.08)'">
-                        <span style="font-size:12px;font-weight:700;color:${c.color};">Explore Course</span>
-                        <i class="ph-bold ph-arrow-up-right" style="color:${c.color};"></i>
-                    </a>
-                </div>
-            `).join('');
-
-            // Reveal the section
-            const section = document.getElementById('recommended-section');
-            section.classList.add('revealed');
-        }
-
-        // â”€â”€ Auto-trigger modal logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        (function initSemesterModal() {
-            const alreadySaved = localStorage.getItem('bu_semester');
-            const lastSeen = parseInt(localStorage.getItem('bu_modal_seen') || '0');
-            const now = Date.now();
-            const HOUR_24 = 24 * 60 * 60 * 1000;
-
-            // If semester saved, render immediately
-            if (alreadySaved) {
-                const sem = parseInt(alreadySaved);
-                const year = parseInt(localStorage.getItem('bu_year') || Math.ceil(sem / 2));
-                renderRecommendations(sem, year);
-            }
-
-            // If not seen in 24h, auto-trigger after 30s of idle
-            if (!alreadySaved && (now - lastSeen) > HOUR_24) {
-                setTimeout(() => {
-                    if (!document.getElementById('semester-modal').classList.contains('active')) {
-                        openSemesterModal();
-                    }
-                }, 30000);
-
-                // Also show a soft toast at 15s nudging
-                setTimeout(() => {
-                    showSmartToast('ðŸ’¡', 'Quick tip!', 'Tell us your semester and we\'ll curate the best crash courses for you â€” takes 5 seconds!');
-                }, 15000);
-            }
-        })();
-
-        // â”€â”€ Smart Toast System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        let _toastQueue = [];
-        let _toastShowing = false;
-
-        function showSmartToast(icon, title, subtitle) {
-            _toastQueue.push({ icon, title, subtitle });
-            if (!_toastShowing) processToastQueue();
-        }
-
-        function processToastQueue() {
-            if (!_toastQueue.length) { _toastShowing = false; return; }
-            _toastShowing = true;
-            const { icon, title, subtitle } = _toastQueue.shift();
-            const container = document.getElementById('toast-container');
-
-            const toast = document.createElement('div');
-            toast.className = 'smart-toast';
-            toast.style.position = 'relative';
-            toast.innerHTML = `
-                <div class="toast-icon">${icon}</div>
-                <div class="toast-body">
-                    <p>${title}</p>
-                    <span>${subtitle}</span>
-                </div>
-                <button class="toast-close-btn" onclick="this.parentElement.remove();_toastShowing=false;processToastQueue();">âœ•</button>
-            `;
-            container.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.add('show'));
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                    _toastShowing = false;
-                    setTimeout(processToastQueue, 400);
-                }, 400);
-            }, 6000);
-        }
-
-        // â”€â”€ Course Hover Preview Popup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        let _hidePreviewTimer = null;
-        const _popup = document.getElementById('course-preview-popup');
-
-        function showPreview(card, event) {
-            clearTimeout(_hidePreviewTimer);
-            const title = card.dataset.title || 'Crash Course';
-            const tag = card.dataset.tag || 'Skills Seekers';
-            const topics = (card.dataset.topics || '').split('|').filter(Boolean);
-            const link = card.dataset.link || 'https://www.skillsseekers.com';
-
-            document.getElementById('pp-tag').textContent = tag;
-            document.getElementById('pp-title').textContent = title;
-            document.getElementById('pp-topics').innerHTML = topics.map(t => `<li>${t}</li>`).join('');
-            document.getElementById('pp-link').href = link;
-            document.getElementById('pp-link').onclick = () => unlockBadge('crasher');
-
-            // Position popup: show above or beside card
-            const rect = card.getBoundingClientRect();
-            const popupWidth = 300;
-            const popupHeight = 260;
-            let left = rect.left;
-            let top = rect.top - popupHeight - 12;
-
-            if (top < 10) top = rect.bottom + 12;
-            if (left + popupWidth > window.innerWidth - 10) left = window.innerWidth - popupWidth - 10;
-            if (left < 10) left = 10;
-
-            _popup.style.left = left + 'px';
-            _popup.style.top = (top + window.scrollY) + 'px';
-            _popup.classList.add('visible');
-        }
-
-        function hidePreview() {
-            _hidePreviewTimer = setTimeout(() => {
-                _popup.classList.remove('visible');
-            }, 200);
-        }
-
-        _popup.addEventListener('mouseenter', () => clearTimeout(_hidePreviewTimer));
-        _popup.addEventListener('mouseleave', hidePreview);
-
-        // Card mouse tracking for glow effect
-        document.querySelectorAll('.cc-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
-                card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
-            });
-        });
-
-        // â”€â”€ Scroll-triggered reveal (IntersectionObserver) â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        const _revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    _revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.12 });
-
-        document.querySelectorAll('.reveal-up').forEach(el => _revealObserver.observe(el));
-
-        // Also reveal recommended section when it scrolls into view
-        const _recObs = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    _recObs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-        const _recSection = document.getElementById('recommended-section');
-        if (_recSection) _recObs.observe(_recSection);
-
-        // â”€â”€ Sticky Explore CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        (function initExploreCTA() {
-            const cta = document.getElementById('sticky-explore-cta');
-            const dismissCount = parseInt(localStorage.getItem('bu_cta_dismissed') || '0');
-            if (dismissCount >= 2) return; // permanently suppressed after 2 dismissals
-
-            let ctaShown = false;
-            const showCTA = () => {
-                if (!ctaShown && window.scrollY > 300) {
-                    cta.classList.add('visible');
-                    ctaShown = true;
-                }
-            };
-            window.addEventListener('scroll', showCTA, { passive: true });
-            setTimeout(showCTA, 5000); // also try to show after 5s
-        })();
-
-        function dismissExploreCTA(e) {
-            e.stopPropagation();
-            const cta = document.getElementById('sticky-explore-cta');
-            cta.classList.remove('visible');
-            const count = parseInt(localStorage.getItem('bu_cta_dismissed') || '0');
-            localStorage.setItem('bu_cta_dismissed', count + 1);
-        }
-
-        // â”€â”€ Learning Path Badge System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        const _badgeKeys = { explorer: 'bu_badge_explorer', focused: 'bu_badge_focused', crasher: 'bu_badge_crasher' };
-
-        function unlockBadge(id) {
-            if (localStorage.getItem(_badgeKeys[id])) return; // already unlocked
-            localStorage.setItem(_badgeKeys[id], '1');
-            const icon = document.getElementById('badge-' + id);
-            const label = document.getElementById('badge-' + id + '-label');
-            if (icon) { icon.classList.remove('locked'); icon.classList.add('unlocked'); }
-            if (label) label.classList.add('unlocked');
-            updateLPProgress();
-            setTimeout(launchConfetti, 200);
-            const messages = {
-                explorer: ['ðŸ—ºï¸', 'Badge Unlocked: Explorer!', 'You\'re navigating the hub like a pro.'],
-                focused: ['ðŸ…', 'Badge Unlocked: Focused Learner!', 'A Pomodoro session started â€” great focus habit!'],
-                crasher: ['ðŸš€', 'Badge Unlocked: Crash Course Pro!', 'You just explored a Skills Seekers crash course!'],
-            };
-            const [icon_e, title_e, sub_e] = messages[id] || [];
-            if (icon_e) showSmartToast(icon_e, title_e, sub_e);
-        }
-
-        function updateLPProgress() {
-            const total = Object.keys(_badgeKeys).length;
-            const unlocked = Object.values(_badgeKeys).filter(k => localStorage.getItem(k)).length;
-            const pct = Math.round((unlocked / total) * 100);
-            const fill = document.getElementById('lp-progress-fill');
-            const label = document.getElementById('lp-progress-label');
-            if (fill) fill.style.width = pct + '%';
-            if (label) label.textContent = `${unlocked} / ${total}`;
-        }
-
-        // Restore badge states on load
-        (function restoreBadges() {
-            Object.keys(_badgeKeys).forEach(id => {
-                if (localStorage.getItem(_badgeKeys[id])) {
-                    const icon = document.getElementById('badge-' + id);
-                    const label = document.getElementById('badge-' + id + '-label');
-                    if (icon) { icon.classList.remove('locked'); icon.classList.add('unlocked'); }
-                    if (label) label.classList.add('unlocked');
-                }
-            });
-            updateLPProgress();
-        })();
-
-        // Badge triggers: hook into existing features
-        // Explorer badge: fires on search or semester tab use
-        document.getElementById('searchInput')?.addEventListener('input', () => {
-            if (document.getElementById('searchInput').value.length > 1) unlockBadge('explorer');
-        });
-        document.querySelectorAll('.sem-tab').forEach(tab => {
-            tab.addEventListener('click', () => unlockBadge('explorer'));
-        });
-        // Focused badge: fires when Pomodoro timer is started
-        document.getElementById('pomo-start-btn')?.addEventListener('click', () => {
-            setTimeout(() => unlockBadge('focused'), 500);
-        });
-        // Course links in trending/loved sections fire crasher badge
-        document.querySelectorAll('.cc-preview-btn, .loved-card a').forEach(link => {
-            link.addEventListener('click', () => unlockBadge('crasher'));
-        });
-
     </script>
-
 </body>
 
 </html>
