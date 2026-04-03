@@ -134,9 +134,13 @@ app.use(express.static(path.join(__dirname), { index: false }));
 // ── Fallback ───────────────────────────────────────
 app.use((req, res) => res.redirect('/login'));
 
-app.listen(PORT, () => {
-    console.log(`\n=========================================`);
-    console.log(`🚀 Server is running!`);
-    console.log(`👉 http://localhost:${PORT}`);
-    console.log(`=========================================\n`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`\n=========================================`);
+        console.log(`🚀 Server is running!`);
+        console.log(`👉 http://localhost:${PORT}`);
+        console.log(`=========================================\n`);
+    });
+}
+
+module.exports = app;
