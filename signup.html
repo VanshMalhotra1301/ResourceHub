@@ -368,34 +368,28 @@
             feedback.style.display = 'none';
 
             try {
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: { data: { full_name: name } }
+                const res = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
                 });
 
-                if (error) {
-                    showMsg('Signup failed: ' + error.message, 'error');
-                    return;
-                }
+                const data = await res.json();
 
-                if (data?.user) {
-                    await supabase.from('users_realtime').upsert([{
-                        id: data.user.id,
-                        email: data.user.email,
-                        full_name: name,
-                        created_at: new Date().toISOString()
-                    }], { onConflict: 'id' });
-                }
-
-                if (data?.session) {
-                    showMsg('✓ Account created! Redirecting...', 'success');
-                    setTimeout(() => { window.location.href = '/home'; }, 700);
+                if (data.success) {
+                    if (data.session) {
+                        sessionStorage.setItem('ss_user', JSON.stringify(data.user));
+                        sessionStorage.setItem('ss_token', data.session.access_token);
+                        showMsg('✓ Account created! Redirecting...', 'success');
+                        setTimeout(() => { window.location.href = '/home'; }, 700);
+                    } else {
+                        showMsg('✓ Account created! Check your email inbox for a confirmation link, then come back to login.', 'success');
+                        form.style.opacity = '0.4';
+                        form.style.pointerEvents = 'none';
+                        btn.innerHTML = 'Create Account';
+                    }
                 } else {
-                    showMsg('✓ Account created! Check your email inbox for a confirmation link, then come back to login.', 'success');
-                    form.style.opacity = '0.4';
-                    form.style.pointerEvents = 'none';
-                    btn.innerHTML = 'Create Account';
+                    showMsg('Signup failed: ' + data.error, 'error');
                 }
             } catch (err) {
                 showMsg('Network error: ' + err.message, 'error');
