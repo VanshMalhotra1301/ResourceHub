@@ -325,15 +325,15 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPA_URL = 'https://bxgbijoqrhvnwzdchedr.supabase.co';
-        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4Z2Jpam9xcmh2bnd6ZGNoZWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzQ1MjUsImV4cCI6MjA5MDgxMDUyNX0.vuxFdc6ps06v41YvpTe3igN8XgXpJsSoCh9zD3bdWiU';
-        const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-
         const form = document.getElementById('signup-form');
         const btn = document.getElementById('btn');
         const feedback = document.getElementById('feedback');
+
+        // If already logged in via sessionStorage, go to home
+        if (sessionStorage.getItem('ss_user')) {
+            window.location.href = '/home';
+        }
 
         function showMsg(text, type) {
             feedback.textContent = text;
@@ -341,11 +341,7 @@
             feedback.style.display = 'block';
         }
 
-        supabase.auth.getSession().then(({ data }) => {
-            if (data && data.session && data.session.user) {
-                window.location.href = '/home';
-            }
-        });
+        let signupDone = false; // track successful signup so finally block doesn't reset UI
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -366,6 +362,7 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span>Creating account...';
             feedback.style.display = 'none';
+            signupDone = false;
 
             try {
                 const res = await fetch('/api/signup', {
@@ -377,25 +374,29 @@
                 const data = await res.json();
 
                 if (data.success) {
+                    signupDone = true;
                     if (data.session) {
                         sessionStorage.setItem('ss_user', JSON.stringify(data.user));
                         sessionStorage.setItem('ss_token', data.session.access_token);
                         showMsg('✓ Account created! Redirecting...', 'success');
                         setTimeout(() => { window.location.href = '/home'; }, 700);
                     } else {
-                        showMsg('✓ Account created! Check your email inbox for a confirmation link, then come back to login.', 'success');
+                        // Email confirmation required — keep form dimmed
+                        showMsg('✓ Account created! Check your email inbox for a confirmation link, then sign in.', 'success');
                         form.style.opacity = '0.4';
                         form.style.pointerEvents = 'none';
-                        btn.innerHTML = 'Create Account';
+                        btn.disabled = true;
+                        btn.innerHTML = 'Check your email ✉️';
                     }
                 } else {
-                    showMsg('Signup failed: ' + data.error, 'error');
+                    showMsg('❌ ' + (data.error || 'Signup failed. Please try again.'), 'error');
                 }
             } catch (err) {
                 showMsg('Network error: ' + err.message, 'error');
             } finally {
-                btn.disabled = false;
-                if (btn.innerHTML !== 'Create Account') {
+                // Only re-enable button if signup did NOT succeed
+                if (!signupDone) {
+                    btn.disabled = false;
                     btn.innerHTML = 'Create Account';
                 }
             }

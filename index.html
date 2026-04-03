@@ -823,7 +823,45 @@
 
 <body class="text-slate-300 antialiased selection:bg-brand-primary selection:text-white">
 
-    <!-- Auth Gate Redirected to auth.html -->
+    <!-- Auth Gate: redirect to login if no session -->
+    <script>
+            (function () {
+                const raw = sessionStorage.getItem('ss_user');
+                if (!raw) {
+                    window.location.replace('/login');
+                    return;
+                }
+                // Populate navbar user UI immediately (before DOM is fully parsed)
+                // Full population happens again after DOMContentLoaded below
+                try {
+                    const u = JSON.parse(raw);
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const loginBtn = document.getElementById('login-btn');
+                        const userProfile = document.getElementById('user-profile');
+                        const userName = document.getElementById('user-name');
+                        const userAvatar = document.getElementById('user-avatar');
+                        if (loginBtn) loginBtn.style.display = 'none';
+                        if (userProfile) {
+                            userProfile.classList.remove('hidden');
+                            userProfile.style.display = 'flex';
+                        }
+                        if (userName && u.name) userName.textContent = u.name.split(' ')[0];
+                        if (userAvatar && u.name) {
+                            userAvatar.src = 'https://ui-avatars.com/api/?name=' +
+                                encodeURIComponent(u.name) + '&background=6366f1&color=fff&size=64';
+                        }
+                    });
+                } catch (e) { /* ignore */ }
+            })();
+
+        function signOut() {
+            sessionStorage.removeItem('ss_user');
+            sessionStorage.removeItem('ss_token');
+            fetch('/api/logout', { method: 'POST' }).catch(() => { });
+            window.location.href = '/login';
+        }
+    </script>
+
 
     <!-- Scroll Progress -->
     <div id="scroll-progress"></div>

@@ -28,5 +28,5 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/auth.html"
   status = 200
