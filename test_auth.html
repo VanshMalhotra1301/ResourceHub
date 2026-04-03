@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auth Diagnostic Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #111;
+            color: #eee;
+            padding: 20px;
+        }
+
+        input {
+            background: #222;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 8px;
+            margin: 4px;
+            width: 300px;
+            display: block;
+        }
+
+        button {
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 8px 4px;
+            cursor: pointer;
+        }
+
+        #log {
+            background: #000;
+            padding: 16px;
+            border: 1px solid #444;
+            margin-top: 20px;
+            min-height: 200px;
+            white-space: pre-wrap;
+            font-size: 13px;
+        }
+
+        .ok {
+            color: #4ade80;
+        }
+
+        .err {
+            color: #f87171;
+        }
+
+        .info {
+            color: #93c5fd;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>🔬 Auth Diagnostic</h2>
+    <input id="email" type="email" placeholder="Email" value="test@example.com">
+    <input id="password" type="password" placeholder="Password" value="password123">
+    <input id="name" type="text" placeholder="Full Name (for signup)" value="Test User">
+    <br>
+    <button onclick="testSignup()">TEST SIGNUP</button>
+    <button onclick="testLogin()">TEST LOGIN</button>
+    <button onclick="testSession()">CHECK SESSION</button>
+    <button onclick="testSignout()">SIGN OUT</button>
+    <button onclick="clearLog()">CLEAR LOG</button>
+
+    <div id="log">Waiting for Supabase to load...\n</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://bxgbijoqrhvnwzdchedr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4Z2Jpam9xcmh2bnd6ZGNoZWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzQ1MjUsImV4cCI6MjA5MDgxMDUyNX0.vuxFdc6ps06v41YvpTe3igN8XgXpJsSoCh9zD3bdWiU';
+
+        const logEl = document.getElementById('log');
+        logEl.textContent = '';
+
+        function log(msg, type = 'info') {
+            const line = document.createElement('span');
+            line.className = type;
+            line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg + '\n';
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(msg);
+        }
+
+        function clearLog() {
+            logEl.textContent = '';
+        }
+
+        // Check Supabase loaded
+        if (typeof window.supabase === 'undefined') {
+            log('ERROR: window.supabase is undefined! The CDN script failed to load.', 'err');
+        } else {
+            log('Supabase CDN loaded OK.', 'ok');
+        }
+
+        let sb;
+        try {
+            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            log('Supabase client created OK.', 'ok');
+        } catch (e) {
+            log('ERROR creating Supabase client: ' + e.message, 'err');
+        }
+
+        async function testSession() {
+            log('Checking current session...', 'info');
+            try {
+                const { data, error } = await sb.auth.getSession();
+                if (error) {
+                    log('Session error: ' + error.message, 'err');
+                } else if (data.session) {
+                    log('Session exists! User: ' + data.session.user.email, 'ok');
+                    log('User ID: ' + data.session.user.id, 'ok');
+                } else {
+                    log('No active session found.', 'info');
+                }
+            } catch (e) {
+                log('Exception: ' + e.message, 'err');
+            }
+        }
+
+        async function testSignup() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value.trim();
+
+            if (!email || !password) { log('Fill in email and password!', 'err'); return; }
+
+            log('Attempting SIGNUP with: ' + email, 'info');
+            try {
+                const { data, error } = await sb.auth.signUp({
+                    email, password,
+                    options: { data: { full_name: name } }
+                });
+
+                if (error) {
+                    log('SIGNUP ERROR: ' + error.message + ' (status: ' + error.status + ')', 'err');
+                    log('Full error: ' + JSON.stringify(error), 'err');
+                } else {
+                    log('SIGNUP RESPONSE RECEIVED', 'ok');
+                    log('User ID: ' + (data.user?.id || 'null'), 'ok');
+                    log('Email confirmed: ' + (data.user?.email_confirmed_at || 'NOT confirmed'), 'info');
+                    log('Session: ' + (data.session ? 'YES (auto-confirmed)' : 'NO (email verification required)'), data.session ? 'ok' : 'info');
+                    if (!data.session) {
+                        log('=> Check your email inbox to verify the account!', 'info');
+                    } else {
+                        log('=> Account created AND logged in! Should redirect to /home', 'ok');
+                    }
+                }
+            } catch (e) {
+                log('Exception during signup: ' + e.message, 'err');
+                log(e.stack, 'err');
+            }
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) { log('Fill in email and password!', 'err'); return; }
+
+            log('Attempting LOGIN with: ' + email, 'info');
+            try {
+                const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+                if (error) {
+                    log('LOGIN ERROR: ' + error.message + ' (status: ' + error.status + ')', 'err');
+                    log('Full error: ' + JSON.stringify(error), 'err');
+                } else {
+                    log('LOGIN SUCCESS!', 'ok');
+                    log('User: ' + data.user.email, 'ok');
+                    log('User ID: ' + data.user.id, 'ok');
+                    log('Session token (first 30): ' + data.session.access_token.substring(0, 30) + '...', 'ok');
+                }
+            } catch (e) {
+                log('Exception during login: ' + e.message, 'err');
+            }
+        }
+
+        async function testSignout() {
+            log('Signing out...', 'info');
+            const { error } = await sb.auth.signOut();
+            if (error) log('Signout error: ' + error.message, 'err');
+            else log('Signed out successfully.', 'ok');
+        }
+
+        // Auto-check session on load
+        testSession();
+    </script>
+</body>
+
+</html>
