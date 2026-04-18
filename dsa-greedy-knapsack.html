@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fractional Knapsack Visualizer ⚡ | Visual DSA Lab</title>
+    <meta name="description"
+        content="Insanely interactive Fractional Knapsack visualizer with greedy ratio sorting, dynamic bag filling, and premium glassmorphic UI." />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --purple: #a855f7;
+            --indigo: #6366f1;
+            --green: #34d399;
+            --pink: #f472b6;
+            --orange: #fb923c;
+            --yellow: #facc15;
+            --red: #f87171;
+            --bg: #050a0a;
+            --card: rgba(10, 20, 20, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            
+            /* Item Colors */
+            --c1: #34d399; /* green */
+            --c2: #22d3ee; /* cyan */
+            --c3: #a855f7; /* purple */
+            --c4: #f472b6; /* pink */
+            --c5: #fb923c; /* orange */
+            --c6: #facc15; /* yellow */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 20% 40%, rgba(52, 211, 153, 0.06), transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(34, 211, 238, 0.08), transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.05), transparent 50%);
+            animation: aurora 25s linear infinite;
+            z-index: -1; pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050a0a; }
+        ::-webkit-scrollbar-thumb { background: #1e3a3a; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2c5252; }
+
+        /* ── Topbar ── */
+        #topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(5, 10, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px;
+        }
+
+        .back-btn {
+            display: flex; align-items: center; gap: 6px; color: #6b7280;
+            text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s;
+        }
+        .back-btn:hover { color: #e2e8f0; }
+        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.08); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; }
+        .topbar-algo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        
+        .badge-beta {
+            font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 99px;
+            background: rgba(52, 211, 153, 0.1); color: var(--green);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .topbar-meta { margin-left: auto; font-size: 11px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+
+        /* ── Page wrapper ── */
+        #page { max-width: 1200px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
+
+        /* ── Hero header ── */
+        .algo-hero { margin-bottom: 32px; }
+        .algo-hero h1 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+        }
+        .algo-hero h1 .icon-wrap {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(52, 211, 153, 0.15);
+        }
+
+        .complexity-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px;
+            border-radius: 99px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-time { background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); color: var(--cyan); }
+        .badge-space { background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); color: var(--purple); }
+        .badge-class { background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); color: var(--green); }
+
+        .algo-desc { color: #94a3b8; font-size: 14px; line-height: 1.65; max-width: 680px; margin-top: 12px; }
+
+        /* ── Glass card ── */
+        .card {
+            background: var(--card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ── Input row ── */
+        .input-row { padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .input-label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+        .input-field {
+            background: rgba(5, 10, 10, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px;
+            padding: 8px 14px; color: #e2e8f0; font-size: 13px; font-family: 'JetBrains Mono', monospace;
+            outline: none; transition: all 0.3s; min-width: 140px;
+        }
+        .input-field:focus { border-color: rgba(52, 211, 153, 0.5); box-shadow: 0 0 15px rgba(52, 211, 153, 0.15); }
+
+        /* ── Controls ── */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+            padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+        }
+        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .btn-primary { background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.35); color: var(--green); }
+        .btn-primary:hover:not(:disabled) { background: rgba(52, 211, 153, 0.22); box-shadow: 0 0 20px rgba(52, 211, 153, 0.2); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #f87171; }
+
+        /* ── VIZ FRAME: GREEDY SYSTEM ── */
+        #viz-frame {
+            border-radius: 16px; background: rgba(5, 10, 10, 0.85); border: 1px solid rgba(52, 211, 153, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 80px rgba(52, 211, 153, 0.03);
+            margin-bottom: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column;
+        }
+        #viz-frame::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0.6;
+        }
+
+        .viz-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            min-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .viz-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Items Area */
+        .items-section {
+            padding: 24px;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .section-header {
+            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+            color: #6b7280; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+        }
+
+        #items-container {
+            display: flex; flex-direction: column; gap: 12px;
+            position: relative; flex: 1;
+        }
+
+        .item-card {
+            display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px; padding: 12px 16px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute; width: 100%;
+        }
+
+        /* States for item cards */
+        .item-card.s-calc { border-color: var(--cyan); background: rgba(34, 211, 238, 0.05); box-shadow: 0 0 15px rgba(34, 211, 238, 0.1); }
+        .item-card.s-active { border-color: var(--yellow); background: rgba(250, 204, 21, 0.08); transform: scale(1.02); z-index: 10; box-shadow: 0 10px 20px rgba(250, 204, 21, 0.15); }
+        .item-card.s-added { opacity: 0.4; filter: grayscale(0.8); border-color: var(--green); }
+        .item-card.s-fraction { border-color: var(--pink); background: rgba(244, 114, 182, 0.05); }
+
+        .item-color-bar { width: 6px; height: 100%; border-radius: 4px; }
+        
+        .item-details { display: flex; flex-direction: column; gap: 4px; }
+        .item-id { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .item-stats { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: #e2e8f0; display: flex; gap: 12px;}
+        .item-stats span { display: flex; align-items: center; gap: 4px; }
+        .stat-icon { color: #6b7280; font-size: 12px; }
+
+        .item-ratio {
+            display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .ratio-lbl { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; }
+        .ratio-val { font-size: 18px; font-weight: 800; color: #fff; }
+        .item-card.s-calc .ratio-val { color: var(--cyan); text-shadow: 0 0 10px rgba(34, 211, 238, 0.5); }
+
+        /* Knapsack Area */
+        .knapsack-section {
+            padding: 24px; display: flex; flex-direction: column; align-items: center;
+        }
+        
+        .knapsack-stats {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px; padding: 16px; margin-bottom: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .k-stat { display: flex; flex-direction: column; gap: 4px; }
+        .k-lbl { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .k-val { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; color: var(--green); }
+        .k-val.cap { color: var(--pink); }
+
+        .bag-container {
+            width: 140px; height: 300px; border: 4px solid rgba(255,255,255,0.1);
+            border-top: none; border-radius: 0 0 20px 20px; position: relative;
+            background: rgba(0,0,0,0.2); overflow: hidden;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        
+        /* The lines on the bag */
+        .bag-lines {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;
+            background-image: repeating-linear-gradient(transparent, transparent 19%, rgba(255,255,255,0.05) 20%);
+            z-index: 5;
+        }
+
+        .bag-chunk {
+            width: 100%; display: flex; align-items: center; justify-content: center;
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 800; color: #000;
+            transition: height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            box-shadow: inset 0 2px 10px rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+        .bag-chunk.frac {
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);
+        }
+
+        /* ── Status strip ── */
+        #status-strip {
+            padding: 14px 24px; font-size: 14px; font-weight: 600; color: #e2e8f0;
+            background: rgba(52, 211, 153, 0.05); border-top: 1px solid rgba(52, 211, 153, 0.15);
+            text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .status-badge {
+            background: rgba(52, 211, 153, 0.15); color: var(--green); padding: 4px 10px;
+            border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        /* ── Controls bar ── */
+        .controls-bar { padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+        .speed-wrap input[type=range] { -webkit-appearance: none; width: 100px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); outline: none; cursor: pointer; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); cursor: pointer; transition: transform 0.2s; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .step-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; }
+
+        /* ── Panels Grid ── */
+        .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media (max-width: 800px) { .panels-grid { grid-template-columns: 1fr; } }
+        .panel-card { padding: 20px; }
+        .panel-title { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; color: #fff; }
+
+        /* ── Pseudocode ── */
+        #pseudo-panel { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; }
+        .ps { padding: 4px 12px; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; color: #6b7280; transition: all 0.3s ease; white-space: pre; }
+        .ps.active { border-left-color: var(--green); background: rgba(52, 211, 153, 0.08); color: #e2e8f0; }
+        .kw { color: #c084fc; } .fn { color: #67e8f9; } .num { color: #fcd34d; } .cmt { color: #4b5563; font-style: italic; }
+
+        /* ── Code panel ── */
+        .code-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .code-tab { padding: 8px 18px; font-size: 12px; font-weight: 700; border-radius: 10px 10px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; color: #6b7280; background: transparent; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .code-tab.active { color: var(--green); background: rgba(5, 5, 15, 0.9); border-color: rgba(255, 255, 255, 0.08); border-bottom-color: rgba(5, 5, 15, 0.9); }
+        .code-block { background: rgba(5, 5, 15, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0 12px 12px 12px; padding: 18px 20px; color: #d1d5db; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; margin-top: -1px; }
+        .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+    </style>
+</head>
+
+<body>
+
+    <header id="topbar">
+        <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">
+            <span style="font-size:1.2rem">⚡</span>
+            <span class="topbar-algo-name">Fractional Knapsack</span>
+            <span class="badge-beta">Greedy Module</span>
+        </div>
+        <div class="topbar-meta"><i class="ph-fill ph-books" style="color:var(--green)"></i> DAA · Bennett University</div>
+    </header>
+
+    <div id="page">
+
+        <div class="algo-hero">
+            <h1>
+                <div class="icon-wrap"><i class="ph-fill ph-briefcase" style="color:var(--green)"></i></div>
+                Fractional Knapsack
+            </h1>
+            <div class="complexity-row">
+                <span class="badge badge-time"><i class="ph-fill ph-clock"></i> Time: O(N log N)</span>
+                <span class="badge badge-space"><i class="ph-fill ph-stack"></i> Space: O(1)</span>
+                <span class="badge badge-class"><i class="ph-fill ph-lightning"></i> Greedy Algorithm</span>
+            </div>
+            <p class="algo-desc">
+                In the Fractional Knapsack problem, you are given a set of items, each with a weight and a value. You must maximize the total value in a knapsack of capacity <strong style="color:var(--pink)">W</strong>. Unlike 0/1 Knapsack, you are allowed to break items to take a fraction. The Greedy Choice is to always pick the item with the highest <strong style="color:var(--cyan)">Value/Weight Ratio</strong>.
+            </p>
+        </div>
+
+        <div class="card input-row">
+            <span class="input-label">Values (V)</span>
+            <input type="text" id="val-input" class="input-field" value="60, 100, 120, 50" placeholder="e.g., 60, 100, 120" />
+            <span class="input-label">Weights (W)</span>
+            <input type="text" id="wt-input" class="input-field" value="10, 20, 30, 5" placeholder="e.g., 10, 20, 30" />
+            <span class="input-label">Capacity</span>
+            <input type="number" id="cap-input" class="input-field" style="min-width: 80px;" value="50" />
+            
+            <button class="btn btn-primary" onclick="generate()">
+                <i class="ph-bold ph-play-circle"></i> Generate
+            </button>
+            <button class="btn" onclick="randomArr()">
+                <i class="ph-bold ph-shuffle"></i> Random
+            </button>
+        </div>
+
+        <div id="viz-frame">
+            <div class="viz-layout">
+                <div class="items-section">
+                    <div class="section-header">
+                        <i class="ph-bold ph-list-numbers"></i> Available Items
+                    </div>
+                    <div id="items-container">
+                        <div style="color:#6b7280; font-size:14px; margin-top:20px; text-align: center;">
+                            Press <strong style="color:var(--green)">Generate</strong> to initialize the inventory.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="knapsack-section">
+                    <div class="section-header" style="width:100%; justify-content:center;">
+                        <i class="ph-bold ph-briefcase"></i> Knapsack
+                    </div>
+                    
+                    <div class="knapsack-stats">
+                        <div class="k-stat">
+                            <span class="k-lbl">Total Value</span>
+                            <span class="k-val" id="ui-tot-v">0.00</span>
+                        </div>
+                        <div class="k-stat" style="align-items: flex-end;">
+                            <span class="k-lbl">Remaining Cap</span>
+                            <span class="k-val cap" id="ui-rem-w">0</span>
+                        </div>
+                    </div>
+
+                    <div class="bag-container" id="ui-bag">
+                        <div class="bag-lines"></div>
+                        </div>
+                </div>
+            </div>
+
+            <div id="status-strip">
+                <i class="ph-fill ph-info" style="color:#34d399"></i>
+                <span id="status-text">Configure items and capacity, then generate to start.</span>
+            </div>
+        </div>
+
+        <div class="card controls-bar">
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i> Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
+            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+
+            <div class="speed-wrap">
+                <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
+                <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
+                <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
+            </div>
+            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span id="tot-steps">0</span></div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-code" style="color:var(--green)"></i> Greedy Strategy</div>
+                <div id="pseudo-panel">
+                    <div class="ps"><span class="kw">function</span> <span class="fn">fractionalKnapsack</span>(items, W):</div>
+                    <div class="ps">  <span class="kw">for</span> each item <span class="kw">in</span> items:</div>
+                    <div class="ps">    item.ratio ← item.value / item.weight</div>
+                    <div class="ps">  <span class="fn">sort</span>(items) descending <span class="kw">by</span> ratio</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">  totalValue ← <span class="num">0</span></div>
+                    <div class="ps">  <span class="kw">for</span> each item <span class="kw">in</span> items:</div>
+                    <div class="ps">    <span class="kw">if</span> W == <span class="num">0</span>: <span class="kw">break</span></div>
+                    <div class="ps">    <span class="kw">if</span> item.weight ≤ W: <span class="cmt">← FULL ITEM</span></div>
+                    <div class="ps">      W ← W - item.weight</div>
+                    <div class="ps">      totalValue ← totalValue + item.value</div>
+                    <div class="ps">    <span class="kw">else</span>: <span class="cmt">← FRACTIONAL ITEM</span></div>
+                    <div class="ps">      fraction ← W / item.weight</div>
+                    <div class="ps">      totalValue ← totalValue + (item.value * fraction)</div>
+                    <div class="ps">      W ← <span class="num">0</span></div>
+                    <div class="ps">  <span class="kw">return</span> totalValue</div>
+                </div>
+            </div>
+
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--purple)"></i> Implementation</div>
+                <div class="code-tabs">
+                    <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
+                    <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
+                    <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
+                </div>
+                
+                <div id="code-cpp" class="code-block"><span class="cm">// Fractional Knapsack - Greedy Approach</span>
+<span class="ck">struct</span> Item {
+    <span class="ck">int</span> value, weight;
+};
+
+<span class="cm">// Comparator to sort items by Value/Weight ratio descending</span>
+<span class="ck">bool</span> cmp(<span class="ck">struct</span> Item a, <span class="ck">struct</span> Item b) {
+    <span class="ck">double</span> r1 = (<span class="ck">double</span>)a.value / (<span class="ck">double</span>)a.weight;
+    <span class="ck">double</span> r2 = (<span class="ck">double</span>)b.value / (<span class="ck">double</span>)b.weight;
+    <span class="ck">return</span> r1 &gt; r2;
+}
+
+<span class="ck">double</span> <span class="ct">fractionalKnapsack</span>(<span class="ck">int</span> W, <span class="ck">struct</span> Item arr[], <span class="ck">int</span> n) {
+    <span class="ct">sort</span>(arr, arr + n, cmp);
+    
+    <span class="ck">double</span> finalValue = <span class="cn">0.0</span>;
+    
+    <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i &lt; n; i++) {
+        <span class="ck">if</span> (arr[i].weight &lt;= W) {
+            W -= arr[i].weight;
+            finalValue += arr[i].value;
+        } <span class="ck">else</span> {
+            finalValue += arr[i].value * ((<span class="ck">double</span>)W / (<span class="ck">double</span>)arr[i].weight);
+            <span class="ck">break</span>; <span class="cm">// Knapsack is full</span>
+        }
+    }
+    <span class="ck">return</span> finalValue;
+}</div>
+
+                <div id="code-py" class="code-block" style="display:none"><span class="cm"># Fractional Knapsack - Greedy Approach</span>
+<span class="ck">class</span> Item:
+    <span class="ck">def</span> <span class="ct">__init__</span>(self, value, weight):
+        self.value = value
+        self.weight = weight
+
+<span class="ck">def</span> <span class="ct">fractional_knapsack</span>(W, arr):
+    <span class="cm"># Sort items based on value/weight ratio descending</span>
+    arr.sort(key=<span class="ck">lambda</span> x: (x.value / x.weight), reverse=True)
+    
+    final_value = <span class="cn">0.0</span>
+    
+    <span class="ck">for</span> item <span class="ck">in</span> arr:
+        <span class="ck">if</span> item.weight &lt;= W:
+            W -= item.weight
+            final_value += item.value
+        <span class="ck">else</span>:
+            fraction = W / item.weight
+            final_value += item.value * fraction
+            <span class="ck">break</span> <span class="cm"># Knapsack is full</span>
+            
+    <span class="ck">return</span> final_value</div>
+
+                <div id="code-java" class="code-block" style="display:none"><span class="cm">// Fractional Knapsack - Greedy Approach</span>
+<span class="ck">class</span> Item {
+    <span class="ck">int</span> value, weight;
+    Item(<span class="ck">int</span> x, <span class="ck">int</span> y) { value = x; weight = y; }
+}
+
+<span class="ck">class</span> ItemComparator <span class="ck">implements</span> Comparator&lt;Item&gt; {
+    @Override
+    <span class="ck">public</span> <span class="ck">int</span> compare(Item a, Item b) {
+        <span class="ck">double</span> r1 = (<span class="ck">double</span>)(a.value) / (<span class="ck">double</span>)(a.weight);
+        <span class="ck">double</span> r2 = (<span class="ck">double</span>)(b.value) / (<span class="ck">double</span>)(b.weight);
+        <span class="ck">if</span> (r1 &lt; r2) <span class="ck">return</span> <span class="cn">1</span>;
+        <span class="ck">else</span> <span class="ck">if</span> (r1 &gt; r2) <span class="ck">return</span> -<span class="cn">1</span>;
+        <span class="ck">else</span> <span class="ck">return</span> <span class="cn">0</span>;
+    }
+}
+
+<span class="ck">double</span> <span class="ct">fractionalKnapsack</span>(<span class="ck">int</span> W, Item arr[], <span class="ck">int</span> n) {
+    Arrays.sort(arr, <span class="ck">new</span> ItemComparator());
+    
+    <span class="ck">double</span> finalValue = <span class="cn">0.0</span>;
+    
+    <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i &lt; n; i++) {
+        <span class="ck">if</span> (arr[i].weight &lt;= W) {
+            W -= arr[i].weight;
+            finalValue += arr[i].value;
+        } <span class="ck">else</span> {
+            finalValue += arr[i].value * ((<span class="ck">double</span>)W / (<span class="ck">double</span>)arr[i].weight);
+            <span class="ck">break</span>;
+        }
+    }
+    <span class="ck">return</span> finalValue;
+}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ── State Management ── */
+        let baseItems = [], steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1000;
+        let globalCap = 0;
+        const colors = ['var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)', 'var(--c5)', 'var(--c6)'];
+
+        const PHASE = {
+            init: 1, calc: 2, sort: 3, loop: 6,
+            check_full: 8, add_full: 9, 
+            calc_frac: 12, add_frac: 13,
+            done: 15
+        };
+
+        /* ── Generator Engine ── */
+        function makeSteps(vals, wts, cap) {
+            let snaps = [];
+            let items = vals.map((v, i) => ({
+                id: i, name: `Item ${i+1}`,
+                v: v, w: wts[i] || 1, r: 0,
+                color: colors[i % colors.length],
+                state: 'normal', order: i // visual Y ordering
+            }));
+
+            function pushSnap(phase, activeId, wRem, totV, bagChunks, msg) {
+                snaps.push({
+                    phase, activeId, wRem, totV,
+                    items: JSON.parse(JSON.stringify(items)),
+                    bag: JSON.parse(JSON.stringify(bagChunks)),
+                    msg
+                });
+            }
+
+            let bag = [];
+            let remW = cap;
+            let totV = 0.0;
+
+            pushSnap('init', -1, remW, totV, bag, `<span class="status-badge">Initialization</span> Loading items and knapsack capacity.`);
+
+            // Calc Ratios
+            items.forEach(it => {
+                it.r = parseFloat((it.v / it.w).toFixed(2));
+                it.state = 'calc';
+            });
+            pushSnap('calc', -1, remW, totV, bag, `<span class="status-badge">Phase 1: Metrics</span> Calculated Value/Weight ratio for all items.`);
+
+            // Sort
+            items.forEach(it => it.state = 'normal');
+            items.sort((a, b) => b.r - a.r);
+            items.forEach((it, idx) => it.order = idx); // Update visual order
+            pushSnap('sort', -1, remW, totV, bag, `<span class="status-badge">Phase 2: Greedy Sort</span> Sorted items descending by ratio. The highest ratio item is strictly the best choice.`);
+
+            // Greedy Loop
+            for (let i = 0; i < items.length; i++) {
+                let it = items[i];
+                if (remW === 0) break;
+
+                it.state = 'active';
+                pushSnap('loop', it.id, remW, totV, bag, `Evaluating <strong>${it.name}</strong>. Weight is ${it.w}, capacity is ${remW}.`);
+
+                if (it.w <= remW) {
+                    // Full Item
+                    remW -= it.w;
+                    totV += it.v;
+                    bag.push({ id: it.id, name: it.name, w: it.w, v: it.v, color: it.color, isFrac: false });
+                    it.state = 'added';
+                    pushSnap('add_full', it.id, remW, totV, bag, `<strong style="color:var(--green)">Full Fit!</strong> Added ${it.name} completely to the bag.`);
+                } else {
+                    // Fractional Item
+                    let frac = remW / it.w;
+                    let valAdded = it.v * frac;
+                    totV += valAdded;
+                    
+                    let addedW = remW;
+                    bag.push({ id: it.id, name: it.name, w: addedW, v: valAdded, color: it.color, isFrac: true });
+                    remW = 0;
+                    it.state = 'fraction';
+                    pushSnap('calc_frac', it.id, remW, totV, bag, `<strong style="color:var(--pink)">Partial Fit!</strong> ${it.name} is too large. Calculating fraction: ${addedW}/${it.w} = ${(frac*100).toFixed(0)}%.`);
+                    pushSnap('add_frac', it.id, remW, totV, bag, `Added fractional part of ${it.name}. Bag is now exactly full.`);
+                    break;
+                }
+            }
+
+            items.forEach(it => { if(it.state === 'active') it.state = 'normal'; });
+            pushSnap('done', -1, remW, totV, bag, `✅ Algorithm complete! Maximum possible value is <strong style="color:var(--green)">${totV.toFixed(2)}</strong>.`);
+
+            return snaps;
+        }
+
+        /* ── DOM Generation ── */
+        function initDOM(items) {
+            const container = document.getElementById('items-container');
+            container.innerHTML = '';
+            
+            // Set container height based on items to allow absolute positioning
+            container.style.height = `${items.length * 85}px`;
+
+            items.forEach((it) => {
+                let card = document.createElement('div');
+                card.className = 'item-card';
+                card.id = `item-card-${it.id}`;
+                card.style.top = `${it.order * 85}px`; // 73px height + 12px gap
+
+                let cBar = document.createElement('div');
+                cBar.className = 'item-color-bar';
+                cBar.style.backgroundColor = it.color;
+
+                let details = document.createElement('div');
+                details.className = 'item-details';
+                details.innerHTML = `
+                    <span class="item-id">${it.name}</span>
+                    <div class="item-stats">
+                        <span><i class="ph-bold ph-coins stat-icon"></i> ${it.v}</span>
+                        <span><i class="ph-bold ph-scales stat-icon"></i> ${it.w}</span>
+                    </div>
+                `;
+
+                let ratio = document.createElement('div');
+                ratio.className = 'item-ratio';
+                ratio.innerHTML = `
+                    <span class="ratio-lbl">Ratio</span>
+                    <span class="ratio-val" id="rval-${it.id}">-</span>
+                `;
+
+                card.appendChild(cBar);
+                card.appendChild(details);
+                card.appendChild(ratio);
+                container.appendChild(card);
+            });
+
+            document.getElementById('ui-bag').innerHTML = '<div class="bag-lines"></div>';
+            document.getElementById('ui-tot-v').textContent = '0.00';
+            document.getElementById('ui-rem-w').textContent = globalCap;
+        }
+
+        /* ── Step Application ── */
+        function applyStep(si) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            // 1. Update Items
+            s.items.forEach(it => {
+                let card = document.getElementById(`item-card-${it.id}`);
+                if (!card) return;
+
+                // Animate position
+                card.style.top = `${it.order * 85}px`;
+                
+                // Update Ratio Text
+                let rval = document.getElementById(`rval-${it.id}`);
+                rval.textContent = it.r > 0 ? it.r.toFixed(2) : '-';
+
+                // Update State Classes
+                card.className = 'item-card';
+                if (it.state === 'calc') card.classList.add('s-calc');
+                if (it.state === 'active') card.classList.add('s-active');
+                if (it.state === 'added') card.classList.add('s-added');
+                if (it.state === 'fraction') card.classList.add('s-fraction');
+            });
+
+            // 2. Update Knapsack Stats
+            document.getElementById('ui-tot-v').textContent = s.totV.toFixed(2);
+            document.getElementById('ui-rem-w').textContent = s.wRem.toFixed(1);
+
+            // 3. Render Bag Chunks
+            const bag = document.getElementById('ui-bag');
+            bag.innerHTML = '<div class="bag-lines"></div>'; // reset
+            
+            s.bag.forEach(chunk => {
+                let div = document.createElement('div');
+                div.className = 'bag-chunk' + (chunk.isFrac ? ' frac' : '');
+                div.style.backgroundColor = chunk.color;
+                
+                // Calculate height percentage based on global capacity
+                let hPct = (chunk.w / globalCap) * 100;
+                div.style.height = `${hPct}%`;
+                
+                // Show info inside chunk if it's large enough
+                if (hPct > 10) {
+                    div.innerHTML = `<span>${chunk.name} <span style="opacity:0.7">(${chunk.w}w)</span></span>`;
+                }
+
+                bag.appendChild(div);
+            });
+
+            // 4. Update Status and Code
+            document.getElementById('status-text').innerHTML = s.msg;
+            highlightPseudo(s.phase);
+            document.getElementById('cur-step').textContent = si + 1;
+            document.getElementById('tot-steps').textContent = steps.length;
+        }
+
+        function highlightPseudo(phase) {
+            const lines = document.querySelectorAll('#pseudo-panel .ps');
+            const active = PHASE[phase] ?? -1;
+            lines.forEach((l, i) => l.classList.toggle('active', i === active));
+        }
+
+        /* ── Controls ── */
+        function generate() {
+            const vRaw = document.getElementById('val-input').value;
+            const wRaw = document.getElementById('wt-input').value;
+            const cRaw = document.getElementById('cap-input').value;
+
+            let vals = vRaw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n) && n > 0);
+            let wts = wRaw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n) && n > 0);
+            globalCap = parseInt(cRaw, 10);
+
+            if (vals.length === 0 || wts.length === 0 || isNaN(globalCap) || globalCap <= 0) {
+                document.getElementById('status-text').innerHTML = '⚠️ Invalid inputs.'; return;
+            }
+
+            // Pad weights if mismatch
+            while(wts.length < vals.length) wts.push(10);
+
+            // Format inputs cleanly
+            document.getElementById('val-input').value = vals.join(', ');
+            document.getElementById('wt-input').value = wts.slice(0, vals.length).join(', ');
+
+            // Setup Engine
+            stopAnim();
+            
+            // Generate initial item objects for DOM
+            let initialItems = vals.map((v, i) => ({
+                id: i, name: `Item ${i+1}`, v: v, w: wts[i], r: 0,
+                color: colors[i % colors.length], state: 'normal', order: i
+            }));
+
+            initDOM(initialItems);
+            steps = makeSteps(vals, wts, globalCap);
+            applyStep(0); curStep = 0;
+            enableBtns(true);
+        }
+
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; applyStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function resetAnim() { stopAnim(); curStep = 0; applyStep(0); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+
+        function randomArr() {
+            const n = 4 + Math.floor(Math.random() * 3); // 4 to 6 items
+            const vals = Array.from({ length: n }, () => Math.floor(Math.random() * 150) + 30);
+            const wts = Array.from({ length: n }, () => Math.floor(Math.random() * 40) + 5);
+            
+            // Make capacity about 60% of total weight to ensure fractional split
+            const totW = wts.reduce((a,b)=>a+b, 0);
+            const cap = Math.floor(totW * 0.6);
+
+            document.getElementById('val-input').value = vals.join(', ');
+            document.getElementById('wt-input').value = wts.join(', ');
+            document.getElementById('cap-input').value = cap;
+        }
+
+        function updateSpeed(v) {
+            speedMs = [1800, 1300, 900, 500, 200][parseInt(v) - 1];
+            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() {
+            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+        }
+
+        function switchTab(lang) {
+            ['cpp', 'py', 'java'].forEach(l => {
+                document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+                document.getElementById('tab-' + l).classList.toggle('active', l === lang);
+            });
+        }
+    </script>
+
+    <style>
+        /* ── Navigation Footer ── */
+        .algo-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(7, 7, 16, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            z-index: 1000;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-btn:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-btn.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #22d3ee;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.2s;
+        }
+        .nav-center:hover {
+            filter: brightness(1.2);
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+        }
+        body { padding-bottom: 70px !important; }
+        @media (max-width: 600px) {
+            .algo-nav { padding: 10px 12px; }
+            .nav-btn { padding: 6px 10px; font-size: 11px; }
+            .nav-center { font-size: 12px; }
+            .nav-btn span.lbl-txt { display: none; }
+        }
+    </style>
+
+    <nav class="algo-nav">
+        <a href="dsa-bucket-sort.html" class="nav-btn"><i class="ph-bold ph-arrow-left"></i> <span class="lbl-txt">Bucket Sort</span></a>
+        <a href="visual-dsa.html" class="nav-center">⚡ <span class="lbl-txt">All Algorithms</span></a>
+        <a href="dsa-huffman.html" class="nav-btn"><span class="lbl-txt">Huffman Coding</span> <i class="ph-bold ph-arrow-right"></i></a>
+    </nav>
+    
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual DSA Lab ⚡ | BU Resource Hub</title>
+    <meta name="description"
+        content="Learn Design & Analysis of Algorithms visually with step-by-step animations. Premium interactive learning for Bennett University students." />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700;900&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bg: '#07050a',
+                        card: 'rgba(15, 12, 20, 0.75)',
+                        border: 'rgba(255, 255, 255, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #07050a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(34, 211, 238, 0.06), transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(168, 85, 247, 0.05), transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(244, 114, 182, 0.03), transparent 50%);
+            animation: aurora 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #07050a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2d1e3a;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #452c5a;
+        }
+
+        /* Algorithm Card */
+        .algo-card {
+            background: rgba(15, 12, 20, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            group: 'card';
+        }
+
+        .algo-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .algo-card.cyan:hover {
+            border-color: rgba(34, 211, 238, 0.4);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.1);
+        }
+
+        .algo-card.purple:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.1);
+        }
+
+        .algo-card.green:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+            box-shadow: 0 10px 30px rgba(52, 211, 153, 0.1);
+        }
+
+        .algo-card.pink:hover {
+            border-color: rgba(244, 114, 182, 0.4);
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.1);
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .algo-card.cyan .icon-box {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            color: #22d3ee;
+        }
+
+        .algo-card.purple .icon-box {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+
+        .algo-card.green .icon-box {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+        }
+
+        .algo-card.pink .icon-box {
+            background: rgba(244, 114, 182, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+            color: #f472b6;
+        }
+
+        .algo-card:hover .icon-box {
+            transform: scale(1.1);
+        }
+
+        .complexity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .nav-link-arr {
+            position: absolute;
+            right: 24px;
+            top: 24px;
+            color: #4b5563;
+            transition: all 0.3s;
+        }
+
+        .algo-card:hover .nav-link-arr {
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        /* Topbar */
+        #topbar {
+            background: rgba(7, 5, 10, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header id="topbar" class="flex items-center px-6 h-16 w-full">
+        <a href="index.html"
+            class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium mr-4">
+            <i class="ph-bold ph-arrow-left"></i>
+            <span>Resource Hub</span>
+        </a>
+        <div class="h-6 w-px bg-white/10 mr-4"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-xl">⚡</span>
+            <span class="font-display font-bold text-white text-lg tracking-tight">Visual DSA Lab</span>
+        </div>
+        <div class="ml-auto text-xs text-slate-500 font-mono hidden sm:flex items-center gap-2">
+            <i class="ph-fill ph-books text-cyan-400"></i> DAA · Bennett
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 pb-24">
+
+        <!-- HERO -->
+        <div class="text-center mb-16 relative">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
+                Interactive Learning
+            </div>
+            <h1 class="font-display text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                Master Algorithms <br /> <span
+                    class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Visually</span>
+            </h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                Step-by-step interactive animations, priority queues, trees, and logic visualizations built specially
+                for Bennett University students.
+            </p>
+        </div>
+
+        <!-- MODULE 1: FOUNDATIONS -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                    <i class="ph-bold ph-number-circle-one text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Foundations & Sorting</h2>
+                    <p class="text-slate-500 text-sm">Fundamental search and sort algorithms.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="dsa-binary-search.html" class="algo-card cyan">
+                    <div class="icon-box"><i class="ph-fill ph-magnifying-glass"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Binary Search</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Efficient search using divide and
+                        conquer on a sorted array.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(log N)</span>
+                        <span class="complexity-badge">O(1)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-bubble-sort.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-arrows-down-up"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Bubble Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Repeatedly stepping through lists and
+                        swapping adjacent elements.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N²)</span>
+                        <span class="complexity-badge">O(1)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-selection-sort.html" class="algo-card green">
+                    <div class="icon-box"><i class="ph-fill ph-selection"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Selection Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Finding the minimum element and
+                        placing it at the beginning.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N²)</span>
+                        <span class="complexity-badge">O(1)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-insertion-sort.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-cards"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Insertion Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Building the final sorted array one
+                        item at a time.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N²)</span>
+                        <span class="complexity-badge">O(1)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-merge-sort.html" class="algo-card cyan">
+                    <div class="icon-box"><i class="ph-fill ph-arrows-merge"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Merge Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Divide and conquer algorithm that
+                        splits arrays and merges them.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N log N)</span>
+                        <span class="complexity-badge">O(N)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-quick-sort.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-lightning"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Quick Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Partitioning arrays using a pivot and
+                        sorting subarrays.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N log N)</span>
+                        <span class="complexity-badge">O(log N)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-radix-sort.html" class="algo-card green">
+                    <div class="icon-box"><i class="ph-fill ph-sort-ascending"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Radix Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Non-comparative integer sorting by
+                        processing individual digits.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(d(N+K))</span>
+                        <span class="complexity-badge">O(N+K)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-bucket-sort.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-buckets"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Bucket Sort</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Distributing elements into a number of
+                        buckets to sort individually.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N+K)</span>
+                        <span class="complexity-badge">O(N+K)</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- MODULE 2: GREEDY & DP -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                    <i class="ph-bold ph-number-circle-two text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Greedy & Compression</h2>
+                    <p class="text-slate-500 text-sm">Optimization processes making local optimal choices.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="dsa-greedy-knapsack.html" class="algo-card green">
+                    <div class="icon-box"><i class="ph-fill ph-backpack"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Fractional Knapsack</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Maximizing total value dynamically
+                        using ratio sorting.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N log N)</span>
+                        <span class="complexity-badge">O(1)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-huffman.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-tree-structure"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Huffman Coding</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Data compression using priority queues
+                        and optimal prefix trees.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N log N)</span>
+                        <span class="complexity-badge">O(N)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-activity-selection.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-calendar-check"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Activity Selection</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Greedy approach to select
+                        non-overlapping activities.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N log N)</span>
+                        <span class="complexity-badge">O(1)</span>
+                    </div>
+                </a>
+
+                <div class="algo-card opacity-50 pointer-events-none"
+                    style="border-style: dashed; background: transparent;">
+                    <div class="icon-box bg-slate-800/50 border-slate-700 text-slate-500"><i
+                            class="ph-fill ph-graph"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Kruskal's MST</h3>
+                    <p class="text-slate-400 text-sm mb-4">Finding the minimum spanning tree using Disjoint Sets.</p>
+                    <div class="px-3 py-1 bg-slate-800/80 rounded-md text-xs font-bold text-slate-400 self-start">Coming
+                        Soon</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-white/5 py-8 text-center text-slate-500 text-sm bg-black/20">
+        <p>Built for Bennett University DAA Curriculum</p>
+    </footer>
+
+</body>
+
+</html>
