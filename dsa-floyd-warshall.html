@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Floyd-Warshall Graph Visualizer ⚡ | Visual DSA Lab</title>
+    <meta name="description"
+        content="Graph-centric interactive Floyd-Warshall visualizer. Watch detours and path optimizations in real-time." />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --purple: #a855f7;
+            --indigo: #6366f1;
+            --green: #34d399;
+            --pink: #f472b6;
+            --orange: #fb923c;
+            --yellow: #facc15;
+            --bg: #030712;
+            /* Very deep blue/black */
+            --card: rgba(10, 15, 25, 0.75);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 15% 40%, rgba(34, 211, 238, 0.06), transparent 50%),
+                radial-gradient(circle at 85% 60%, rgba(99, 102, 241, 0.06), transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.04), transparent 50%);
+            animation: aurora 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        /* ── Topbar ── */
+        #topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 28px;
+            height: 60px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #e2e8f0;
+        }
+
+        .sep {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .topbar-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-algo-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #fff;
+        }
+
+        .badge-beta {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 99px;
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--cyan);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+        }
+
+        .topbar-meta {
+            margin-left: auto;
+            font-size: 11px;
+            color: #6b7280;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        #page {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 36px 28px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Hero header ── */
+        .algo-hero {
+            margin-bottom: 24px;
+        }
+
+        .algo-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .algo-hero h1 .icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 0 25px rgba(34, 211, 238, 0.15);
+        }
+
+        /* ── Glass card ── */
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: rgba(34, 211, 238, 0.12);
+            border-color: rgba(34, 211, 238, 0.35);
+            color: #67e8f9;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: rgba(34, 211, 238, 0.22);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        /* ── MAIN LAYOUT: Graph Left, Code Right ── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1000px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── VIZ FRAME: GRAPH ONLY ── */
+        #viz-frame {
+            border-radius: 16px;
+            background: rgba(5, 10, 15, 0.6);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 80px rgba(34, 211, 238, 0.03);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            min-height: 550px;
+        }
+
+        #viz-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            opacity: 0.6;
+        }
+
+        .viz-header {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6b7280;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        #graph-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, rgba(34, 211, 238, 0.03) 0%, transparent 70%);
+            padding: 20px;
+            position: relative;
+        }
+
+        /* ── SVG GRAPH STYLES ── */
+        svg {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            overflow: visible;
+        }
+
+        .node-circle {
+            fill: rgba(15, 23, 42, 0.9);
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 2.5;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .node-text {
+            fill: #e2e8f0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .edge-path {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 2.5;
+            transition: all 0.3s;
+        }
+
+        .edge-text {
+            fill: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            transition: all 0.3s;
+        }
+
+        .edge-bg {
+            fill: #04080f;
+            rx: 6;
+        }
+
+        /* Interactive Graph States */
+        .g-node-pivot {
+            stroke: var(--cyan);
+            fill: rgba(34, 211, 238, 0.15);
+            stroke-width: 4;
+            filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6));
+            transform: scale(1.1);
+            transform-origin: center;
+        }
+
+        .g-node-source {
+            stroke: var(--yellow);
+            fill: rgba(250, 204, 21, 0.15);
+            stroke-width: 3;
+        }
+
+        .g-node-dest {
+            stroke: var(--yellow);
+            fill: rgba(250, 204, 21, 0.15);
+            stroke-width: 3;
+        }
+
+        .g-edge-base {
+            stroke: rgba(255, 255, 255, 0.2);
+        }
+
+        .g-edge-eval {
+            stroke: var(--yellow);
+            stroke-width: 4;
+            stroke-dasharray: 8, 6;
+            animation: flow 0.8s linear infinite;
+            filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.5));
+        }
+
+        .g-edge-eval-text {
+            fill: var(--yellow);
+            font-weight: 800;
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+        }
+
+        .g-edge-update {
+            stroke: var(--green);
+            stroke-width: 5;
+            filter: drop-shadow(0 0 12px rgba(52, 211, 153, 0.8));
+        }
+
+        .g-edge-update-text {
+            fill: var(--green);
+            font-weight: 900;
+            font-size: 18px;
+            text-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+            transform: scale(1.2);
+        }
+
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -28;
+            }
+        }
+
+        #status-strip {
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #e2e8f0;
+            background: rgba(34, 211, 238, 0.05);
+            border-top: 1px solid rgba(34, 211, 238, 0.15);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.2px;
+            min-height: 60px;
+        }
+
+        .status-badge {
+            background: rgba(34, 211, 238, 0.15);
+            color: #67e8f9;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        /* ── RIGHT COLUMN: CODE & INPUT ── */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-area {
+            background: rgba(5, 5, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 14px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+            height: 110px;
+            resize: none;
+            line-height: 1.6;
+        }
+
+        .input-area:focus {
+            border-color: rgba(34, 211, 238, 0.5);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.15);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        /* Proper Code Column Styling */
+        .code-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 0;
+        }
+
+        .code-tab {
+            padding: 8px 18px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 10px 10px 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            cursor: pointer;
+            color: #6b7280;
+            background: transparent;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .code-tab.active {
+            color: var(--cyan);
+            background: rgba(5, 10, 20, 0.8);
+            border-color: rgba(255, 255, 255, 0.08);
+            border-bottom-color: rgba(5, 10, 20, 0.8);
+        }
+
+        .code-block {
+            background: rgba(5, 10, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0 12px 12px 12px;
+            padding: 20px;
+            color: #e2e8f0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre;
+            margin-top: -1px;
+            flex: 1;
+            /* Stretch to fill */
+        }
+
+        /* Syntax Highlighting */
+        .ck {
+            color: #c084fc;
+            font-weight: 600;
+        }
+
+        /* Keywords */
+        .ct {
+            color: #67e8f9;
+        }
+
+        /* Types/Functions */
+        .cm {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* Comments */
+        .cn {
+            color: #fcd34d;
+        }
+
+        /* Numbers */
+        .co {
+            color: #f472b6;
+        }
+
+        /* Operators */
+        .hl-line {
+            background: rgba(34, 211, 238, 0.1);
+            display: block;
+            border-left: 2px solid var(--cyan);
+            padding-left: 8px;
+            margin-left: -10px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* ── Controls bar ── */
+        .controls-bar {
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(10, 15, 25, 0.8);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .speed-wrap {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speed-wrap input[type=range] {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-wrap input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .step-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="topbar">
+        <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">
+            <span style="font-size:1.2rem">⚡</span>
+            <span class="topbar-algo-name">Floyd-Warshall (APSP)</span>
+            <span class="badge-beta">Graph Animation</span>
+        </div>
+        <div class="topbar-meta"><i class="ph-fill ph-books" style="color:var(--cyan)"></i> DAA · Bennett University
+        </div>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1>
+                <div class="icon-wrap"><i class="ph-fill ph-projector-screen" style="color:var(--cyan)"></i></div>
+                Visual Graph Network
+            </h1>
+        </div>
+
+        <div class="main-grid">
+            <div id="viz-frame">
+                <div class="viz-header">
+                    <span><i class="ph-bold ph-graph"></i> Live Directed Graph</span>
+                    <span id="dp-info" style="color:var(--cyan); font-family:'JetBrains Mono'">k = -</span>
+                </div>
+
+                <div id="graph-container">
+                    <svg id="network-svg">
+                        <defs id="svg-defs"></defs>
+                        <g id="svg-edges"></g>
+                        <g id="svg-nodes"></g>
+                    </svg>
+                </div>
+
+                <div id="status-strip">
+                    <i class="ph-fill ph-info" style="color:#22d3ee"></i>
+                    <span id="status-text">Initialize graph to watch path optimization.</span>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="card" style="padding: 20px;">
+                    <div class="panel-title"><i class="ph-fill ph-faders" style="color:var(--yellow)"></i> Graph Setup
+                        (Adjacency Matrix)</div>
+                    <textarea id="matrix-input" class="input-area" spellcheck="false">
+0, 3, INF, 7
+8, 0, 2, INF
+5, INF, 0, 1
+2, INF, INF, 0</textarea>
+                    <div style="display: flex; gap: 10px; margin-top: 12px;">
+                        <button class="btn btn-primary" onclick="generate()" style="flex:1">
+                            <i class="ph-bold ph-arrows-clockwise"></i> Load Graph
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; flex-direction: column; flex: 1; padding: 20px;">
+                    <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--purple)"></i>
+                        Implementation</div>
+                    <div class="code-tabs">
+                        <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
+                        <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
+                        <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
+                    </div>
+
+                    <div id="code-cpp" class="code-block"><span class="ck">void</span> <span
+                            class="ct">floydWarshall</span>(<span class="ct">vector</span>&lt;<span
+                            class="ct">vector</span>&lt;<span class="ck">int</span>&gt;&gt;&amp; dist) {
+                        <span class="ck">int</span> V <span class="co">=</span> dist.size();
+
+                        <span class="cm">// k is the intermediate detour vertex</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> k <span class="co">=</span> <span
+                            class="cn">0</span>; k &lt; V; k++) {
+                        <span class="cm">// i is the source vertex</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> i <span class="co">=</span> <span
+                            class="cn">0</span>; i &lt; V; i++) {
+                        <span class="cm">// j is the destination vertex</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> j <span class="co">=</span> <span
+                            class="cn">0</span>; j &lt; V; j++) {
+
+                        <span class="cm">// Check if path via 'k' is shorter</span>
+                        <span class="hl-line"> <span class="ck">if</span> (dist[i][k] <span class="co">!=</span> INF
+                            <span class="co">&amp;&amp;</span> dist[k][j] <span class="co">!=</span> INF <span
+                                class="co">&amp;&amp;</span></span>
+                        <span class="hl-line"> dist[i][k] <span class="co">+</span> dist[k][j] &lt; dist[i][j]) {</span>
+                        <span class="hl-line"> </span>
+                        <span class="hl-line"> dist[i][j] <span class="co">=</span> dist[i][k] <span class="co">+</span>
+                            dist[k][j];</span>
+                        <span class="hl-line"> }</span>
+                        }
+                        }
+                        }
+                        }
+                    </div>
+
+                    <div id="code-py" class="code-block" style="display:none"><span class="ck">def</span> <span
+                            class="ct">floyd_warshall</span>(dist):
+                        V <span class="co">=</span> len(dist)
+
+                        <span class="cm"># k is the intermediate detour vertex</span>
+                        <span class="ck">for</span> k <span class="ck">in</span> range(V):
+                        <span class="cm"># i is the source vertex</span>
+                        <span class="ck">for</span> i <span class="ck">in</span> range(V):
+                        <span class="cm"># j is the destination vertex</span>
+                        <span class="ck">for</span> j <span class="ck">in</span> range(V):
+
+                        <span class="cm"># Check if path via 'k' is shorter</span>
+                        <span class="hl-line"> <span class="ck">if</span> dist[i][k] <span class="co">!=</span>
+                            float('inf') <span class="ck">and</span> \</span>
+                        <span class="hl-line"> dist[k][j] <span class="co">!=</span> float('inf') <span
+                                class="ck">and</span> \</span>
+                        <span class="hl-line"> dist[i][k] <span class="co">+</span> dist[k][j] &lt; dist[i][j]:</span>
+                        <span class="hl-line"> </span>
+                        <span class="hl-line"> dist[i][j] <span class="co">=</span> dist[i][k] <span class="co">+</span>
+                            dist[k][j]</span>
+                    </div>
+
+                    <div id="code-java" class="code-block" style="display:none"><span class="ck">public void</span>
+                        <span class="ct">floydWarshall</span>(<span class="ck">int</span>[][] dist) {
+                        <span class="ck">int</span> V <span class="co">=</span> dist.length;
+
+                        <span class="cm">// k is the intermediate detour vertex</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> k <span class="co">=</span> <span
+                            class="cn">0</span>; k &lt; V; k++) {
+                        <span class="cm">// i is the source vertex</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> i <span class="co">=</span> <span
+                            class="cn">0</span>; i &lt; V; i++) {
+                        <span class="cm">// j is the destination vertex</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> j <span class="co">=</span> <span
+                            class="cn">0</span>; j &lt; V; j++) {
+
+                        <span class="cm">// Check if path via 'k' is shorter</span>
+                        <span class="hl-line"> <span class="ck">if</span> (dist[i][k] <span class="co">!=</span>
+                            Integer.MAX_VALUE <span class="co">&amp;&amp;</span> </span>
+                        <span class="hl-line"> dist[k][j] <span class="co">!=</span> Integer.MAX_VALUE <span
+                                class="co">&amp;&amp;</span> </span>
+                        <span class="hl-line"> dist[i][k] <span class="co">+</span> dist[k][j] &lt; dist[i][j]) {</span>
+                        <span class="hl-line"> </span>
+                        <span class="hl-line"> dist[i][j] <span class="co">=</span> dist[i][k] <span class="co">+</span>
+                            dist[k][j];</span>
+                        <span class="hl-line"> }</span>
+                        }
+                        }
+                        }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bar">
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon"
+                    class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i>
+                Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i>
+                Back</button>
+            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i
+                    class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+
+            <div class="speed-wrap">
+                <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
+                <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
+                <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
+            </div>
+            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span
+                    id="tot-steps">0</span></div>
+        </div>
+    </div>
+
+    <script>
+        /* ── State Management ── */
+        let N = 0;
+        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1200; // slightly slower for graph
+        let graphNodes = [];
+
+        function copyMatrix(mat) { return mat.map(row => [...row]); }
+        function formatVal(v) { return v === Infinity ? '∞' : v; }
+
+        /* ── Graph Visualization Logic ── */
+        function initGraphLayout(size) {
+            graphNodes = [];
+
+            // Fixed container dimensions for calculations
+            const width = 600, height = 500;
+            const cx = width / 2, cy = height / 2;
+            const radius = Math.min(width, height) * 0.35; // 35% of container
+
+            const svg = document.getElementById('network-svg');
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+            // Distribute nodes in a circle
+            for (let i = 0; i < size; i++) {
+                let angle = (i * (2 * Math.PI / size)) - (Math.PI / 2);
+                graphNodes.push({
+                    x: cx + radius * Math.cos(angle),
+                    y: cy + radius * Math.sin(angle)
+                });
+            }
+
+            // Setup SVG Defs for markers
+            const defs = document.getElementById('svg-defs');
+            defs.innerHTML = `
+                <marker id="arrow-base" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.2)" />
+                </marker>
+                <marker id="arrow-eval" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--yellow)" />
+                </marker>
+                <marker id="arrow-update" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--green)" />
+                </marker>
+            `;
+        }
+
+        function getEdgePath(p1, p2, isBidirectional) {
+            if (!isBidirectional) {
+                return `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
+            }
+            const dx = p2.x - p1.x, dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const offset = 35; // Curve amount
+            const nx = -dy / dist, ny = dx / dist;
+            const cx = (p1.x + p2.x) / 2 + nx * offset;
+            const cy = (p1.y + p2.y) / 2 + ny * offset;
+            return `M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}`;
+        }
+
+        function getCurveCenter(p1, p2, isBidirectional) {
+            if (!isBidirectional) return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+            const dx = p2.x - p1.x, dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const offset = 35;
+            const nx = -dy / dist, ny = dx / dist;
+            return {
+                x: (p1.x + p2.x) / 2 + nx * (offset * 0.5),
+                y: (p1.y + p2.y) / 2 + ny * (offset * 0.5)
+            };
+        }
+
+        function drawGraph(s) {
+            const edgeGroup = document.getElementById('svg-edges');
+            const nodeGroup = document.getElementById('svg-nodes');
+            edgeGroup.innerHTML = ''; nodeGroup.innerHTML = '';
+
+            // Draw Edges based on CURRENT matrix state (s.A)
+            for (let i = 0; i < N; i++) {
+                for (let j = 0; j < N; j++) {
+                    if (i === j || s.A[i][j] === Infinity) continue;
+
+                    const isBidir = s.A[j][i] !== Infinity;
+                    const pathD = getEdgePath(graphNodes[i], graphNodes[j], isBidir);
+                    const center = getCurveCenter(graphNodes[i], graphNodes[j], isBidir);
+
+                    let edgeClass = 'edge-path g-edge-base';
+                    let marker = 'url(#arrow-base)';
+                    let weight = formatVal(s.A[i][j]);
+
+                    // Animations for specific steps
+                    if (s.phase === 'eval' || s.phase === 'update' || s.phase === 'no_update') {
+                        // Highlight detour edges: i->k and k->j
+                        if ((i === s.i && j === s.k) || (i === s.k && j === s.j)) {
+                            edgeClass = 'edge-path g-edge-eval';
+                            marker = 'url(#arrow-eval)';
+                        }
+                    }
+
+                    // Highlight the direct shortcut edge: i->j
+                    if (i === s.i && j === s.j) {
+                        if (s.phase === 'update') {
+                            edgeClass = 'edge-path g-edge-update';
+                            marker = 'url(#arrow-update)';
+                        }
+                    }
+
+                    edgeGroup.innerHTML += `
+                        <path d="${pathD}" class="${edgeClass}" marker-end="${marker}" />
+                        <rect x="${center.x - 12}" y="${center.y - 12}" width="24" height="24" class="edge-bg" />
+                        <text x="${center.x}" y="${center.y}" class="edge-text ${edgeClass.includes('eval') ? 'g-edge-eval-text' : ''} ${edgeClass.includes('update') ? 'g-edge-update-text' : ''}">${weight}</text>
+                    `;
+                }
+            }
+
+            // Draw Nodes
+            for (let i = 0; i < N; i++) {
+                let nodeClass = 'node-circle';
+                // Apply highlights
+                if (s.k === i) nodeClass += ' g-node-pivot';
+                else if (s.i === i) nodeClass += ' g-node-source';
+                else if (s.j === i) nodeClass += ' g-node-dest';
+
+                nodeGroup.innerHTML += `
+                    <g style="transform-origin: ${graphNodes[i].x}px ${graphNodes[i].y}px">
+                        <circle cx="${graphNodes[i].x}" cy="${graphNodes[i].y}" r="24" class="${nodeClass}" />
+                        <text x="${graphNodes[i].x}" y="${graphNodes[i].y + 1}" class="node-text">${i + 1}</text>
+                    </g>
+                `;
+            }
+        }
+
+        /* ── Generator Engine ── */
+        function parseMatrixInput() {
+            let raw = document.getElementById('matrix-input').value;
+            let lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            let A = [];
+            for (let line of lines) {
+                let row = line.split(',').map(s => s.trim().toUpperCase());
+                let parsedRow = row.map(v => (v === 'INF' || v === '∞' || v === '') ? Infinity : parseInt(v, 10));
+                A.push(parsedRow);
+            }
+            return A;
+        }
+
+        function makeSteps(initialMatrix) {
+            let A = copyMatrix(initialMatrix);
+            N = A.length;
+            let snaps = [];
+
+            snaps.push({ phase: 'init', A: copyMatrix(A), msg: `<span class="status-badge">Initialization</span> Graph constructed from Adjacency Matrix.` });
+
+            for (let k = 0; k < N; k++) {
+                for (let i = 0; i < N; i++) {
+                    for (let j = 0; j < N; j++) {
+                        if (i === k || j === k || i === j) continue;
+
+                        let oldVal = A[i][j];
+                        let dep1 = A[i][k];
+                        let dep2 = A[k][j];
+                        let sum = dep1 + dep2;
+                        let sumStr = (dep1 === Infinity || dep2 === Infinity) ? '∞' : sum;
+
+                        // 1. Evaluate Detour
+                        snaps.push({
+                            phase: 'eval', A: copyMatrix(A), k, i, j,
+                            msg: `Testing Detour: <b>${i + 1} ➔ <span style="color:var(--cyan)">${k + 1}</span> ➔ ${j + 1}</b>.<br>Is ${formatVal(dep1)} + ${formatVal(dep2)} < ${formatVal(oldVal)} ?`
+                        });
+
+                        if (sum < oldVal) {
+                            A[i][j] = sum; // Apply change to matrix
+                            // 2a. Update path
+                            snaps.push({
+                                phase: 'update', A: copyMatrix(A), k, i, j,
+                                msg: `<span style="color:var(--green); font-weight:700">Shortcut Found!</span> Graph updated: Edge <b>${i + 1} ➔ ${j + 1}</b> is now ${sum}.`
+                            });
+                        } else {
+                            // 2b. No update
+                            snaps.push({
+                                phase: 'no_update', A: copyMatrix(A), k, i, j,
+                                msg: `<span style="color:var(--orange)">Detour rejected.</span> Direct path ${formatVal(oldVal)} is shorter or equal.`
+                            });
+                        }
+                    }
+                }
+            }
+
+            snaps.push({
+                phase: 'done', A: copyMatrix(A),
+                msg: `<span class="status-badge">Finished</span> Shortest paths evaluated. Graph displays optimal network.`
+            });
+
+            return snaps;
+        }
+
+        function applyStep(si) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            let kDisplay = s.k !== undefined ? s.k + 1 : '-';
+            document.getElementById('dp-info').innerHTML = `Detour Node k = ${kDisplay}`;
+
+            drawGraph(s);
+
+            document.getElementById('status-text').innerHTML = s.msg;
+            document.getElementById('cur-step').textContent = si + 1;
+            document.getElementById('tot-steps').textContent = steps.length;
+        }
+
+        /* ── Controls ── */
+        function generate() {
+            try {
+                let initMat = parseMatrixInput();
+                let size = initMat.length;
+                if (size < 2 || initMat.some(r => r.length !== size)) {
+                    document.getElementById('status-text').innerHTML = '⚠️ Please enter a valid square matrix (e.g., 4x4).';
+                    return;
+                }
+
+                stopAnim();
+                N = size;
+                initGraphLayout(N);
+                steps = makeSteps(initMat);
+                applyStep(0); curStep = 0;
+                enableBtns(true);
+            } catch (e) {
+                document.getElementById('status-text').innerHTML = '⚠️ Error parsing matrix. Ensure comma-separated rows.';
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; applyStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function resetAnim() { stopAnim(); curStep = 0; applyStep(0); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+
+        function updateSpeed(v) {
+            speedMs = [1800, 1400, 1000, 600, 200][parseInt(v) - 1]; // Custom tuned for graph readability
+            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() {
+            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+        }
+
+        function switchTab(lang) {
+            ['cpp', 'py', 'java'].forEach(l => {
+                document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+                document.getElementById('tab-' + l).classList.toggle('active', l === lang);
+            });
+        }
+
+        // Auto-initialize on load
+        window.onload = () => { generate(); };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRRN Scheduling ⚡ | Visual OS Lab</title>
+    <meta name="description" content="Interactive HRRN CPU Scheduling visualizer with Custom Data Input." />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --teal: #14b8a6;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --pink: #f472b6;
+            --purple: #a855f7;
+            --bg: #050508;
+            --card: rgba(15, 15, 25, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Premium Aurora Background (Teal/Rose Theme for HRRN) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(20, 184, 166, 0.06), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(244, 63, 94, 0.05), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04), transparent 40%);
+            animation: aurora 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050508;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a3333;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #264c4c;
+        }
+
+        /* Topbar */
+        #topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5, 10, 12, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 28px;
+            height: 60px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #e2e8f0;
+        }
+
+        .sep {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .topbar-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-algo-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #fff;
+        }
+
+        .badge-beta {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 99px;
+            background: rgba(20, 184, 166, 0.1);
+            color: var(--teal);
+            border: 1px solid rgba(20, 184, 166, 0.25);
+        }
+
+        .topbar-meta {
+            margin-left: auto;
+            font-size: 11px;
+            color: #6b7280;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Page wrapper */
+        #page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 28px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero */
+        .algo-hero {
+            margin-bottom: 32px;
+        }
+
+        .algo-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .algo-hero h1 .icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 0 25px rgba(20, 184, 166, 0.15);
+            color: var(--teal);
+        }
+
+        .algo-desc {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.65;
+            max-width: 720px;
+            margin-top: 12px;
+        }
+
+        /* Glass card */
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Controls */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: rgba(20, 184, 166, 0.12);
+            border-color: rgba(20, 184, 166, 0.35);
+            color: var(--teal);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: rgba(20, 184, 166, 0.22);
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .controls-bar {
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 8px 14px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--teal);
+        }
+
+        .input-field::placeholder {
+            color: #6b7280;
+        }
+
+        .speed-wrap {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speed-wrap input[type=range] {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-wrap input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 10px var(--teal);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .step-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        /* Custom Input Area */
+        #custom-input-bar {
+            display: none;
+            background: rgba(20, 184, 166, 0.05);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+        }
+
+        /* Viz Frame Layout */
+        #viz-frame {
+            border-radius: 16px;
+            background: rgba(8, 12, 12, 0.85);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 80px rgba(20, 184, 166, 0.03);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            gap: 30px;
+        }
+
+        .viz-section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* CPU & Ready Queue */
+        .system-state {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .ready-queue-container {
+            flex: 1;
+            min-height: 80px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        .cpu-container {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(20, 184, 166, 0.05);
+            border: 2px solid rgba(20, 184, 166, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(20, 184, 166, 0.1);
+            transition: all 0.3s;
+        }
+
+        .cpu-container.active {
+            border-color: var(--teal);
+            background: rgba(20, 184, 166, 0.15);
+            box-shadow: 0 0 40px rgba(20, 184, 166, 0.3);
+            transform: scale(1.05);
+        }
+
+        .cpu-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .cpu-status {
+            font-size: 11px;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* Process Blocks */
+        .process-block {
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--teal), var(--rose));
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            min-width: 75px;
+            text-align: center;
+        }
+
+        .process-block .stats {
+            display: flex;
+            gap: 4px;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .process-block span.rr {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: var(--cyan);
+        }
+
+        .process-block span.wt {
+            color: #fff;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Gantt Chart */
+        .gantt-wrapper {
+            width: 100%;
+        }
+
+        .gantt-chart {
+            display: flex;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .gantt-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            border-right: 1px solid rgba(0, 0, 0, 0.5);
+            transition: width 0.5s ease-in-out;
+            background: linear-gradient(135deg, var(--teal), var(--rose));
+            position: relative;
+        }
+
+        .gantt-segment.idle {
+            background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 10px, rgba(255, 255, 255, 0.05) 10px, rgba(255, 255, 255, 0.05) 20px);
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .gantt-times {
+            display: flex;
+            width: 100%;
+            position: relative;
+            height: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .gantt-time-marker {
+            position: absolute;
+            transform: translateX(-50%);
+            top: 0;
+            transition: left 0.5s ease;
+        }
+
+        /* Status strip */
+        #status-strip {
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            background: rgba(20, 184, 166, 0.05);
+            border-top: 1px solid rgba(20, 184, 166, 0.15);
+            text-align: center;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px -30px -30px -30px;
+        }
+
+        .status-badge {
+            background: rgba(20, 184, 166, 0.15);
+            color: var(--teal);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            border: 1px solid rgba(20, 184, 166, 0.3);
+        }
+
+        /* Panels Grid */
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .panels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+        }
+
+        /* Table */
+        .os-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .os-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .os-table th {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--teal);
+            padding: 12px 10px;
+            background: rgba(20, 184, 166, 0.05);
+            border-bottom: 1px solid rgba(20, 184, 166, 0.2);
+        }
+
+        .os-table td {
+            padding: 12px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        .os-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .val-dash {
+            color: #475569;
+        }
+
+        /* Theory */
+        .theory-content h4 {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theory-content p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .theory-content ul {
+            color: #94a3b8;
+            font-size: 13px;
+            padding-left: 20px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .theory-content li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="topbar">
+        <a href="#" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>OS Lab</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">
+            <span style="font-size:1.2rem">⚡</span>
+            <span class="topbar-algo-name">HRRN Algorithm</span>
+            <span class="badge-beta">Dynamic Priority</span>
+        </div>
+        <div class="topbar-meta"><i class="ph-fill ph-cpu" style="color:var(--teal)"></i> OS · Skills Seekers</div>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1>
+                <div class="icon-wrap"><i class="ph-fill ph-chart-line-up"></i></div>
+                Highest Response Ratio Next (HRRN)
+            </h1>
+            <p class="algo-desc">
+                HRRN is a non-preemptive algorithm designed to solve the starvation problem of SJF. It dynamically
+                calculates a priority based on how long a process has been waiting. <strong>The longer a process waits,
+                    the higher its Response Ratio becomes</strong>, guaranteeing it will eventually run.
+            </p>
+        </div>
+
+        <div class="card controls-bar">
+            <select id="scenario-select" class="input-field">
+                <option value="1">Dataset 1: Standard HRRN</option>
+                <option value="2">Dataset 2: Aging in Action (Long waiter wins)</option>
+                <option value="3">Dataset 3: Rapid Arrivals</option>
+                <option value="custom">Dataset 4: Custom Input</option>
+            </select>
+
+            <button id="btn-load" class="btn btn-primary" onclick="loadScenario()">
+                <i class="ph-bold ph-download-simple"></i> Load Data
+            </button>
+            <div style="width:1px; height:20px; background:rgba(255,255,255,0.1); margin: 0 8px;"></div>
+
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon"
+                    class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i>
+                Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i>
+                Back</button>
+            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i
+                    class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+
+            <div class="speed-wrap">
+                <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
+                <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
+                <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
+            </div>
+            <div class="step-counter" style="margin-left:8px">Time: <span id="cur-time">0</span>ms</div>
+        </div>
+
+        <div class="card controls-bar" id="custom-input-bar">
+            <div class="viz-section-title" style="margin:0; margin-right: 10px; color: var(--teal);"><i
+                    class="ph-bold ph-plus-circle"></i> Add Process</div>
+
+            <input type="number" id="custom-at" class="input-field" style="width: 100px;" placeholder="Arrival Time"
+                min="0">
+            <input type="number" id="custom-bt" class="input-field" style="width: 100px;" placeholder="Burst Time"
+                min="1">
+
+            <button class="btn btn-primary" onclick="addCustomProcess()" style="background: rgba(20, 184, 166, 0.2);"><i
+                    class="ph-bold ph-plus"></i> Add</button>
+            <button class="btn" onclick="clearCustom()" style="background: transparent;"><i
+                    class="ph-bold ph-trash"></i> Clear All</button>
+
+            <span id="custom-count" class="step-counter" style="margin-left:auto;">0 Processes Added</span>
+        </div>
+
+        <div id="viz-frame">
+            <div class="system-state">
+                <div style="flex:1">
+                    <div class="viz-section-title"><i class="ph-bold ph-queue"></i> Ready Queue (Evaluates RR)</div>
+                    <div class="ready-queue-container" id="ready-queue">
+                    </div>
+                </div>
+                <div>
+                    <div class="viz-section-title" style="justify-content: center;"><i class="ph-bold ph-cpu"></i>
+                        Processor</div>
+                    <div class="cpu-container" id="cpu-core">
+                        <div class="cpu-label" id="cpu-process">IDLE</div>
+                        <div class="cpu-status" id="cpu-status-text">Waiting</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gantt-wrapper">
+                <div class="viz-section-title"><i class="ph-bold ph-chart-bar"></i> Gantt Chart</div>
+                <div class="gantt-chart" id="gantt-chart">
+                </div>
+                <div class="gantt-times" id="gantt-times">
+                    <div class="gantt-time-marker" style="left: 0%;">0</div>
+                </div>
+            </div>
+
+            <div id="status-strip">
+                <i class="ph-fill ph-info" style="color:var(--teal)"></i>
+                <span id="status-text">Select a dataset and click Load Data to begin the HRRN simulation.</span>
+            </div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-table" style="color:var(--teal)"></i> Process Scheduling
+                    Table</div>
+                <div class="os-table-wrapper">
+                    <table class="os-table">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>AT</th>
+                                <th>BT</th>
+                                <th>CT</th>
+                                <th>TAT</th>
+                                <th>WT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="process-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-book-open-text" style="color:var(--cyan)"></i> HRRN Exam
+                    Theory</div>
+                <div class="theory-content">
+                    <h4><i class="ph-fill ph-calculator" style="color:var(--teal)"></i> The Response Ratio Formula</h4>
+                    <p>
+                        The decision of which process to execute next is made when the CPU becomes idle. The OS
+                        calculates the ratio for every waiting process:
+                    </p>
+                    <div
+                        style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; text-align:center; font-family:'JetBrains Mono', monospace; font-size:14px; color:var(--rose); margin-bottom:16px;">
+                        RR = (Waiting Time + Burst Time) / Burst Time<br>
+                        <span style="font-size:12px; color:#94a3b8">RR = 1 + (W / S)</span>
+                    </div>
+
+                    <h4><i class="ph-fill ph-check-circle" style="color:var(--emerald)"></i> Key Advantages</h4>
+                    <ul>
+                        <li><strong>Prevents Starvation:</strong> Because Waiting Time (W) is in the numerator, the
+                            longer a job waits, the higher its ratio climbs. It will eventually out-prioritize even the
+                            shortest incoming jobs.</li>
+                        <li><strong>Favors Shorter Jobs initially:</strong> If waiting time is 0, RR is 1 for all
+                            processes. As time passes, the ratio grows much faster for processes with a small Burst Time
+                            (S).</li>
+                        <li><strong>Mode:</strong> Non-Preemptive. Once it grabs the CPU, it runs to completion.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datasets
+        const datasets = {
+            "1": [ // Standard HRRN
+                { id: "P1", at: 0, bt: 3 },
+                { id: "P2", at: 2, bt: 6 },
+                { id: "P3", at: 4, bt: 4 },
+                { id: "P4", at: 6, bt: 5 },
+                { id: "P5", at: 8, bt: 2 }
+            ],
+            "2": [ // Aging in Action
+                { id: "P1", at: 0, bt: 10 }, // Big job locks CPU
+                { id: "P2", at: 1, bt: 20 }, // Massive job arrives
+                { id: "P3", at: 2, bt: 2 },  // Short job arrives
+                { id: "P4", at: 3, bt: 1 }   // Tiny job arrives
+                // P4 and P3 will execute after P1. Eventually P2 will age enough to run.
+            ],
+            "3": [ // Rapid Arrivals
+                { id: "P1", at: 0, bt: 5 },
+                { id: "P2", at: 1, bt: 4 },
+                { id: "P3", at: 2, bt: 3 },
+                { id: "P4", at: 3, bt: 2 }
+            ],
+            "custom": [] // Custom user data
+        };
+
+        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1200;
+        let totalSimTime = 0;
+
+        // Custom Data Handlers
+        document.getElementById('scenario-select').addEventListener('change', function () {
+            const customBar = document.getElementById('custom-input-bar');
+            stopAnim();
+            enableBtns(false);
+
+            if (this.value === 'custom') {
+                customBar.style.display = 'flex';
+                document.getElementById('status-text').innerHTML = 'Add your custom processes, then click Load Data.';
+                renderCustomPreview();
+            } else {
+                customBar.style.display = 'none';
+                document.getElementById('status-text').innerHTML = 'Select a dataset and click Load Data to begin.';
+                document.getElementById('process-table-body').innerHTML = `<tr><td colspan="6" style="color:#6b7280; padding: 20px">Click Load Data to begin</td></tr>`;
+            }
+        });
+
+        function setStatusError(msg) {
+            document.getElementById('status-text').innerHTML = `<span class="status-badge" style="color:var(--red); border-color:var(--red)">ERROR</span> ${msg}`;
+        }
+
+        function addCustomProcess() {
+            const atInput = document.getElementById('custom-at');
+            const btInput = document.getElementById('custom-bt');
+
+            const at = parseInt(atInput.value);
+            const bt = parseInt(btInput.value);
+
+            if (isNaN(at) || isNaN(bt) || at < 0 || bt < 1) {
+                setStatusError("Valid numbers required: AT ≥ 0, BT ≥ 1.");
+                return;
+            }
+
+            const id = "P" + (datasets["custom"].length + 1);
+            datasets["custom"].push({ id, at, bt });
+
+            document.getElementById('custom-count').textContent = `${datasets["custom"].length} Processes Added`;
+            document.getElementById('status-text').innerHTML = `<span class="status-badge" style="color:var(--emerald); border-color:var(--emerald)">SUCCESS</span> Added ${id} (AT:${at}, BT:${bt}).`;
+
+            atInput.value = '';
+            btInput.value = '';
+            atInput.focus();
+
+            renderCustomPreview();
+        }
+
+        function clearCustom() {
+            datasets["custom"] = [];
+            document.getElementById('custom-count').textContent = `0 Processes Added`;
+            document.getElementById('status-text').innerHTML = 'Custom data cleared. Add new processes.';
+            renderCustomPreview();
+        }
+
+        function renderCustomPreview() {
+            const tb = document.getElementById('process-table-body');
+            tb.innerHTML = '';
+            if (datasets["custom"].length === 0) {
+                tb.innerHTML = `<tr><td colspan="6" style="color:#6b7280; padding: 20px">No custom data added yet.</td></tr>`;
+                return;
+            }
+
+            let displayList = JSON.parse(JSON.stringify(datasets["custom"])).sort((a, b) => a.at - b.at);
+            displayList.forEach(p => {
+                tb.innerHTML += `<tr>
+                    <td style="color:#fff; font-weight:700">${p.id}</td>
+                    <td>${p.at}</td>
+                    <td>${p.bt}</td>
+                    <td class="val-dash">-</td>
+                    <td class="val-dash">-</td>
+                    <td class="val-dash">-</td>
+                </tr>`;
+            });
+        }
+
+        // Core HRRN Logic
+        function generateHRRNSteps(processes) {
+            let pList = JSON.parse(JSON.stringify(processes));
+            pList.forEach(p => p.completed = false);
+
+            let time = 0;
+            let completed = [];
+            let gantt = [];
+            let animSteps = [];
+
+            animSteps.push({ time: 0, queue: [], running: null, completed: [], gantt: [], msg: "Simulation Loaded. Ready to start." });
+
+            while (completed.length < pList.length) {
+                // Fetch available incomplete processes
+                let queue = pList.filter(p => p.at <= time && !p.completed);
+
+                if (queue.length === 0) {
+                    let pending = pList.filter(p => !p.completed).sort((a, b) => a.at - b.at);
+                    let nextArrival = pending[0].at;
+                    gantt.push({ id: 'IDLE', start: time, end: nextArrival, duration: nextArrival - time });
+                    time = nextArrival;
+                    animSteps.push({
+                        time, queue: [], running: null,
+                        completed: [...completed], gantt: [...gantt],
+                        msg: `CPU is IDLE until next process arrives at time ${time}.`
+                    });
+                    continue;
+                }
+
+                // Calculate RR for visualization
+                queue.forEach(p => {
+                    p.currentWT = time - p.at;
+                    p.rr = ((p.currentWT + p.bt) / p.bt).toFixed(2);
+                });
+
+                // Sort Queue: Highest RR first. Tie-break by Arrival Time.
+                queue.sort((a, b) => {
+                    let rrDiff = b.rr - a.rr;
+                    if (Math.abs(rrDiff) > 0.001) return rrDiff;
+                    return a.at - b.at;
+                });
+
+                // Frame showing calculation phase
+                animSteps.push({
+                    time, queue: JSON.parse(JSON.stringify(queue)), running: null,
+                    completed: [...completed], gantt: [...gantt],
+                    msg: `CPU Free. Calculating Response Ratio (RR) for waiting processes.`
+                });
+
+                let current = queue[0];
+                let actualProcess = pList.find(p => p.id === current.id);
+
+                animSteps.push({
+                    time, queue: JSON.parse(JSON.stringify(queue)), running: current,
+                    completed: [...completed], gantt: [...gantt],
+                    msg: `Dispatched ${current.id} because it has the highest RR (${current.rr}).`
+                });
+
+                // Execute Non-Preemptively
+                let start = time;
+                time += actualProcess.bt;
+                actualProcess.ct = time;
+                actualProcess.tat = actualProcess.ct - actualProcess.at;
+                actualProcess.wt = actualProcess.tat - actualProcess.bt;
+                actualProcess.completed = true;
+
+                gantt.push({ id: current.id, start: start, end: time, duration: actualProcess.bt });
+                completed.push(actualProcess);
+
+                let nextQueue = pList.filter(p => p.at <= time && !p.completed);
+                animSteps.push({
+                    time, queue: JSON.parse(JSON.stringify(nextQueue)), running: null,
+                    completed: [...completed], gantt: [...gantt],
+                    msg: `${current.id} completed execution at time ${time}.`
+                });
+            }
+
+            animSteps.push({ time, queue: [], running: null, completed: [...completed], gantt: [...gantt], msg: "All processes have completed execution." });
+            totalSimTime = time;
+            return animSteps;
+        }
+
+        function loadScenario() {
+            const scenKey = document.getElementById('scenario-select').value;
+            const data = datasets[scenKey];
+
+            if (scenKey === 'custom' && data.length === 0) {
+                setStatusError("Please add at least one custom process first.");
+                return;
+            }
+
+            steps = generateHRRNSteps(data);
+
+            stopAnim();
+            curStep = 0;
+            renderStep(curStep, data);
+            enableBtns(true);
+        }
+
+        function renderStep(si, initialData = null) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            document.getElementById('cur-time').textContent = s.time;
+            document.getElementById('status-text').innerHTML = `<span class="status-badge">TIME ${s.time}</span> ${s.msg}`;
+
+            // Render Queue explicitly showing calculated WT and RR
+            const rq = document.getElementById('ready-queue');
+            rq.innerHTML = '';
+
+            let displayQueue = s.queue.filter(p => !s.running || p.id !== s.running.id);
+            displayQueue.forEach(p => {
+                let metricsHtml = '';
+                if (p.rr) {
+                    metricsHtml = `<div class="stats"><span class="wt">WT:${p.currentWT}</span><span class="rr">RR:${p.rr}</span></div>`;
+                }
+                rq.innerHTML += `<div class="process-block"><span>${p.id}</span>${metricsHtml}</div>`;
+            });
+
+            // Render CPU
+            const cpu = document.getElementById('cpu-core');
+            const cpuLabel = document.getElementById('cpu-process');
+            const cpuStatus = document.getElementById('cpu-status-text');
+            if (s.running) {
+                cpu.classList.add('active');
+                cpuLabel.textContent = s.running.id;
+                cpuStatus.innerHTML = `<span style="color:var(--teal); font-weight:700">Executing</span>`;
+            } else {
+                cpu.classList.remove('active');
+                cpuLabel.textContent = "IDLE";
+                cpuStatus.textContent = "Waiting";
+            }
+
+            const gc = document.getElementById('gantt-chart');
+            const gt = document.getElementById('gantt-times');
+            gc.innerHTML = '';
+            gt.innerHTML = '';
+
+            let maxTime = totalSimTime || 1;
+
+            s.gantt.forEach(block => {
+                let widthPct = (block.duration / maxTime) * 100;
+                let cssClass = block.id === 'IDLE' ? 'gantt-segment idle' : 'gantt-segment';
+                let label = block.id === 'IDLE' ? '' : block.id;
+                gc.innerHTML += `<div class="${cssClass}" style="width: ${widthPct}%">${label}</div>`;
+
+                let endPct = (block.end / maxTime) * 100;
+                gt.innerHTML += `<div class="gantt-time-marker" style="left: ${endPct}%;">${block.end}</div>`;
+            });
+
+            if (s.gantt.length === 0) {
+                gt.innerHTML = `<div class="gantt-time-marker" style="left: 0%;">0</div>`;
+            } else {
+                gt.innerHTML += `<div class="gantt-time-marker" style="left: 0%;">0</div>`;
+            }
+
+            const tb = document.getElementById('process-table-body');
+            tb.innerHTML = '';
+
+            let displayList = [];
+            if (initialData) {
+                displayList = JSON.parse(JSON.stringify(initialData)).sort((a, b) => a.at - b.at);
+            } else {
+                const scenKey = document.getElementById('scenario-select').value;
+                displayList = JSON.parse(JSON.stringify(datasets[scenKey])).sort((a, b) => a.at - b.at);
+            }
+
+            displayList.forEach(p => {
+                let compData = s.completed.find(cp => cp.id === p.id);
+                if (compData) {
+                    tb.innerHTML += `<tr>
+                        <td style="color:#fff; font-weight:700">${compData.id}</td>
+                        <td>${compData.at}</td>
+                        <td>${compData.bt}</td>
+                        <td style="color:var(--emerald)">${compData.ct}</td>
+                        <td style="color:var(--rose)">${compData.tat}</td>
+                        <td style="color:var(--teal)">${compData.wt}</td>
+                    </tr>`;
+                } else {
+                    tb.innerHTML += `<tr>
+                        <td style="color:#fff; font-weight:700">${p.id}</td>
+                        <td>${p.at}</td>
+                        <td>${p.bt}</td>
+                        <td class="val-dash">-</td>
+                        <td class="val-dash">-</td>
+                        <td class="val-dash">-</td>
+                    </tr>`;
+                }
+            });
+        }
+
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; renderStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; renderStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function resetAnim() { stopAnim(); curStep = 0; renderStep(0); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; renderStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; renderStep(curStep); } }
+
+        function updateSpeed(v) {
+            speedMs = [1600, 1200, 800, 400, 100][parseInt(v) - 1];
+            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() {
+            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+        }
+
+        window.onload = () => {
+            document.getElementById('process-table-body').innerHTML = `<tr><td colspan="6" style="color:#6b7280; padding: 20px">Click Load Data to begin</td></tr>`;
+        }
+    </script>
+</body>
+
+</html>

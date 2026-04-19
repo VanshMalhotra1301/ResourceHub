@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual OS Lab ⚡ | BU Resource Hub</title>
+    <meta name="description"
+        content="Learn Operating Systems visually with step-by-step animations. Interactive scheduling, memory management, and deadlock simulations for Skills Seekers." />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700;900&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bg: '#07050a',
+                        card: 'rgba(15, 12, 20, 0.75)',
+                        border: 'rgba(255, 255, 255, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #07050a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(244, 114, 182, 0.06), transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.05), transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(251, 146, 60, 0.03), transparent 50%);
+            animation: aurora 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #07050a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2d1e3a;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #452c5a;
+        }
+
+        /* Algorithm Card */
+        .algo-card {
+            background: rgba(15, 12, 20, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            group: 'card';
+        }
+
+        .algo-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .algo-card.cyan:hover {
+            border-color: rgba(34, 211, 238, 0.4);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.1);
+        }
+
+        .algo-card.purple:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.1);
+        }
+
+        .algo-card.orange:hover {
+            border-color: rgba(251, 146, 60, 0.4);
+            box-shadow: 0 10px 30px rgba(251, 146, 60, 0.1);
+        }
+
+        .algo-card.pink:hover {
+            border-color: rgba(244, 114, 182, 0.4);
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.1);
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .algo-card.cyan .icon-box {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            color: #22d3ee;
+        }
+
+        .algo-card.purple .icon-box {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+
+        .algo-card.orange .icon-box {
+            background: rgba(251, 146, 60, 0.1);
+            border: 1px solid rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        .algo-card.pink .icon-box {
+            background: rgba(244, 114, 182, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+            color: #f472b6;
+        }
+
+        .algo-card:hover .icon-box {
+            transform: scale(1.1);
+        }
+
+        .complexity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .nav-link-arr {
+            position: absolute;
+            right: 24px;
+            top: 24px;
+            color: #4b5563;
+            transition: all 0.3s;
+        }
+
+        .algo-card:hover .nav-link-arr {
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        /* Topbar */
+        #topbar {
+            background: rgba(7, 5, 10, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header id="topbar" class="flex items-center px-6 h-16 w-full">
+        <a href="index.html"
+            class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium mr-4">
+            <i class="ph-bold ph-arrow-left"></i>
+            <span>Resource Hub</span>
+        </a>
+        <div class="h-6 w-px bg-white/10 mr-4"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-xl">⚡</span>
+            <span class="font-display font-bold text-white text-lg tracking-tight">Visual OS Lab</span>
+        </div>
+        <div class="ml-auto text-xs text-slate-500 font-mono hidden sm:flex items-center gap-2">
+            <i class="ph-fill ph-cpu text-pink-400"></i> Operating Systems · Skills Seekers
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 pb-24">
+
+        <!-- HERO -->
+        <div class="text-center mb-16 relative">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-bold tracking-widest uppercase mb-6">
+                Interactive Learning
+            </div>
+            <h1 class="font-display text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                Master Operating Systems <br /> <span
+                    class="bg-gradient-to-r from-pink-400 via-purple-400 to-orange-400 bg-clip-text text-transparent">Visually</span>
+            </h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                Step-by-step interactive animations, scheduling Gantt charts, memory allocators, and deadlocks simulated
+                specially
+                for Skills Seekers.
+            </p>
+        </div>
+
+        <!-- MODULE 1: Process + Scheduling -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
+                    <i class="ph-bold ph-number-circle-one text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Process & Scheduling</h2>
+                    <p class="text-slate-500 text-sm">Process lifecycles, CPU scheduling policies, and Gantt charts.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="os-process-states.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-arrows-clockwise"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Process States</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Understand the lifecycle: New, Ready,
+                        Running, Blocked, and Terminated.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Lifecycle</span>
+                        <span class="complexity-badge">Transitions</span>
+                    </div>
+                </a>
+
+                <a href="os-fcfs-scheduling.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-list-numbers"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">FCFS</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">First Come, First Served logic with
+                        live Gantt charts.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Non-preemptive</span>
+                    </div>
+                </a>
+
+                <a href="os-sjf-non-preemptive.html" class="algo-card cyan">
+                    <div class="icon-box"><i class="ph-fill ph-activity"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">SJF (Non-Preemptive)</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Shortest Job First logic.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Non-preemptive</span>
+                        <span class="complexity-badge">Optimum</span>
+                    </div>
+                </a>
+
+                <a href="os-sjf-preemptive.html" class="algo-card cyan">
+                    <div class="icon-box"><i class="ph-fill ph-activity"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">SRTF (Preemptive SJF)</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Shortest Remaining Time First.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Preemptive</span>
+                        <span class="complexity-badge">Optimum</span>
+                    </div>
+                </a>
+
+                <a href="os-round-robin.html" class="algo-card orange">
+                    <div class="icon-box"><i class="ph-fill ph-clock-counter-clockwise"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Round Robin</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Time quantum based preemptive CPU
+                        scheduling.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Preemptive</span>
+                        <span class="complexity-badge">Time slice</span>
+                    </div>
+                </a>
+
+                <a href="os-priority-nonpreemptive.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-sort-descending"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Priority (Non-Preemptive)</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Execute tasks based on priority values
+                        without preemption.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Non-preemptive</span>
+                        <span class="complexity-badge">Priority</span>
+                    </div>
+                </a>
+
+                <a href="os-priority-preemptive.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-sort-descending"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Priority (Preemptive)</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Execute tasks based on priority values
+                        with preemption.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Preemptive</span>
+                        <span class="complexity-badge">Priority</span>
+                    </div>
+                </a>
+
+                <a href="os-hrrn.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-chart-line-up"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">HRRN</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Highest Response Ratio Next scheduling
+                        algorithm.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Non-preemptive</span>
+                        <span class="complexity-badge">Dynamic</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- MODULE 2: Memory + Storage -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                    <i class="ph-bold ph-number-circle-two text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Memory & Storage</h2>
+                    <p class="text-slate-500 text-sm">Paging, virtual memory, replacement algorithms, and disk
+                        scheduling.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="javascript:void(0)" class="algo-card purple" style="opacity:0.6; cursor:not-allowed">
+                    <div class="icon-box"><i class="ph-fill ph-squares-four"></i></div>
+                    <div class="nav-link-arr"></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Paging Translation</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Logical to physical address
+                        translation with TLB.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Memory Maps</span>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity">
+                        <span
+                            class="bg-black border border-white/10 px-3 py-1 rounded-full text-xs font-bold text-white tracking-widest">COMING
+                            SOON</span>
+                    </div>
+                </a>
+
+                <a href="javascript:void(0)" class="algo-card orange" style="opacity:0.6; cursor:not-allowed">
+                    <div class="icon-box"><i class="ph-fill ph-file-arrow-down"></i></div>
+                    <div class="nav-link-arr"></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Page Replacement</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">FIFO, LRU, and Optimal strategy
+                        visualizer.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Page Faults</span>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity">
+                        <span
+                            class="bg-black border border-white/10 px-3 py-1 rounded-full text-xs font-bold text-white tracking-widest">COMING
+                            SOON</span>
+                    </div>
+                </a>
+
+                <a href="javascript:void(0)" class="algo-card cyan" style="opacity:0.6; cursor:not-allowed">
+                    <div class="icon-box"><i class="ph-fill ph-hard-drives"></i></div>
+                    <div class="nav-link-arr"></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Disk Scheduling</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">FCFS, SSTF, SCAN, C-SCAN simulations
+                        for disk arm movement.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Seek Time</span>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity">
+                        <span
+                            class="bg-black border border-white/10 px-3 py-1 rounded-full text-xs font-bold text-white tracking-widest">COMING
+                            SOON</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- MODULE 3: Concurrency + Deadlocks -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
+                    <i class="ph-bold ph-number-circle-three text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Concurrency & Deadlocks</h2>
+                    <p class="text-slate-500 text-sm">Critical sections, IPC, and Banker's Algorithm.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="javascript:void(0)" class="algo-card orange" style="opacity:0.6; cursor:not-allowed">
+                    <div class="icon-box"><i class="ph-fill ph-warning-circle"></i></div>
+                    <div class="nav-link-arr"></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Banker's Algorithm</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Deadlock avoidance implementation &
+                        safe sequences.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Deadlock</span>
+                        <span class="complexity-badge">Resource</span>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity">
+                        <span
+                            class="bg-black border border-white/10 px-3 py-1 rounded-full text-xs font-bold text-white tracking-widest">COMING
+                            SOON</span>
+                    </div>
+                </a>
+
+                <a href="javascript:void(0)" class="algo-card pink" style="opacity:0.6; cursor:not-allowed">
+                    <div class="icon-box"><i class="ph-fill ph-users-three"></i></div>
+                    <div class="nav-link-arr"></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Dining Philosophers</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Classic semaphore and critical section
+                        scenario.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">Synch</span>
+                        <span class="complexity-badge">Starvation</span>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity">
+                        <span
+                            class="bg-black border border-white/10 px-3 py-1 rounded-full text-xs font-bold text-white tracking-widest">COMING
+                            SOON</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-white/5 py-8 text-center text-slate-500 text-sm bg-black/20">
+        <p>Built for Skills Seekers Operating Systems Curriculum</p>
+    </footer>
+
+</body>
+
+</html>
