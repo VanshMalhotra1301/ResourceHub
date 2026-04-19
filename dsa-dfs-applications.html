@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFS Applications Visualizer ⚡ | Visual DSA Lab</title>
+    <meta name="description"
+        content="Interactive visualizer for DFS Applications: Topological Sort, Articulation Points, and Connected Components." />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --purple: #a855f7;
+            --indigo: #6366f1;
+            --green: #34d399;
+            --pink: #f472b6;
+            --orange: #fb923c;
+            --yellow: #facc15;
+            --red: #f87171;
+            --bg: #07040a;
+            --card: rgba(20, 10, 25, 0.7);
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.06), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05), transparent 40%);
+            animation: aurora 25s linear infinite;
+            z-index: -1; pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #07040a; }
+        ::-webkit-scrollbar-thumb { background: #2a1a3a; border-radius: 8px; }
+
+        /* ── Topbar ── */
+        #topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 5, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px;
+        }
+
+        .back-btn { display: flex; align-items: center; gap: 6px; color: #6b7280; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+        .back-btn:hover { color: #e2e8f0; }
+        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.08); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        .badge-beta { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; background: rgba(168, 85, 247, 0.1); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.25); }
+
+        /* ── Page Layout ── */
+        #page { max-width: 1300px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
+
+        .algo-hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+        .algo-hero h1 .icon-wrap { width: 44px; height: 44px; border-radius: 12px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(168, 85, 247, 0.15); }
+        .complexity-row { display: flex; gap: 8px; margin-top: 10px; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px; border-radius: 99px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .badge-time { background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); color: var(--cyan); }
+        .badge-space { background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.25); color: var(--pink); }
+
+        .card { background: var(--card); backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+
+        /* ── Controls Row ── */
+        .input-row { padding: 18px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.06); color: #e2e8f0; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-primary { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.4); color: var(--purple); }
+        .btn-primary:hover:not(:disabled) { background: rgba(168, 85, 247, 0.25); box-shadow: 0 0 20px rgba(168, 85, 247, 0.25); }
+        
+        .mode-selector { background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(168, 85, 247, 0.4); padding: 8px 16px; border-radius: 8px; font-family: 'JetBrains Mono'; outline: none; font-weight: 600; cursor: pointer; }
+        .mode-selector:focus { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
+
+        /* ── VIZ FRAME ── */
+        #viz-frame { border-radius: 16px; background: rgba(10, 8, 15, 0.85); border: 1px solid rgba(168, 85, 247, 0.25); margin-bottom: 20px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+        #viz-frame::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--purple), transparent); opacity: 0.8; }
+        
+        .viz-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(400px, 1fr); min-height: 520px; }
+        @media (max-width: 950px) { .viz-layout { grid-template-columns: 1fr; } }
+
+        /* Left: Graph Canvas */
+        #d3-container { width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(168, 85, 247, 0.04) 0%, transparent 75%); border-right: 1px solid rgba(255,255,255,0.08); position: relative; }
+        
+        /* Right: Exam Table */
+        .exam-section { padding: 24px; background: rgba(15, 10, 22, 0.6); overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .section-header { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;}
+        
+        .exam-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+        .exam-table th { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: #6b7280; text-align: center; padding: 0 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; text-transform: uppercase; }
+        .exam-table td { background: rgba(255,255,255,0.03); padding: 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; color: #94a3b8;}
+        .exam-table td:first-child { border-left: 1px solid rgba(255,255,255,0.05); border-radius: 8px 0 0 8px; font-weight: 800; color: #e2e8f0; }
+        .exam-table td:last-child { border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0 8px 8px 0; }
+        
+        .row-visiting td { background: rgba(244, 114, 182, 0.1); border-color: rgba(244, 114, 182, 0.3); color: #fff;}
+        .row-visiting td:first-child { color: var(--pink); border-left: 2px solid var(--pink); }
+        
+        .row-visited td { background: rgba(52, 211, 153, 0.08); border-color: transparent; }
+        .row-visited td:first-child { color: var(--green); border-left: 2px solid var(--green); }
+
+        /* Array UI for Topo Sort */
+        .array-container { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); min-height: 60px; align-items: center;}
+        .array-item { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-family: 'JetBrains Mono'; font-weight: 800; color: #fff; transition: all 0.3s; }
+        .array-item.active { background: rgba(168, 85, 247, 0.2); border-color: var(--purple); color: var(--cyan); box-shadow: 0 0 10px rgba(168, 85, 247, 0.3); transform: scale(1.1); }
+
+        /* Status Strip */
+        #status-strip { padding: 16px 24px; font-size: 14px; font-weight: 600; background: rgba(168, 85, 247, 0.08); border-top: 1px solid rgba(168, 85, 247, 0.2); text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 60px; color: #fff;}
+        .status-badge { background: rgba(168, 85, 247, 0.2); color: var(--purple); padding: 5px 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; border: 1px solid rgba(168, 85, 247, 0.4); }
+
+        /* Play Controls */
+        .controls-bar { padding: 18px 22px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .speed-wrap input[type=range] { -webkit-appearance: none; width: 110px; height: 5px; border-radius: 5px; background: rgba(255,255,255,0.15); outline: none; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--purple); cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 10px var(--purple); }
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* SVG Graph Styles */
+        .edge-line { stroke: rgba(255, 255, 255, 0.2); stroke-width: 3px; transition: all 0.4s ease; fill: none;}
+        .edge-line.evaluating { stroke: var(--pink); stroke-width: 5px; filter: drop-shadow(0 0 8px rgba(244, 114, 182, 0.6)); }
+        .edge-line.tree-edge { stroke: var(--green); stroke-width: 4px; }
+        .edge-line.back-edge { stroke: var(--red); stroke-width: 4px; stroke-dasharray: 6; }
+        
+        .arrow-head { fill: rgba(255, 255, 255, 0.2); transition: fill 0.4s ease; }
+        .edge-line.evaluating ~ .arrow-head { fill: var(--pink); }
+        .edge-line.tree-edge ~ .arrow-head { fill: var(--green); }
+        .edge-line.back-edge ~ .arrow-head { fill: var(--red); }
+
+        .node circle { fill: rgba(255, 255, 255, 0.05); stroke: rgba(255, 255, 255, 0.3); stroke-width: 2.5px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .node text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; fill: #f8fafc; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+        
+        .node.visiting circle { fill: rgba(244, 114, 182, 0.25); stroke: var(--pink); stroke-width: 4px; filter: drop-shadow(0 0 15px rgba(244, 114, 182, 0.4)); transform: scale(1.1); }
+        .node.visited circle { fill: rgba(52, 211, 153, 0.15); stroke: var(--green); stroke-width: 3px; }
+        .node.ap circle { fill: rgba(248, 113, 113, 0.2); stroke: var(--red); stroke-width: 5px; filter: drop-shadow(0 0 20px rgba(248, 113, 113, 0.6)); animation: pulseRed 2s infinite; }
+        
+        @keyframes pulseRed { 0% { filter: drop-shadow(0 0 10px rgba(248, 113, 113, 0.4)); } 50% { filter: drop-shadow(0 0 25px rgba(248, 113, 113, 0.8)); } 100% { filter: drop-shadow(0 0 10px rgba(248, 113, 113, 0.4)); } }
+
+        /* Meta tags on nodes (d/f times) */
+        .node-meta { font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 800; fill: var(--cyan); text-anchor: middle; opacity: 0; transition: opacity 0.3s; }
+        .node.visiting .node-meta, .node.visited .node-meta { opacity: 1; }
+
+        /* ── Code panel ── */
+        .panels-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 20px; }
+        .panel-card { padding: 22px; }
+        .code-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .code-tab { padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 12px 12px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; color: #94a3b8; background: transparent; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .code-tab.active { color: var(--purple); background: rgba(5, 5, 15, 0.95); border-color: rgba(255, 255, 255, 0.1); border-bottom-color: rgba(5, 5, 15, 0.95); }
+        .code-block { background: rgba(5, 5, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0 12px 12px 12px; padding: 20px 22px; color: #e2e8f0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; white-space: pre; margin-top: -1px; }
+        .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+    </style>
+</head>
+
+<body>
+    <header id="topbar">
+        <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">⚡ DFS Applications <span class="badge-beta">Graph Module</span></div>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1><div class="icon-wrap"><i class="ph-fill ph-tree-structure" style="color:var(--purple)"></i></div> Depth-First Search Mastery</h1>
+            <div class="complexity-row">
+                <span class="badge badge-time"><i class="ph-fill ph-clock"></i> Time: O(V + E)</span>
+                <span class="badge badge-space"><i class="ph-fill ph-stack"></i> Space: O(V)</span>
+            </div>
+            <p style="color:#94a3b8; font-size:14px; margin-top:12px; max-width:700px; line-height: 1.6;">
+                DFS is the foundation for solving complex graph structure problems. Select an application below to see how tweaking the standard DFS trace (using discovery/finish times and low values) unlocks advanced algorithms.
+            </p>
+        </div>
+
+        <div class="card input-row">
+            <div style="color:#e2e8f0; font-size:13px; font-weight:700;">Select Application:</div>
+            <select id="mode-selector" class="mode-selector" onchange="switchMode()">
+                <option value="topo">Topological Sort (DAG)</option>
+                <option value="ap">Articulation Points (Undirected)</option>
+                <option value="cc">Connected Components (Undirected)</option>
+            </select>
+            
+            <div style="width:1px; height:24px; background:rgba(255,255,255,0.1); margin:0 8px;"></div>
+
+            <button class="btn btn-primary" onclick="generateDFS()">
+                <i class="ph-bold ph-play-circle"></i> Run Algorithm
+            </button>
+        </div>
+
+        <div id="viz-frame">
+            <div class="viz-layout">
+                <div id="d3-container">
+                    <svg width="100%" height="100%" viewBox="0 0 680 480" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="28" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" class="arrow-head" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                
+                <div class="exam-section" id="right-panel">
+                    </div>
+            </div>
+            <div id="status-strip">
+                <i class="ph-fill ph-info" style="color:var(--purple)"></i>
+                <span id="status-text">Select an application and click "Run Algorithm" to begin the DFS trace.</span>
+            </div>
+        </div>
+
+        <div class="card controls-bar">
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i> Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
+            <button id="btn-reset" class="btn" style="color:#f87171" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+
+            <div class="speed-wrap">
+                <i class="ph-bold ph-tortoise" style="color:#94a3b8"></i>
+                <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                <i class="ph-bold ph-rabbit" style="color:#94a3b8"></i>
+                <span id="speed-label" style="font-family:'JetBrains Mono'; font-size:12px; color:#94a3b8; width:36px">1.0×</span>
+            </div>
+            <div style="font-family:'JetBrains Mono'; font-size:12px; color:#94a3b8; margin-left:8px">
+                Step <span id="cur-step">0</span> / <span id="tot-steps">0</span>
+            </div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--cyan)"></i> Core DFS Implementations</div>
+                <div class="code-tabs">
+                    <button class="code-tab active" id="tab-topo" onclick="switchCodeTab('topo')">Topological Sort</button>
+                    <button class="code-tab" id="tab-ap" onclick="switchCodeTab('ap')">Articulation Points</button>
+                    <button class="code-tab" id="tab-cc" onclick="switchCodeTab('cc')">Components</button>
+                </div>
+                
+                <div id="code-topo" class="code-block"><span class="cm">// C++ Topological Sort using DFS</span>
+<span class="ck">void</span> <span class="ct">dfs</span>(<span class="ck">int</span> u, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; adj, vector&lt;<span class="ck">bool</span>&gt;&amp; visited, stack&lt;<span class="ck">int</span>&gt;&amp; st) {
+    visited[u] = <span class="ck">true</span>;
+    <span class="ck">for</span> (<span class="ck">int</span> v : adj[u]) {
+        <span class="ck">if</span> (!visited[v]) dfs(v, adj, visited, st);
+    }
+    <span class="cm">// Push to stack ONLY AFTER all children are processed (Finish Time)</span>
+    st.<span class="ct">push</span>(u); 
+}
+
+<span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; <span class="ct">topoSort</span>(<span class="ck">int</span> V, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; adj) {
+    <span class="ct">vector</span>&lt;<span class="ck">bool</span>&gt; <span class="ct">visited</span>(V, <span class="ck">false</span>);
+    <span class="ct">stack</span>&lt;<span class="ck">int</span>&gt; st;
+    
+    <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i &lt; V; i++) {
+        <span class="ck">if</span> (!visited[i]) dfs(i, adj, visited, st);
+    }
+    
+    <span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; res;
+    <span class="ck">while</span> (!st.<span class="ct">empty</span>()) {
+        res.<span class="ct">push_back</span>(st.<span class="ct">top</span>());
+        st.<span class="ct">pop</span>();
+    }
+    <span class="ck">return</span> res;
+}</div>
+
+                <div id="code-ap" class="code-block" style="display:none"><span class="cm">// C++ Articulation Points using Tarjan's Concept (low/disc)</span>
+<span class="ck">int</span> timer = <span class="cn">0</span>;
+<span class="ck">void</span> <span class="ct">dfs</span>(<span class="ck">int</span> u, <span class="ck">int</span> p, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; adj, vector&lt;<span class="ck">bool</span>&gt;&amp; vis, 
+         vector&lt;<span class="ck">int</span>&gt;&amp; disc, vector&lt;<span class="ck">int</span>&gt;&amp; low, vector&lt;<span class="ck">bool</span>&gt;&amp; isAP) {
+    vis[u] = <span class="ck">true</span>;
+    disc[u] = low[u] = ++timer;
+    <span class="ck">int</span> children = <span class="cn">0</span>;
+    
+    <span class="ck">for</span> (<span class="ck">int</span> v : adj[u]) {
+        <span class="ck">if</span> (v == p) <span class="ck">continue</span>; <span class="cm">// Ignore edge to parent</span>
+        
+        <span class="ck">if</span> (vis[v]) {
+            <span class="cm">// Back-edge found: update low value</span>
+            low[u] = <span class="ct">min</span>(low[u], disc[v]);
+        } <span class="ck">else</span> {
+            children++;
+            dfs(v, u, adj, vis, disc, low, isAP);
+            
+            <span class="cm">// Propagate low value up the tree</span>
+            low[u] = <span class="ct">min</span>(low[u], low[v]);
+            
+            <span class="cm">// Articulation Point Condition 1: Non-root</span>
+            <span class="ck">if</span> (p != -<span class="cn">1</span> &amp;&amp; low[v] &gt;= disc[u]) isAP[u] = <span class="ck">true</span>;
+        }
+    }
+    <span class="cm">// Articulation Point Condition 2: Root with &gt;1 children</span>
+    <span class="ck">if</span> (p == -<span class="cn">1</span> &amp;&amp; children &gt; <span class="cn">1</span>) isAP[u] = <span class="ck">true</span>;
+}</div>
+
+                <div id="code-cc" class="code-block" style="display:none"><span class="cm">// C++ Connected Components</span>
+<span class="ck">void</span> <span class="ct">dfs</span>(<span class="ck">int</span> u, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; adj, vector&lt;<span class="ck">bool</span>&gt;&amp; visited, <span class="ck">int</span> compID, vector&lt;<span class="ck">int</span>&gt;&amp; comp) {
+    visited[u] = <span class="ck">true</span>;
+    comp[u] = compID;
+    
+    <span class="ck">for</span> (<span class="ck">int</span> v : adj[u]) {
+        <span class="ck">if</span> (!visited[v]) dfs(v, adj, visited, compID, comp);
+    }
+}
+
+<span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; <span class="ct">findComponents</span>(<span class="ck">int</span> V, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; adj) {
+    <span class="ct">vector</span>&lt;<span class="ck">bool</span>&gt; <span class="ct">visited</span>(V, <span class="ck">false</span>);
+    <span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; <span class="ct">comp</span>(V, <span class="cn">0</span>);
+    <span class="ck">int</span> compID = <span class="cn">0</span>;
+    
+    <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i &lt; V; i++) {
+        <span class="ck">if</span> (!visited[i]) {
+            compID++;
+            dfs(i, adj, visited, compID, comp);
+        }
+    }
+    <span class="ck">return</span> comp; <span class="cm">// Returns array mapping node to its Component ID</span>
+}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ── Core Graph Datasets ── */
+        const graphs = {
+            'topo': {
+                directed: true,
+                nodes: [{id:0, l:'0', cx:100, cy:240}, {id:1, l:'1', cx:250, cy:100}, {id:2, l:'2', cx:250, cy:380}, {id:3, l:'3', cx:450, cy:100}, {id:4, l:'4', cx:450, cy:380}, {id:5, l:'5', cx:600, cy:240}],
+                edges: [{u:0, v:1}, {u:0, v:2}, {u:1, v:3}, {u:2, v:4}, {u:3, v:5}, {u:4, v:5}, {u:2, v:1}] // DAG
+            },
+            'ap': {
+                directed: false,
+                nodes: [{id:0, l:'0', cx:120, cy:150}, {id:1, l:'1', cx:120, cy:330}, {id:2, l:'2', cx:280, cy:240}, {id:3, l:'3', cx:440, cy:240}, {id:4, l:'4', cx:600, cy:150}, {id:5, l:'5', cx:600, cy:330}],
+                edges: [{u:0, v:1}, {u:1, v:2}, {u:2, v:0}, {u:2, v:3}, {u:3, v:4}, {u:4, v:5}, {u:5, v:3}] // Bowtie shape (2 and 3 are APs)
+            },
+            'cc': {
+                directed: false,
+                nodes: [{id:0, l:'0', cx:100, cy:150}, {id:1, l:'1', cx:200, cy:250}, {id:2, l:'2', cx:100, cy:350}, {id:3, l:'3', cx:450, cy:150}, {id:4, l:'4', cx:550, cy:250}, {id:5, l:'5', cx:450, cy:350}],
+                edges: [{u:0, v:1}, {u:1, v:2}, {u:2, v:0}, {u:3, v:4}, {u:4, v:5}] // Two disconnected triangles
+            }
+        };
+
+        let currentMode = 'topo';
+        let nodes = [], edges = [];
+        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1200;
+
+        const svg = d3.select("#d3-container svg");
+
+        /* ── UI INITIALIZATION ── */
+        function switchMode() {
+            currentMode = document.getElementById('mode-selector').value;
+            nodes = graphs[currentMode].nodes;
+            edges = graphs[currentMode].edges;
+            resetAnim();
+            buildPanelUI();
+            drawGraph();
+            switchCodeTab(currentMode);
+        }
+
+        function buildPanelUI() {
+            const panel = document.getElementById('right-panel');
+            let html = '';
+            
+            if (currentMode === 'topo') {
+                html = `
+                    <div class="section-header"><i class="ph-bold ph-stack"></i> Topological Sort Trace</div>
+                    <table class="exam-table">
+                        <thead><tr><th>Node</th><th>Status</th><th>Disc / Finish</th></tr></thead>
+                        <tbody id="tb-body"></tbody>
+                    </table>
+                    <div class="section-header" style="margin-top:10px"><i class="ph-bold ph-list-numbers"></i> Result Stack (Reversed for Valid Order)</div>
+                    <div class="array-container" id="res-stack"></div>
+                `;
+            } else if (currentMode === 'ap') {
+                html = `
+                    <div class="section-header"><i class="ph-bold ph-table"></i> Articulation Point Trace</div>
+                    <table class="exam-table">
+                        <thead><tr><th>Node</th><th>Status</th><th>Disc</th><th>Low</th><th>Parent</th></tr></thead>
+                        <tbody id="tb-body"></tbody>
+                    </table>
+                    <div class="section-header" style="margin-top:10px"><i class="ph-bold ph-warning-circle" style="color:var(--red)"></i> Identified APs</div>
+                    <div class="array-container" id="ap-list"></div>
+                `;
+            } else if (currentMode === 'cc') {
+                html = `
+                    <div class="section-header"><i class="ph-bold ph-graph"></i> Components Trace</div>
+                    <table class="exam-table">
+                        <thead><tr><th>Node</th><th>Status</th><th>Comp ID</th></tr></thead>
+                        <tbody id="tb-body"></tbody>
+                    </table>
+                `;
+            }
+            panel.innerHTML = html;
+            initTableRows();
+        }
+
+        function initTableRows() {
+            const tbody = document.getElementById('tb-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            nodes.forEach(n => {
+                let tr = `<tr id="tr-${n.id}"><td>${n.l}</td><td id="st-${n.id}">Unvisited</td>`;
+                if(currentMode === 'topo') tr += `<td id="df-${n.id}">- / -</td>`;
+                if(currentMode === 'ap') tr += `<td id="d-${n.id}">-</td><td id="l-${n.id}">-</td><td id="p-${n.id}">-</td>`;
+                if(currentMode === 'cc') tr += `<td id="cid-${n.id}">-</td>`;
+                tr += `</tr>`;
+                tbody.innerHTML += tr;
+            });
+        }
+
+        /* ── D3 GRAPH RENDERING ── */
+        function drawGraph() {
+            svg.selectAll(".edges, .nodes").remove();
+
+            const edgesGroup = svg.append("g").attr("class", "edges");
+            const edgeData = edgesGroup.selectAll(".edge-group").data(edges).enter().append("g")
+                .attr("class", "edge-group").attr("id", d => `eg-${d.u}-${d.v}`);
+
+            edgeData.append("line").attr("class", "edge-line").attr("id", d => `line-${d.u}-${d.v}`)
+                .attr("x1", d => nodes.find(n => n.id === d.u).cx)
+                .attr("y1", d => nodes.find(n => n.id === d.u).cy)
+                .attr("x2", d => nodes.find(n => n.id === d.v).cx)
+                .attr("y2", d => nodes.find(n => n.id === d.v).cy)
+                .attr("marker-end", graphs[currentMode].directed ? "url(#arrowhead)" : "");
+
+            const nodesGroup = svg.append("g").attr("class", "nodes");
+            const nodeData = nodesGroup.selectAll(".node").data(nodes).enter().append("g")
+                .attr("class", "node").attr("id", d => `node-${d.id}`)
+                .attr("transform", d => `translate(${d.cx}, ${d.cy})`);
+
+            nodeData.append("circle").attr("r", 22);
+            nodeData.append("text").text(d => d.l);
+            nodeData.append("text").attr("class", "node-meta").attr("id", d => `meta-${d.id}`).attr("y", -35).text("");
+        }
+
+        /* ── ALGORITHM ENGINES ── */
+        function generateDFS() {
+            stopAnim(); initTableRows(); drawGraph();
+            steps = [];
+            
+            if (currentMode === 'topo') runTopo();
+            else if (currentMode === 'ap') runAP();
+            else if (currentMode === 'cc') runCC();
+
+            enableBtns(true);
+            curStep = 0; applyStep(0);
+        }
+
+        function pushState(msg, currU = null, currE = null, edgeClass = null) {
+            let snap = { msg, currU, currE, edgeClass, states: {} };
+            nodes.forEach(n => {
+                snap.states[n.id] = { 
+                    col: document.getElementById(`node-${n.id}`).dataset.col || 'W',
+                    d: document.getElementById(`node-${n.id}`).dataset.d || '-',
+                    f: document.getElementById(`node-${n.id}`).dataset.f || '-',
+                    low: document.getElementById(`node-${n.id}`).dataset.low || '-',
+                    p: document.getElementById(`node-${n.id}`).dataset.p || '-',
+                    cid: document.getElementById(`node-${n.id}`).dataset.cid || '-',
+                    isAp: document.getElementById(`node-${n.id}`).dataset.isAp === 'true'
+                };
+            });
+            // Snapshot edge colors
+            snap.edgeStyles = {};
+            edges.forEach(e => {
+                snap.edgeStyles[`${e.u}-${e.v}`] = document.getElementById(`line-${e.u}-${e.v}`).dataset.style || '';
+            });
+            
+            // UI Arrays
+            if(currentMode==='topo') {
+                let stack = document.getElementById('res-stack').dataset.arr || '';
+                snap.stack = stack ? stack.split(',') : [];
+            }
+            if(currentMode==='ap') {
+                let aps = document.getElementById('ap-list').dataset.arr || '';
+                snap.aps = aps ? aps.split(',') : [];
+            }
+
+            steps.push(snap);
+        }
+
+        function setNodeData(id, key, val) { document.getElementById(`node-${id}`).dataset[key] = val; }
+        function setEdgeStyle(u, v, style) { 
+            let line = document.getElementById(`line-${u}-${v}`);
+            if(line) line.dataset.style = style;
+            else if (!graphs[currentMode].directed) { // check reverse for undirected
+                line = document.getElementById(`line-${v}-${u}`);
+                if(line) line.dataset.style = style;
+            }
+        }
+
+        // --- TOPOLOGICAL SORT LOGIC ---
+        function runTopo() {
+            let time = 0;
+            nodes.forEach(n => { setNodeData(n.id, 'col', 'W'); });
+            document.getElementById('res-stack').dataset.arr = '';
+            
+            function dfsTopo(u) {
+                setNodeData(u, 'col', 'G');
+                setNodeData(u, 'd', ++time);
+                pushState(`Discovered Node ${u}. Discovery Time = ${time}.`, u);
+                
+                let adjs = edges.filter(e => e.u === u);
+                for (let e of adjs) {
+                    let v = e.v;
+                    let vCol = document.getElementById(`node-${v}`).dataset.col || 'W';
+                    if (vCol === 'W') {
+                        setEdgeStyle(u, v, 'tree-edge');
+                        pushState(`Traversing tree edge ${u} -> ${v}.`, u, e, 'tree-edge');
+                        dfsTopo(v);
+                    } else {
+                        pushState(`Edge ${u} -> ${v} leads to visited node. Skipping.`, u, e);
+                    }
+                }
+                
+                setNodeData(u, 'col', 'B');
+                setNodeData(u, 'f', ++time);
+                let curStack = document.getElementById('res-stack').dataset.arr;
+                curStack = curStack ? u + ',' + curStack : u.toString();
+                document.getElementById('res-stack').dataset.arr = curStack;
+                pushState(`Finished Node ${u}. Finish Time = ${time}. Pushed to result stack.`, u);
+            }
+
+            for(let n of nodes) {
+                if((document.getElementById(`node-${n.id}`).dataset.col || 'W') === 'W') {
+                    pushState(`Starting DFS from unvisited Node ${n.id}.`, n.id);
+                    dfsTopo(n.id);
+                }
+            }
+            pushState(`✅ Topological Sort Complete. Read stack left to right.`);
+        }
+
+        // --- ARTICULATION POINTS LOGIC ---
+        function runAP() {
+            let time = 0;
+            nodes.forEach(n => { setNodeData(n.id, 'col', 'W'); setNodeData(n.id, 'p', '-1'); setNodeData(n.id, 'isAp', 'false'); });
+            document.getElementById('ap-list').dataset.arr = '';
+
+            function dfsAP(u, p) {
+                setNodeData(u, 'col', 'G');
+                let t = ++time;
+                setNodeData(u, 'd', t); setNodeData(u, 'low', t); setNodeData(u, 'p', p);
+                pushState(`Discovered Node ${u}. Disc = Low = ${t}.`, u);
+                
+                let children = 0;
+                let adjs = edges.filter(e => e.u === u || e.v === u);
+                
+                for(let e of adjs) {
+                    let v = e.u === u ? e.v : e.u;
+                    if (v === p) continue;
+
+                    let vCol = document.getElementById(`node-${v}`).dataset.col || 'W';
+                    if (vCol === 'W') {
+                        children++;
+                        setEdgeStyle(u, v, 'tree-edge');
+                        pushState(`Tree edge ${u}-${v}. Recursing into ${v}.`, u, e, 'tree-edge');
+                        dfsAP(v, u);
+
+                        let lowU = parseInt(document.getElementById(`node-${u}`).dataset.low);
+                        let lowV = parseInt(document.getElementById(`node-${v}`).dataset.low);
+                        if(lowV < lowU) {
+                            setNodeData(u, 'low', lowV);
+                            pushState(`Backtracking from ${v} to ${u}. Updated low[${u}] = min(${lowU}, ${lowV}) = ${lowV}.`, u);
+                        } else {
+                            pushState(`Backtracking from ${v} to ${u}. low[${u}] remains ${lowU}.`, u);
+                        }
+
+                        let discU = parseInt(document.getElementById(`node-${u}`).dataset.d);
+                        if(p !== -1 && lowV >= discU) {
+                            setNodeData(u, 'isAp', 'true');
+                            let arr = document.getElementById('ap-list').dataset.arr;
+                            if(!arr.includes(u.toString())) document.getElementById('ap-list').dataset.arr = arr ? arr+','+u : u.toString();
+                            pushState(`🚨 AP FOUND! low[${v}] (${lowV}) >= disc[${u}] (${discU}). Node ${u} is an Articulation Point.`, u);
+                        }
+                    } else if (vCol === 'G') {
+                        setEdgeStyle(u, v, 'back-edge');
+                        let discV = parseInt(document.getElementById(`node-${v}`).dataset.d);
+                        let lowU = parseInt(document.getElementById(`node-${u}`).dataset.low);
+                        if(discV < lowU) {
+                            setNodeData(u, 'low', discV);
+                            pushState(`Back-edge ${u}-${v} found! Updated low[${u}] = min(low[${u}], disc[${v}]) = ${discV}.`, u, e, 'back-edge');
+                        } else {
+                            pushState(`Back-edge ${u}-${v} found, but disc[${v}] >= low[${u}]. No update.`, u, e, 'back-edge');
+                        }
+                    }
+                }
+
+                setNodeData(u, 'col', 'B');
+                if(p === -1 && children > 1) {
+                    setNodeData(u, 'isAp', 'true');
+                    let arr = document.getElementById('ap-list').dataset.arr;
+                    if(!arr.includes(u.toString())) document.getElementById('ap-list').dataset.arr = arr ? arr+','+u : u.toString();
+                    pushState(`🚨 AP FOUND! Root Node ${u} has > 1 children (${children}). It is an Articulation Point.`, u);
+                } else if (p === -1) {
+                    pushState(`Root Node ${u} finished. Only has ${children} child. Not an AP.`, u);
+                } else {
+                    pushState(`Finished Node ${u}.`, u);
+                }
+            }
+
+            for(let n of nodes) {
+                if((document.getElementById(`node-${n.id}`).dataset.col || 'W') === 'W') dfsAP(n.id, -1);
+            }
+            pushState(`✅ Articulation Points algorithm complete.`);
+        }
+
+        // --- CONNECTED COMPONENTS LOGIC ---
+        function runCC() {
+            let compID = 0;
+            const colors = ['#f472b6', '#34d399', '#22d3ee', '#facc15', '#a855f7'];
+            nodes.forEach(n => { setNodeData(n.id, 'col', 'W'); setNodeData(n.id, 'cid', '-'); });
+
+            function dfsCC(u, id) {
+                setNodeData(u, 'col', 'B');
+                setNodeData(u, 'cid', id);
+                pushState(`Visiting Node ${u}. Assigned to Component ${id}.`, u);
+
+                let adjs = edges.filter(e => e.u === u || e.v === u);
+                for(let e of adjs) {
+                    let v = e.u === u ? e.v : e.u;
+                    if ((document.getElementById(`node-${v}`).dataset.col || 'W') === 'W') {
+                        setEdgeStyle(u, v, 'tree-edge');
+                        dfsCC(v, id);
+                    }
+                }
+            }
+
+            for(let n of nodes) {
+                if((document.getElementById(`node-${n.id}`).dataset.col || 'W') === 'W') {
+                    compID++;
+                    pushState(`Found unvisited node ${n.id}. Starting new Component ID: ${compID}.`, n.id);
+                    dfsCC(n.id, compID);
+                }
+            }
+            pushState(`✅ Connected Components complete. Total components: ${compID}.`);
+        }
+
+        /* ── ANIMATION ENGINE ── */
+        function applyStep(si) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            // Reset SVG
+            d3.selectAll('.node').attr('class', 'node');
+            d3.selectAll('.edge-line').attr('class', 'edge-line').style('stroke', '');
+            d3.selectAll('.node circle').style('fill', '');
+
+            const compColors = ['rgba(244,114,182,0.2)', 'rgba(52,211,153,0.2)', 'rgba(34,211,238,0.2)', 'rgba(250,204,21,0.2)', 'rgba(168,85,247,0.2)'];
+
+            // Apply Nodes
+            nodes.forEach(n => {
+                let state = s.states[n.id];
+                let dom = d3.select(`#node-${n.id}`);
+                let tr = document.getElementById(`tr-${n.id}`);
+                tr.className = '';
+
+                if(state.col === 'G') { dom.classed('visiting', true); tr.classList.add('row-visiting'); document.getElementById(`st-${n.id}`).innerHTML = 'Visiting'; }
+                else if(state.col === 'B') { dom.classed('visited', true); tr.classList.add('row-visited'); document.getElementById(`st-${n.id}`).innerHTML = 'Visited'; }
+                else { document.getElementById(`st-${n.id}`).innerHTML = 'Unvisited'; }
+
+                if(state.isAp) { dom.classed('ap', true); }
+
+                if(currentMode === 'cc' && state.cid !== '-') {
+                    dom.select('circle').style('fill', compColors[(state.cid-1) % compColors.length]);
+                }
+
+                if(n.id === s.currU) dom.classed('visiting', true); // Highlight active
+
+                // Update Meta Text (Above Node)
+                let meta = dom.select('.node-meta');
+                if(currentMode === 'topo') meta.text(state.col !== 'W' ? `${state.d}/${state.f}` : '');
+                else if(currentMode === 'ap') meta.text(state.col !== 'W' ? `d:${state.d} l:${state.low}` : '');
+                else meta.text('');
+
+                // Update Table Data
+                if(currentMode === 'topo') document.getElementById(`df-${n.id}`).innerText = `${state.d} / ${state.f}`;
+                if(currentMode === 'ap') {
+                    document.getElementById(`d-${n.id}`).innerText = state.d;
+                    document.getElementById(`l-${n.id}`).innerText = state.low;
+                    document.getElementById(`p-${n.id}`).innerText = state.p;
+                }
+                if(currentMode === 'cc') {
+                    document.getElementById(`cid-${n.id}`).innerText = state.cid;
+                    if(state.cid !== '-') tr.style.borderLeftColor = compColors[(state.cid-1)%compColors.length];
+                }
+            });
+
+            // Apply Edges
+            Object.keys(s.edgeStyles).forEach(key => {
+                let [u, v] = key.split('-');
+                let el = d3.select(`#line-${u}-${v}`);
+                if(el.empty() && !graphs[currentMode].directed) el = d3.select(`#line-${v}-${u}`);
+                if(!el.empty() && s.edgeStyles[key]) el.classed(s.edgeStyles[key], true);
+            });
+
+            if(s.currE) {
+                let el = d3.select(`#line-${s.currE.u}-${s.currE.v}`);
+                if(el.empty() && !graphs[currentMode].directed) el = d3.select(`#line-${s.currE.v}-${s.currE.u}`);
+                if(!el.empty()) el.classed('evaluating', true);
+            }
+
+            // Apply UI Arrays
+            if(currentMode === 'topo' && s.stack) {
+                let html = s.stack.map((v, i) => `<div class="array-item ${i===0 && s.stack.length>0 ? 'active':''}">${v}</div>`).join('');
+                document.getElementById('res-stack').innerHTML = html;
+            }
+            if(currentMode === 'ap' && s.aps) {
+                let html = s.aps.map(v => `<div class="array-item" style="border-color:var(--red); color:var(--red)">${v}</div>`).join('');
+                document.getElementById('ap-list').innerHTML = html;
+            }
+
+            // Status
+            document.getElementById('status-text').innerHTML = s.msg;
+            document.getElementById('cur-step').textContent = si + 1;
+            document.getElementById('tot-steps').textContent = steps.length;
+        }
+
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; applyStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function resetAnim() { stopAnim(); curStep = -1; initTableRows(); drawGraph(); document.getElementById('status-text').innerHTML = "Ready. Click Run Algorithm."; enableBtns(false); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+
+        function updateSpeed(v) {
+            speedMs = [2000, 1500, 1000, 600, 250][parseInt(v) - 1];
+            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '1.5×', '3.0×'][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() {
+            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+        }
+
+        function switchCodeTab(lang) {
+            ['topo', 'ap', 'cc'].forEach(l => {
+                document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+                document.getElementById('tab-' + l).classList.toggle('active', l === lang);
+            });
+        }
+
+        // Boot
+        switchMode();
+    </script>
+</body>
+</html>

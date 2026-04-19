@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>0/1 Knapsack DP Visualizer ⚡ | Visual DSA Lab</title>
+    <meta name="description" content="Highly interactive 0/1 Knapsack Dynamic Programming visualizer. Watch the DP matrix fill and trace back the optimal items." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee; --purple: #a855f7; --indigo: #6366f1;
+            --green: #34d399; --pink: #f472b6; --orange: #fb923c;
+            --yellow: #facc15; --red: #f87171; --bg: #07040a;
+            --card: rgba(20, 10, 25, 0.7); --border: rgba(255, 255, 255, 0.12);
+            --gold: #fbbf24;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.08), transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.06), transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.05), transparent 40%);
+            animation: aurora 25s linear infinite; z-index: -1; pointer-events: none;
+        }
+        @keyframes aurora { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 8px; }
+
+        /* ── Topbar ── */
+        #topbar { position: sticky; top: 0; z-index: 100; background: rgba(10, 5, 15, 0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px; }
+        .back-btn { display: flex; align-items: center; gap: 6px; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 600; transition: color 0.2s; }
+        .back-btn:hover { color: #fff; }
+        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.1); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        .badge-beta { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; background: rgba(168, 85, 247, 0.15); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+        #page { max-width: 1400px; margin: 0 auto; padding: 30px 20px 80px; }
+        
+        .algo-hero { margin-bottom: 24px; }
+        .algo-hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+        .algo-hero h1 .icon-wrap { width: 44px; height: 44px; border-radius: 12px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--purple); box-shadow: 0 0 25px rgba(168, 85, 247, 0.15); }
+        
+        .card { background: var(--card); backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+
+        /* ── Controls & Inputs ── */
+        .controls-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; padding: 20px; margin-bottom: 20px;}
+        .input-group { display: flex; flex-direction: column; gap: 6px; }
+        .input-group label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input[type="text"], input[type="number"] {
+            background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2); 
+            padding: 10px 14px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 13px; outline: none; transition: border 0.3s;
+        }
+        input:focus { border-color: var(--purple); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.06); color: #e2e8f0; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; white-space: nowrap;}
+        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-primary { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.4); color: var(--purple); }
+        .btn-primary:hover:not(:disabled) { background: rgba(168, 85, 247, 0.25); box-shadow: 0 0 20px rgba(168, 85, 247, 0.25); }
+        .btn-magic { background: rgba(34, 211, 238, 0.1); border-color: rgba(34, 211, 238, 0.3); color: var(--cyan); }
+
+        /* ── Items Visual Display ── */
+        .items-display { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .item-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s; position: relative;}
+        .item-box.selected { background: rgba(251, 191, 36, 0.15); border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); transform: translateY(-4px); }
+        .item-box.selected::after { content: 'IN KNAPSACK'; position: absolute; top: -10px; font-size: 9px; font-weight: 900; background: var(--gold); color: #000; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px; }
+        .item-idx { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+        .item-wt { font-family: 'JetBrains Mono'; font-size: 14px; font-weight: 700; color: var(--pink); }
+        .item-val { font-family: 'JetBrains Mono'; font-size: 14px; font-weight: 700; color: var(--green); }
+
+        /* ── VIZ FRAME: The DP Matrix ── */
+        .viz-layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(400px, 1fr); gap: 24px; margin-bottom: 20px; }
+        @media (max-width: 1000px) { .viz-layout { grid-template-columns: 1fr; } }
+
+        .matrix-container { background: rgba(10, 8, 15, 0.85); border-radius: 16px; border: 1px solid rgba(168, 85, 247, 0.25); box-shadow: inset 0 0 80px rgba(168, 85, 247, 0.05); overflow: auto; padding: 24px; min-height: 400px; display: flex; justify-content: center; position: relative;}
+        
+        .dp-grid { display: grid; gap: 6px; align-content: start;}
+        .dp-cell { 
+            width: 48px; height: 48px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; 
+            font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: #6b7280; 
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;
+        }
+        
+        /* The Header/Axis Cells */
+        .dp-header { background: transparent; border-color: transparent; color: #94a3b8; font-weight: 800; font-size: 12px; }
+        .dp-header-row { display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
+        .dp-idx { position: absolute; top: 4px; left: 4px; font-size: 9px; color: rgba(255,255,255,0.2); font-weight: 400; }
+
+        /* Animation States for Cells */
+        .cell-base { color: #e2e8f0; background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+        .cell-evaluating { background: rgba(244, 114, 182, 0.2); border-color: var(--pink); color: #fff; transform: scale(1.15); z-index: 10; box-shadow: 0 0 20px rgba(244, 114, 182, 0.4); }
+        .cell-dependency { background: rgba(34, 211, 238, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); transform: scale(1.05); z-index: 5;}
+        .cell-updated { background: rgba(52, 211, 153, 0.25); border-color: var(--green); color: #fff; animation: flashGreen 0.6s ease-out; box-shadow: 0 0 20px rgba(52, 211, 153, 0.3); z-index: 10;}
+        .cell-path { background: rgba(251, 191, 36, 0.25); border-color: var(--gold); color: var(--gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); font-weight: 900; z-index: 5;}
+        .cell-null { background: transparent; border-color: transparent; color: transparent; }
+
+        @keyframes flashGreen { 0% { background: var(--green); color: #000; transform: scale(1.2); } 100% { background: rgba(52, 211, 153, 0.25); } }
+
+        /* Status & Playback */
+        .right-panel { display: flex; flex-direction: column; gap: 20px; }
+        
+        .status-box { background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 24px; flex-grow: 1;}
+        .status-header { font-size: 12px; font-weight: 800; color: var(--purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;}
+        .status-msg { font-size: 15px; line-height: 1.6; color: #f8fafc; font-family: 'Inter', sans-serif;}
+        
+        .formula-box { background: rgba(0,0,0,0.5); padding: 16px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 14px; color: var(--cyan); margin-top: 16px; border: 1px solid rgba(34, 211, 238, 0.2); line-height: 1.8;}
+        .fb-label { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-family: 'Inter'; font-weight: 800;}
+        .f-exc { color: var(--cyan); }
+        .f-inc { color: var(--pink); }
+
+        .playback-bar { padding: 16px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+        .speed-wrap input[type=range] { -webkit-appearance: none; width: 100px; height: 5px; border-radius: 5px; background: rgba(255,255,255,0.15); outline: none; cursor: pointer;}
+        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 10px var(--purple); cursor: pointer; transition: transform 0.2s; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* ── Code Panel ── */
+        .code-panel { background: rgba(10, 8, 15, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; }
+        .code-tabs { display: flex; gap: 2px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 8px; pt-top: 8px; }
+        .code-tab { padding: 10px 16px; font-size: 12px; font-weight: 700; cursor: pointer; color: #94a3b8; background: transparent; border: none; border-bottom: 2px solid transparent; transition: all 0.2s; font-family: 'Inter'; }
+        .code-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+        .code-content { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; max-height: 350px; }
+        .cl { padding: 2px 8px; border-left: 2px solid transparent; color: #94a3b8; transition: all 0.2s; white-space: pre; border-radius: 0 4px 4px 0;}
+        .cl.active { border-left-color: var(--purple); background: rgba(168, 85, 247, 0.1); color: #fff; }
+        .kw { color: #c084fc; } .fn { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .vr { color: #f472b6; }
+    </style>
+</head>
+
+<body>
+
+    <header id="topbar">
+        <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">
+            ⚡ 0/1 Knapsack Visualizer
+            <span class="badge-beta">DP Module</span>
+        </div>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1><div class="icon-wrap"><i class="ph-fill ph-backpack"></i></div> Dynamic Programming: 0/1 Knapsack</h1>
+            <p style="color:#94a3b8; font-size:14px; max-width:800px; line-height:1.6;">
+                Given weights and values of <b>N</b> items, put these items in a knapsack of capacity <b>W</b> to get the maximum total value. You cannot break an item, either pick the complete item or don’t pick it (0/1 property).
+            </p>
+        </div>
+        
+        <div class="card controls-row">
+            <div class="input-group">
+                <label>Weights (comma separated)</label>
+                <input type="text" id="in-wt" value="1, 3, 4, 5" style="width:200px"/>
+            </div>
+            <div class="input-group">
+                <label>Values (comma separated)</label>
+                <input type="text" id="in-val" value="1, 4, 5, 7" style="width:200px"/>
+            </div>
+            <div class="input-group">
+                <label>Knapsack Capacity (W)</label>
+                <input type="number" id="in-cap" value="7" style="width:100px" min="1" max="20"/>
+            </div>
+
+            <div style="margin-left: auto; display: flex; gap: 10px;">
+                <button class="btn btn-magic" onclick="randomizeInputs()"><i class="ph-bold ph-dice-three"></i> Randomize</button>
+                <button class="btn btn-primary" onclick="buildAndRun()"><i class="ph-bold ph-play"></i> Generate Matrix</button>
+            </div>
+        </div>
+
+        <div class="items-display" id="items-container">
+            </div>
+
+        <div class="viz-layout">
+            <div class="matrix-container">
+                <div id="grid-container">
+                    <div style="color:#6b7280; font-family:'JetBrains Mono';">Configure inputs and click Generate Matrix.</div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="card playback-bar">
+                    <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i></button>
+                    <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i></button>
+                    <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i></button>
+                    <span style="font-family:'JetBrains Mono'; font-size:12px; color:#94a3b8; margin-left:10px;">
+                        Step <span id="cur-step" style="color:#fff">0</span> / <span id="tot-steps">0</span>
+                    </span>
+                    <div class="speed-wrap">
+                        <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
+                        <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                        <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
+                    </div>
+                </div>
+
+                <div class="status-box card">
+                    <div class="status-header"><i class="ph-fill ph-cpu"></i> DP Evaluation Engine</div>
+                    <div class="status-msg" id="status-msg">Awaiting generation...</div>
+                    <div class="formula-box" id="formula-box" style="display:none"></div>
+                </div>
+
+                <div class="code-panel">
+                    <div class="code-tabs">
+                        <button class="code-tab active" onclick="switchLang('cpp')" id="tab-cpp">C++</button>
+                        <button class="code-tab" onclick="switchLang('py')" id="tab-py">Python</button>
+                        <button class="code-tab" onclick="switchLang('java')" id="tab-java">Java</button>
+                    </div>
+                    <div class="code-content" id="code-container">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ── Core State ── */
+        let steps = [];
+        let curStep = -1;
+        let isPlaying = false;
+        let timer = null;
+        let speedMs = 1200;
+        let gridConfig = { rows: 0, cols: 0 }; 
+
+        // Data arrays
+        let W = 0, wt = [], val = [], n = 0;
+
+        const codeSnippets = {
+            cpp: [
+                `<span class="kw">int</span> <span class="fn">knapSack</span>(<span class="kw">int</span> W, <span class="kw">int</span> wt[], <span class="kw">int</span> val[], <span class="kw">int</span> n) {`,
+                `    <span class="kw">vector</span>&lt;<span class="kw">vector</span>&lt;<span class="kw">int</span>&gt;&gt; dp(n + <span class="cn">1</span>, <span class="kw">vector</span>&lt;<span class="kw">int</span>&gt;(W + <span class="cn">1</span>, <span class="cn">0</span>));`,
+                `    `,
+                `    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="cn">1</span>; i <= n; i++) {`,
+                `        <span class="kw">for</span> (<span class="kw">int</span> w = <span class="cn">1</span>; w <= W; w++) {`,
+                `            <span class="kw">if</span> (wt[i - <span class="cn">1</span>] <= w) {`,
+                `                <span class="cm">// Max of including or excluding item</span>`,
+                `                dp[i][w] = <span class="fn">max</span>(dp[i-<span class="cn">1</span>][w], val[i-<span class="cn">1</span>] + dp[i-<span class="cn">1</span>][w - wt[i-<span class="cn">1</span>]]);`,
+                `            } <span class="kw">else</span> {`,
+                `                <span class="cm">// Cannot include, carry forward</span>`,
+                `                dp[i][w] = dp[i-<span class="cn">1</span>][w];`,
+                `            }`,
+                `        }`,
+                `    }`,
+                `    <span class="kw">return</span> dp[n][W];`,
+                `}`
+            ],
+            py: [
+                `<span class="kw">def</span> <span class="fn">knapSack</span>(W, wt, val, n):`,
+                `    dp = [[<span class="cn">0</span> <span class="kw">for</span> x <span class="kw">in range</span>(W + <span class="cn">1</span>)] <span class="kw">for</span> x <span class="kw">in range</span>(n + <span class="cn">1</span>)]`,
+                `    `,
+                `    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="cn">1</span>, n + <span class="cn">1</span>):`,
+                `        <span class="kw">for</span> w <span class="kw">in range</span>(<span class="cn">1</span>, W + <span class="cn">1</span>):`,
+                `            <span class="kw">if</span> wt[i - <span class="cn">1</span>] <= w:`,
+                `                <span class="cm"># Max of including or excluding item</span>`,
+                `                dp[i][w] = <span class="fn">max</span>(dp[i-<span class="cn">1</span>][w], val[i-<span class="cn">1</span>] + dp[i-<span class="cn">1</span>][w - wt[i-<span class="cn">1</span>]])`,
+                `            <span class="kw">else</span>:`,
+                `                <span class="cm"># Cannot include, carry forward</span>`,
+                `                dp[i][w] = dp[i-<span class="cn">1</span>][w]`,
+                `                `,
+                `    <span class="kw">return</span> dp[n][W]`
+            ],
+            java: [
+                `<span class="kw">static int</span> <span class="fn">knapSack</span>(<span class="kw">int</span> W, <span class="kw">int</span> wt[], <span class="kw">int</span> val[], <span class="kw">int</span> n) {`,
+                `    <span class="kw">int</span> dp[][] = <span class="kw">new int</span>[n + <span class="cn">1</span>][W + <span class="cn">1</span>];`,
+                `    `,
+                `    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="cn">1</span>; i <= n; i++) {`,
+                `        <span class="kw">for</span> (<span class="kw">int</span> w = <span class="cn">1</span>; w <= W; w++) {`,
+                `            <span class="kw">if</span> (wt[i - <span class="cn">1</span>] <= w) {`,
+                `                <span class="cm">// Max of including or excluding item</span>`,
+                `                dp[i][w] = Math.<span class="fn">max</span>(dp[i-<span class="cn">1</span>][w], val[i-<span class="cn">1</span>] + dp[i-<span class="cn">1</span>][w - wt[i-<span class="cn">1</span>]]);`,
+                `            } <span class="kw">else</span> {`,
+                `                <span class="cm">// Cannot include, carry forward</span>`,
+                `                dp[i][w] = dp[i-<span class="cn">1</span>][w];`,
+                `            }`,
+                `        }`,
+                `    }`,
+                `    <span class="kw">return</span> dp[n][W];`,
+                `}`
+            ]
+        };
+
+        function switchLang(lang) {
+            document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${lang}`).classList.add('active');
+            const lines = codeSnippets[lang];
+            
+            // Map the universal line indices to specific languages
+            // Universal mapping: OuterLoop=3, InnerLoop=4, IfCond=5, CalcInclude=7, Else=8, CalcExclude=10
+            
+            document.getElementById('code-container').innerHTML = lines.map((l, i) => `<div class="cl" id="cl-${i}">${l}</div>`).join('');
+            
+            // Re-apply highlight if paused mid-step
+            if(curStep >= 0 && steps[curStep]) {
+                let map = { 3:3, 4:4, 5:5, 7:7, 8:8, 10:10 }; // Luckily structure aligns across my snippets
+                let hl = map[steps[curStep].codeLine];
+                if(hl) document.getElementById(`cl-${hl}`).classList.add('active');
+            }
+        }
+
+        function randomizeInputs() {
+            let numItems = Math.floor(Math.random() * 3) + 4; // 4 to 6 items
+            document.getElementById('in-wt').value = Array.from({length:numItems}, ()=>Math.floor(Math.random()*5)+1).join(', ');
+            document.getElementById('in-val').value = Array.from({length:numItems}, ()=>Math.floor(Math.random()*10)+2).join(', ');
+            document.getElementById('in-cap').value = Math.floor(Math.random()*7) + 6; // 6 to 12
+        }
+
+        /* ── Grid & Item Rendering ── */
+        function renderItems() {
+            const cont = document.getElementById('items-container');
+            cont.innerHTML = '';
+            for(let i=0; i<n; i++) {
+                cont.innerHTML += `
+                    <div class="item-box" id="item-box-${i}">
+                        <div class="item-idx">Item ${i+1}</div>
+                        <div class="item-wt"><i class="ph-fill ph-barbell"></i> W: ${wt[i]}</div>
+                        <div class="item-val"><i class="ph-fill ph-coin"></i> V: ${val[i]}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function createGrid() {
+            gridConfig.rows = n + 1;
+            gridConfig.cols = W + 1;
+            const cont = document.getElementById('grid-container');
+            cont.innerHTML = '';
+            
+            const grid = document.createElement('div');
+            grid.className = 'dp-grid';
+            grid.style.gridTemplateColumns = `max-content repeat(${W + 1}, 48px)`;
+            
+            // Top Left empty
+            grid.appendChild(createCell('', 'dp-header'));
+            
+            // Top headers (Capacities)
+            for(let w=0; w<=W; w++) {
+                let d = createCell(`<div class="dp-header-row"><span style="font-size:9px;color:rgba(255,255,255,0.4)">Cap</span><span>${w}</span></div>`, 'dp-header');
+                grid.appendChild(d);
+            }
+            
+            // Body
+            for(let i=0; i<=n; i++) {
+                // Left Header (Item info)
+                if(i===0) {
+                    grid.appendChild(createCell('Init (0)', 'dp-header'));
+                } else {
+                    grid.appendChild(createCell(`<div class="dp-header-row">Item ${i}<span style="font-size:10px;color:var(--purple);margin-top:2px">w:${wt[i-1]} v:${val[i-1]}</span></div>`, 'dp-header'));
+                }
+
+                for(let w=0; w<=W; w++) {
+                    let cell = createCell('0', 'cell-null');
+                    cell.id = `c-${i}-${w}`;
+                    let idx = document.createElement('div');
+                    idx.className = 'dp-idx';
+                    idx.innerText = `${i},${w}`;
+                    cell.appendChild(idx);
+                    grid.appendChild(cell);
+                }
+            }
+            cont.appendChild(grid);
+        }
+
+        function createCell(text, className) {
+            let d = document.createElement('div');
+            d.className = `dp-cell ${className}`;
+            d.innerHTML = text;
+            return d;
+        }
+
+        /* ── Algorithm & Animation Recorder ── */
+        function createStep(dpState, activeR, activeC, deps, isUpdate, msg, formula, codeLine, selectedItems = []) {
+            let state = dpState.map(row => [...row]);
+            steps.push({
+                state, r: activeR, c: activeC, deps: [...deps],
+                isUpdate, msg, formula, codeLine, selectedItems: [...selectedItems]
+            });
+        }
+
+        function buildAndRun() {
+            stopAnim();
+            steps = [];
+            document.querySelectorAll('.item-box').forEach(el => el.classList.remove('selected'));
+            
+            try {
+                wt = document.getElementById('in-wt').value.split(',').map(s=>parseInt(s.trim()));
+                val = document.getElementById('in-val').value.split(',').map(s=>parseInt(s.trim()));
+                W = parseInt(document.getElementById('in-cap').value);
+                n = wt.length;
+
+                if(wt.length !== val.length) throw new Error("Mismatch");
+                if(W > 25) { alert("Please keep capacity <= 25 for visualization"); return; }
+                
+                renderItems();
+                createGrid();
+                switchLang('cpp'); // Reset code
+                runKnapsackEngine();
+                
+                enableBtns(true);
+                curStep = 0;
+                applyStep(0);
+            } catch(e) {
+                alert("Input parsing error. Please ensure lists are comma separated numbers.");
+                console.error(e);
+            }
+        }
+
+        function runKnapsackEngine() {
+            let dp = Array(n+1).fill(0).map(()=>Array(W+1).fill(0));
+            createStep(dp, -1, -1, [], false, "Initialized `dp` table. 0 items or 0 capacity means 0 value.", "", 1);
+
+            for (let i = 1; i <= n; i++) {
+                for (let w = 1; w <= W; w++) {
+                    let w_i = wt[i-1];
+                    let v_i = val[i-1];
+                    
+                    if (w_i <= w) {
+                        let exclude = dp[i-1][w];
+                        let include = v_i + dp[i-1][w - w_i];
+                        let newVal = Math.max(exclude, include);
+                        dp[i][w] = newVal;
+                        
+                        let formula = `
+                            <div class="fb-label">Option 1: Exclude Item ${i}</div>
+                            <span class="f-exc">dp[${i-1}][${w}] = <b>${exclude}</b></span><br><br>
+                            <div class="fb-label">Option 2: Include Item ${i}</div>
+                            <span class="f-inc">Val(${v_i}) + dp[${i-1}][${w} - ${w_i}] &rarr; ${v_i} + ${dp[i-1][w-w_i]} = <b>${include}</b></span><br><br>
+                            <div class="fb-label" style="color:#fff">Result</div>
+                            dp[${i}][${w}] = max(<span class="f-exc">${exclude}</span>, <span class="f-inc">${include}</span>) = <b style="color:var(--green); font-size:18px">${newVal}</b>
+                        `;
+                        
+                        createStep(dp, i, w, [[i-1, w], [i-1, w - w_i]], true, 
+                            `Evaluating Item ${i} (W:${w_i}, V:${v_i}) at Capacity ${w}.<br>Since it fits (${w_i} &le; ${w}), we compare Including vs Excluding.`, 
+                            formula, 7);
+                    } else {
+                        dp[i][w] = dp[i-1][w];
+                        
+                        let formula = `
+                            <div class="fb-label">Item Too Heavy!</div>
+                            Weight(${w_i}) > Current Capacity(${w})<br><br>
+                            <div class="fb-label" style="color:#fff">Result: Inherit from above</div>
+                            dp[${i}][${w}] = dp[${i-1}][${w}] = <b style="color:var(--green); font-size:18px">${dp[i][w]}</b>
+                        `;
+
+                        createStep(dp, i, w, [[i-1, w]], true, 
+                            `Evaluating Item ${i} (W:${w_i}, V:${v_i}) at Capacity ${w}.<br>It is too heavy, so we cannot include it. We take the best value without it.`, 
+                            formula, 10);
+                    }
+                }
+            }
+
+            // Backtrack to find items
+            let res = dp[n][W], w = W;
+            let path = [[n, W]];
+            let selected = [];
+            
+            createStep(dp, -1, -1, [], false, "Table complete! Maximum value is <b>" + res + "</b> in the bottom right cell. Now backtracking to find which items were selected.", "", 14, []);
+
+            for (let i = n; i > 0 && res > 0; i--) {
+                if (res !== dp[i - 1][w]) {
+                    // Item was included
+                    path.push([i-1, w - wt[i-1]]);
+                    selected.push(i-1);
+                    res -= val[i - 1];
+                    w -= wt[i - 1];
+                    createStep(dp, -1, -1, [], false, `Value changed from row ${i-1} to ${i}. This means <b>Item ${i}</b> was Included! Tracing back capacity by ${wt[i-1]}.`, "", -1, selected);
+                } else {
+                    // Item was excluded
+                    path.push([i-1, w]);
+                    createStep(dp, -1, -1, [], false, `Value didn't change from row ${i-1} to ${i}. <b>Item ${i}</b> was Excluded. Moving straight up.`, "", -1, selected);
+                }
+            }
+            
+            createStep(dp, -1, -1, [], false, `✅ <b>Algorithm Finished!</b> The optimal items have been identified.`, "", 14, selected);
+            // Store the final trace path specifically for the last step so we can color it
+            steps[steps.length-1].finalPath = path;
+        }
+
+        /* ── Animation Player ── */
+        function applyStep(si) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            // 1. Render Grid
+            for(let r=0; r<=n; r++) {
+                for(let c=0; c<=W; c++) {
+                    let cell = document.getElementById(`c-${r}-${c}`);
+                    if(!cell) continue;
+                    
+                    let valStr = s.state[r][c].toString();
+                    if(cell.childNodes.length > 1) cell.childNodes[0].nodeValue = valStr;
+                    else cell.innerHTML = valStr;
+
+                    cell.className = 'dp-cell cell-base'; // Reset
+                    if (r===0 || c===0) cell.classList.add('cell-null'); // Keep 0th row/col slightly muted but visible
+
+                    // Highlight dependencies (cyan)
+                    let isDep = s.deps.some(d => d[0] === r && d[1] === c);
+                    if(isDep) cell.classList.add('cell-dependency');
+
+                    // Highlight Active (pink/green)
+                    if(r === s.r && c === s.c) {
+                        cell.classList.add(s.isUpdate ? 'cell-updated' : 'cell-evaluating');
+                    }
+
+                    // Highlight Final Path (gold)
+                    if(s.finalPath && s.finalPath.some(p => p[0] === r && p[1] === c)) {
+                        cell.classList.add('cell-path');
+                    }
+                }
+            }
+
+            // 2. Items Display
+            document.querySelectorAll('.item-box').forEach((el, idx) => {
+                if(s.selectedItems.includes(idx)) el.classList.add('selected');
+                else el.classList.remove('selected');
+            });
+
+            // 3. Status Updates
+            document.getElementById('status-msg').innerHTML = s.msg;
+            let fBox = document.getElementById('formula-box');
+            if(s.formula) { fBox.style.display='block'; fBox.innerHTML = s.formula; }
+            else { fBox.style.display='none'; }
+
+            // 4. Code Highlight
+            document.querySelectorAll('.cl').forEach(el => el.classList.remove('active'));
+            if(s.codeLine >= 0 && document.getElementById(`cl-${s.codeLine}`)) {
+                document.getElementById(`cl-${s.codeLine}`).classList.add('active');
+            }
+
+            // 5. Progress
+            document.getElementById('cur-step').textContent = si + 1;
+            document.getElementById('tot-steps').textContent = steps.length;
+        }
+
+        /* ── Playback Controls ── */
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; applyStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+        function resetAnim() { stopAnim(); curStep = -1; document.getElementById('cur-step').innerText='0'; document.getElementById('tot-steps').innerText='0'; enableBtns(false); }
+
+        function updateSpeed(v) {
+            speedMs = [1800, 1200, 800, 300, 50][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() { document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play'; }
+
+        // Boot
+        switchLang('cpp');
+    </script>
+</body>
+</html>

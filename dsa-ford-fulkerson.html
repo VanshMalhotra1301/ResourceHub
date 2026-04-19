@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Max Flow: Ford-Fulkerson ⚡ | Visual DSA Lab</title>
+    <meta name="description" content="Interactive Max Flow visualizer. Build networks, run Ford-Fulkerson (Edmonds-Karp), and trace augmenting paths." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee; --purple: #a855f7; --indigo: #6366f1;
+            --green: #34d399; --pink: #f472b6; --orange: #fb923c;
+            --yellow: #facc15; --red: #f87171; --bg: #07040a;
+            --card: rgba(20, 10, 25, 0.7); --border: rgba(255, 255, 255, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 20% 30%, rgba(34, 211, 238, 0.08), transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.06), transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.05), transparent 40%);
+            animation: aurora 25s linear infinite; z-index: -1; pointer-events: none;
+        }
+        @keyframes aurora { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #07040a; }
+        ::-webkit-scrollbar-thumb { background: #2a1a3a; border-radius: 8px; }
+
+        /* ── Topbar ── */
+        #topbar { position: sticky; top: 0; z-index: 100; background: rgba(10, 5, 15, 0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px; }
+        .back-btn { display: flex; align-items: center; gap: 6px; color: #6b7280; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+        .back-btn:hover { color: #e2e8f0; }
+        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.08); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        .badge-beta { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; background: rgba(34, 211, 238, 0.1); color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.25); }
+
+        #page { max-width: 1300px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
+        .algo-hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+        .algo-hero h1 .icon-wrap { width: 44px; height: 44px; border-radius: 12px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(52, 211, 153, 0.15); }
+        .complexity-row { display: flex; gap: 8px; margin-top: 10px; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px; border-radius: 99px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .badge-time { background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); color: var(--cyan); }
+        .badge-space { background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.25); color: var(--pink); }
+
+        .card { background: var(--card); backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+
+        /* ── Controls Row ── */
+        .input-row { padding: 18px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.06); color: #e2e8f0; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-primary { background: rgba(52, 211, 153, 0.15); border-color: rgba(52, 211, 153, 0.4); color: var(--green); }
+        .btn-primary:hover:not(:disabled) { background: rgba(52, 211, 153, 0.25); box-shadow: 0 0 20px rgba(52, 211, 153, 0.25); }
+        .btn-builder { background: rgba(244, 114, 182, 0.15); border-color: rgba(244, 114, 182, 0.4); color: var(--pink); }
+        .src-selector { background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 8px; font-family: 'JetBrains Mono'; outline: none; }
+
+        .mst-stats { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-left: auto;}
+        .mst-lbl { font-size: 11px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+        .mst-val { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 800; color: var(--cyan); text-shadow: 0 0 10px rgba(34, 211, 238, 0.4); }
+
+        /* ── VIZ FRAME ── */
+        #viz-frame { border-radius: 16px; background: rgba(10, 8, 15, 0.85); border: 1px solid rgba(52, 211, 153, 0.25); margin-bottom: 20px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+        #viz-frame::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0.8; }
+        
+        .viz-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(400px, 1fr); min-height: 500px; }
+        @media (max-width: 950px) { .viz-layout { grid-template-columns: 1fr; } }
+
+        /* Left: Graph Canvas */
+        #d3-container { width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(52, 211, 153, 0.04) 0%, transparent 75%); border-right: 1px solid rgba(255,255,255,0.08); position: relative; }
+        .build-overlay { position: absolute; top: 12px; left: 12px; font-size: 11px; background: rgba(244, 114, 182, 0.2); color: var(--pink); padding: 6px 12px; border-radius: 6px; font-weight: 700; display: none; z-index: 10; border: 1px solid rgba(244, 114, 182, 0.4); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; box-shadow: 0 0 10px rgba(244,114,182,0.4); } 100% { opacity: 0.8; } }
+
+        /* Right: Exam Table */
+        .exam-section { padding: 24px; background: rgba(15, 10, 22, 0.6); overflow-y: auto; }
+        .section-header { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        
+        .exam-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+        .exam-table th { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: #6b7280; text-align: center; padding: 0 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 700; text-transform: uppercase; }
+        .exam-table td { background: rgba(255,255,255,0.04); padding: 10px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; color:#e2e8f0; }
+        .exam-table td:first-child { border-left: 1px solid rgba(255,255,255,0.05); border-radius: 8px 0 0 8px; font-weight: 800; color: var(--purple); }
+        .exam-table td:last-child { border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0 8px 8px 0; font-weight: 800; color: var(--cyan); }
+        
+        .row-active td { background: rgba(34, 211, 238, 0.1); border-color: rgba(34, 211, 238, 0.3); }
+        .row-active td:first-child { border-left: 2px solid var(--cyan); }
+        
+        /* Status Strip */
+        #status-strip { padding: 16px 24px; font-size: 14px; font-weight: 600; background: rgba(52, 211, 153, 0.08); border-top: 1px solid rgba(52, 211, 153, 0.2); text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 60px; color: #fff;}
+        .status-badge { background: rgba(52, 211, 153, 0.2); color: var(--green); padding: 5px 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; border: 1px solid rgba(52, 211, 153, 0.4); }
+
+        /* Play Controls */
+        .controls-bar { padding: 18px 22px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .speed-wrap input[type=range] { -webkit-appearance: none; width: 110px; height: 5px; border-radius: 5px; background: rgba(255,255,255,0.15); outline: none; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--green); cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 10px var(--green); }
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* SVG Graph Styles */
+        .edge-line { stroke: rgba(255, 255, 255, 0.2); stroke-width: 3px; transition: all 0.4s ease; fill: none; }
+        .edge-line.evaluating { stroke: var(--cyan); stroke-width: 5px; filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.6)); stroke-dasharray: 8; animation: flowAnim 1s linear infinite; }
+        .edge-line.bottleneck { stroke: var(--pink); stroke-width: 6px; filter: drop-shadow(0 0 12px rgba(244, 114, 182, 0.8)); }
+        .edge-line.full { stroke: var(--green); stroke-width: 3px; opacity: 0.6; }
+        .edge-line.backward { stroke: var(--orange); stroke-dasharray: 4; stroke-width: 4px; animation: flowAnimBack 1s linear infinite;}
+        
+        @keyframes flowAnim { to { stroke-dashoffset: -16; } }
+        @keyframes flowAnimBack { to { stroke-dashoffset: 16; } }
+
+        .arrow-head { fill: rgba(255, 255, 255, 0.2); transition: fill 0.4s ease; }
+        .edge-line.evaluating ~ .arrow-head { fill: var(--cyan); }
+        .edge-line.bottleneck ~ .arrow-head { fill: var(--pink); }
+        .edge-line.full ~ .arrow-head { fill: var(--green); }
+        .edge-line.backward ~ .arrow-head { fill: transparent; } /* Hide arrow for back-edge visual */
+
+        .edge-weight-bg { fill: var(--bg); stroke: rgba(255, 255, 255, 0.2); stroke-width: 1.5px; transition: all 0.4s ease; rx: 6; ry: 6; }
+        .edge-weight-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 800; fill: #cbd5e1; text-anchor: middle; dominant-baseline: central; transition: all 0.4s ease; cursor: pointer; }
+        
+        .edge-group.evaluating .edge-weight-bg { stroke: var(--cyan); fill: rgba(34, 211, 238, 0.15); }
+        .edge-group.evaluating .edge-weight-text { fill: var(--cyan); font-size: 14px; }
+        .edge-group.bottleneck .edge-weight-bg { stroke: var(--pink); fill: rgba(244, 114, 182, 0.2); }
+        .edge-group.bottleneck .edge-weight-text { fill: var(--pink); font-size: 15px; }
+        .edge-group.full .edge-weight-bg { stroke: var(--green); fill: rgba(52, 211, 153, 0.1); }
+        .edge-group.full .edge-weight-text { fill: var(--green); }
+
+        .node circle { fill: rgba(255, 255, 255, 0.05); stroke: rgba(255, 255, 255, 0.3); stroke-width: 2.5px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;}
+        .node text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; fill: #f8fafc; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+        
+        .node.source circle { stroke: var(--purple); stroke-width: 4px; fill: rgba(168, 85, 247, 0.2); filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4)); }
+        .node.source text { fill: var(--purple); }
+        .node.sink circle { stroke: var(--cyan); stroke-width: 4px; fill: rgba(34, 211, 238, 0.2); filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.4)); }
+        .node.sink text { fill: var(--cyan); }
+        
+        .node.evaluating circle { fill: rgba(34, 211, 238, 0.2); stroke: var(--cyan); stroke-width: 4px; transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.5));}
+        
+        .node.build-selected circle { stroke: var(--pink); stroke-width: 4px; stroke-dasharray: 4; animation: rotateDash 4s linear infinite; }
+        @keyframes rotateDash { to { stroke-dashoffset: 24; } }
+
+        /* ── Code panel ── */
+        .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+        @media (max-width: 800px) { .panels-grid { grid-template-columns: 1fr; } }
+        .panel-card { padding: 22px; }
+        .panel-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #fff; }
+
+        #pseudo-panel { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; }
+        .ps { padding: 4px 12px; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; color: #94a3b8; transition: all 0.3s ease; white-space: pre; }
+        .ps.active { border-left-color: var(--green); background: rgba(52, 211, 153, 0.1); color: #f8fafc; }
+        .kw { color: #c084fc; } .fn { color: #67e8f9; } .num { color: #fcd34d; } .cmt { color: #6b7280; font-style: italic; }
+
+        .code-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .code-tab { padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 12px 12px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; color: #94a3b8; background: transparent; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .code-tab.active { color: var(--green); background: rgba(5, 5, 15, 0.95); border-color: rgba(255, 255, 255, 0.1); border-bottom-color: rgba(5, 5, 15, 0.95); }
+        .code-block { background: rgba(5, 5, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0 12px 12px 12px; padding: 20px 22px; color: #e2e8f0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; white-space: pre; margin-top: -1px; }
+        .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+    </style>
+</head>
+
+<body>
+    <header id="topbar">
+        <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">⚡ Max Flow <span class="badge-beta">Network Module</span></div>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1><div class="icon-wrap"><i class="ph-fill ph-waves" style="color:var(--green)"></i></div> Ford-Fulkerson (Edmonds-Karp)</h1>
+            <div class="complexity-row">
+                <span class="badge badge-time"><i class="ph-fill ph-clock"></i> Time: O(V * E^2)</span>
+                <span class="badge badge-space"><i class="ph-fill ph-stack"></i> Space: O(V + E)</span>
+            </div>
+            <p style="color:#94a3b8; font-size:14px; margin-top:12px; max-width:700px; line-height: 1.6;">
+                Finds the maximum flow in a network. It repeatedly finds an augmenting path from Source to Sink in the residual graph using BFS (Edmonds-Karp implementation) and pushes the bottleneck capacity through that path until no more paths exist.
+            </p>
+        </div>
+
+        <div class="card input-row">
+            <button class="btn btn-builder" id="btn-build" onclick="toggleBuildMode()">
+                <i class="ph-bold ph-pencil-simple"></i> <span id="build-text">Build Graph</span>
+            </button>
+            <button class="btn" onclick="clearGraph()"><i class="ph-bold ph-trash"></i> Clear</button>
+            <div style="width:1px; height:24px; background:rgba(255,255,255,0.1); margin:0 8px;"></div>
+            
+            <div style="color:#94a3b8; font-size:13px; font-weight:600;">Source (S):</div>
+            <select id="source-selector" class="src-selector" onchange="resetAnim()"></select>
+            <div style="color:#94a3b8; font-size:13px; font-weight:600; margin-left:10px;">Sink (T):</div>
+            <select id="sink-selector" class="src-selector" onchange="resetAnim()"></select>
+
+            <button class="btn btn-primary" style="margin-left:auto" onclick="generateMaxFlow()">
+                <i class="ph-bold ph-play-circle"></i> Run Max Flow
+            </button>
+
+            <div class="mst-stats">
+                <span class="mst-lbl">Max Flow:</span>
+                <span class="mst-val" id="max-flow-val">0</span>
+            </div>
+        </div>
+
+        <div id="viz-frame">
+            <div class="build-overlay" id="build-overlay">
+                BUILD MODE: Click canvas to add Node. Click two Nodes to add Edge. Click Edge text to edit Capacity.
+            </div>
+            <div class="viz-layout">
+                <div id="d3-container">
+                    <svg width="100%" height="100%" viewBox="0 0 680 480" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="26" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" class="arrow-head" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                
+                <div class="exam-section">
+                    <div class="section-header"><i class="ph-bold ph-table"></i> Augmentation Trace</div>
+                    <table class="exam-table">
+                        <thead>
+                            <tr>
+                                <th>Path Taken (S -> T)</th>
+                                <th>Bottleneck</th>
+                                <th>Total Flow</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exam-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="status-strip">
+                <i class="ph-fill ph-info" style="color:var(--green)"></i>
+                <span id="status-text">Select Source and Sink, then click "Run Max Flow".</span>
+            </div>
+        </div>
+
+        <div class="card controls-bar">
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i> Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
+            <button id="btn-reset" class="btn" style="color:#f87171" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+
+            <div class="speed-wrap">
+                <i class="ph-bold ph-tortoise" style="color:#94a3b8"></i>
+                <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                <i class="ph-bold ph-rabbit" style="color:#94a3b8"></i>
+                <span id="speed-label" style="font-family:'JetBrains Mono'; font-size:12px; color:#94a3b8; width:36px">1.0×</span>
+            </div>
+            <div style="font-family:'JetBrains Mono'; font-size:12px; color:#94a3b8; margin-left:8px">
+                Step <span id="cur-step">0</span> / <span id="tot-steps">0</span>
+            </div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-code" style="color:var(--cyan)"></i> Algorithm Logic</div>
+                <div id="pseudo-panel">
+                    <div class="ps" id="ps-1"><span class="kw">function</span> <span class="fn">FordFulkerson</span>(Graph, S, T):</div>
+                    <div class="ps" id="ps-2">  max_flow ← <span class="num">0</span></div>
+                    <div class="ps" id="ps-3">  Initialize flow on all edges to <span class="num">0</span></div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps" id="ps-4">  <span class="cmt">// Edmonds-Karp uses BFS to find shortest augmenting path</span></div>
+                    <div class="ps" id="ps-5">  <span class="kw">while</span> <span class="fn">BFS</span>(Graph, S, T, parent_map) <span class="kw">is</span> True:</div>
+                    <div class="ps" id="ps-6">    bottleneck ← ∞</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps" id="ps-7">    <span class="cmt">// 1. Find bottleneck capacity along the path</span></div>
+                    <div class="ps" id="ps-8">    curr ← T</div>
+                    <div class="ps" id="ps-9">    <span class="kw">while</span> curr ≠ S:</div>
+                    <div class="ps" id="ps-10">      prev ← parent_map[curr]</div>
+                    <div class="ps" id="ps-11">      residual_cap ← capacity(prev, curr) - flow(prev, curr)</div>
+                    <div class="ps" id="ps-12">      bottleneck ← min(bottleneck, residual_cap)</div>
+                    <div class="ps" id="ps-13">      curr ← prev</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps" id="ps-14">    <span class="cmt">// 2. Augment flow along the path</span></div>
+                    <div class="ps" id="ps-15">    curr ← T</div>
+                    <div class="ps" id="ps-16">    <span class="kw">while</span> curr ≠ S:</div>
+                    <div class="ps" id="ps-17">      prev ← parent_map[curr]</div>
+                    <div class="ps" id="ps-18">      flow(prev, curr) ← flow(prev, curr) + bottleneck <span class="cmt">// Forward</span></div>
+                    <div class="ps" id="ps-19">      flow(curr, prev) ← flow(curr, prev) - bottleneck <span class="cmt">// Backward</span></div>
+                    <div class="ps" id="ps-20">      curr ← prev</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps" id="ps-21">    max_flow ← max_flow + bottleneck</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps" id="ps-22">  <span class="kw">return</span> max_flow</div>
+                </div>
+            </div>
+
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--green)"></i> Implementation (Edmonds-Karp)</div>
+                <div class="code-tabs">
+                    <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
+                    <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
+                    <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
+                </div>
+                
+                <div id="code-cpp" class="code-block"><span class="cm">// C++ Edmonds-Karp (BFS based Ford-Fulkerson)</span>
+<span class="ck">#include</span> &lt;iostream&gt;
+<span class="ck">#include</span> &lt;vector&gt;
+<span class="ck">#include</span> &lt;queue&gt;
+<span class="ck">#include</span> &lt;algorithm&gt;
+<span class="ck">using namespace</span> std;
+
+<span class="ck">bool</span> <span class="ct">bfs</span>(<span class="ck">int</span> V, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; resGraph, <span class="ck">int</span> s, <span class="ck">int</span> t, vector&lt;<span class="ck">int</span>&gt;&amp; parent) {
+    <span class="ct">fill</span>(parent.begin(), parent.end(), -<span class="cn">1</span>);
+    <span class="ct">queue</span>&lt;<span class="ck">int</span>&gt; q;
+    q.<span class="ct">push</span>(s);
+    parent[s] = -<span class="cn">2</span>; <span class="cm">// Source marker</span>
+
+    <span class="ck">while</span> (!q.<span class="ct">empty</span>()) {
+        <span class="ck">int</span> u = q.<span class="ct">front</span>();
+        q.<span class="ct">pop</span>();
+
+        <span class="ck">for</span> (<span class="ck">int</span> v = <span class="cn">0</span>; v &lt; V; v++) {
+            <span class="ck">if</span> (parent[v] == -<span class="cn">1</span> &amp;&amp; resGraph[u][v] &gt; <span class="cn">0</span>) {
+                parent[v] = u;
+                <span class="ck">if</span> (v == t) <span class="ck">return true</span>;
+                q.<span class="ct">push</span>(v);
+            }
+        }
+    }
+    <span class="ck">return false</span>;
+}
+
+<span class="ck">int</span> <span class="ct">edmondsKarp</span>(<span class="ck">int</span> V, vector&lt;vector&lt;<span class="ck">int</span>&gt;&gt;&amp; graph, <span class="ck">int</span> s, <span class="ck">int</span> t) {
+    <span class="ct">vector</span>&lt;vector&lt;<span class="ck">int</span>&gt;&gt; <span class="ct">resGraph</span> = graph; <span class="cm">// Residual graph</span>
+    <span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; <span class="ct">parent</span>(V);
+    <span class="ck">int</span> max_flow = <span class="cn">0</span>;
+
+    <span class="ck">while</span> (bfs(V, resGraph, s, t, parent)) {
+        <span class="ck">int</span> path_flow = 1e9;
+        
+        <span class="cm">// Find bottleneck capacity</span>
+        <span class="ck">for</span> (<span class="ck">int</span> v = t; v != s; v = parent[v]) {
+            <span class="ck">int</span> u = parent[v];
+            path_flow = <span class="ct">min</span>(path_flow, resGraph[u][v]);
+        }
+
+        <span class="cm">// Update residual capacities</span>
+        <span class="ck">for</span> (<span class="ck">int</span> v = t; v != s; v = parent[v]) {
+            <span class="ck">int</span> u = parent[v];
+            resGraph[u][v] -= path_flow; <span class="cm">// Forward edge</span>
+            resGraph[v][u] += path_flow; <span class="cm">// Backward edge</span>
+        }
+        max_flow += path_flow;
+    }
+    <span class="ck">return</span> max_flow;
+}</div>
+
+                <div id="code-py" class="code-block" style="display:none"><span class="cm"># Python Edmonds-Karp Algorithm</span>
+<span class="ck">from</span> collections <span class="ck">import</span> deque
+
+<span class="ck">def</span> <span class="ct">bfs</span>(resGraph, s, t, parent):
+    visited = [<span class="ck">False</span>] * <span class="ct">len</span>(resGraph)
+    queue = deque([s])
+    visited[s] = <span class="ck">True</span>
+    
+    <span class="ck">while</span> queue:
+        u = queue.popleft()
+        
+        <span class="ck">for</span> v, cap <span class="ck">in</span> <span class="ct">enumerate</span>(resGraph[u]):
+            <span class="ck">if</span> <span class="ck">not</span> visited[v] <span class="ck">and</span> cap &gt; <span class="cn">0</span>:
+                queue.append(v)
+                visited[v] = <span class="ck">True</span>
+                parent[v] = u
+                <span class="ck">if</span> v == t:
+                    <span class="ck">return True</span>
+    <span class="ck">return False</span>
+
+<span class="ck">def</span> <span class="ct">edmonds_karp</span>(graph, s, t):
+    <span class="cm"># Create residual graph</span>
+    resGraph = [row[:] <span class="ck">for</span> row <span class="ck">in</span> graph]
+    parent = [-<span class="cn">1</span>] * <span class="ct">len</span>(graph)
+    max_flow = <span class="cn">0</span>
+    
+    <span class="ck">while</span> bfs(resGraph, s, t, parent):
+        path_flow = <span class="ct">float</span>(<span class="ct">'inf'</span>)
+        v = t
+        
+        <span class="cm"># Find bottleneck</span>
+        <span class="ck">while</span> v != s:
+            u = parent[v]
+            path_flow = <span class="ct">min</span>(path_flow, resGraph[u][v])
+            v = parent[v]
+            
+        <span class="cm"># Augment flow</span>
+        v = t
+        <span class="ck">while</span> v != s:
+            u = parent[v]
+            resGraph[u][v] -= path_flow
+            resGraph[v][u] += path_flow
+            v = parent[v]
+            
+        max_flow += path_flow
+        
+    <span class="ck">return</span> max_flow</div>
+
+                <div id="code-java" class="code-block" style="display:none"><span class="cm">// Java Edmonds-Karp Algorithm</span>
+<span class="ck">import</span> java.util.*;
+
+<span class="ck">class</span> MaxFlow {
+    <span class="ck">boolean</span> <span class="ct">bfs</span>(<span class="ck">int</span>[][] resGraph, <span class="ck">int</span> s, <span class="ck">int</span> t, <span class="ck">int</span>[] parent) {
+        <span class="ck">int</span> V = resGraph.length;
+        <span class="ck">boolean</span>[] visited = <span class="ck">new boolean</span>[V];
+        Queue&lt;Integer&gt; queue = <span class="ck">new</span> LinkedList&lt;&gt;();
+        
+        queue.add(s);
+        visited[s] = <span class="ck">true</span>;
+        parent[s] = -<span class="cn">1</span>;
+        
+        <span class="ck">while</span> (!queue.isEmpty()) {
+            <span class="ck">int</span> u = queue.poll();
+            
+            <span class="ck">for</span> (<span class="ck">int</span> v = <span class="cn">0</span>; v &lt; V; v++) {
+                <span class="ck">if</span> (!visited[v] &amp;&amp; resGraph[u][v] &gt; <span class="cn">0</span>) {
+                    queue.add(v);
+                    parent[v] = u;
+                    visited[v] = <span class="ck">true</span>;
+                    <span class="ck">if</span> (v == t) <span class="ck">return true</span>;
+                }
+            }
+        }
+        <span class="ck">return false</span>;
+    }
+
+    <span class="ck">int</span> <span class="ct">edmondsKarp</span>(<span class="ck">int</span>[][] graph, <span class="ck">int</span> s, <span class="ck">int</span> t) {
+        <span class="ck">int</span> V = graph.length;
+        <span class="ck">int</span>[][] resGraph = <span class="ck">new int</span>[V][V];
+        <span class="ck">for</span> (<span class="ck">int</span> u = <span class="cn">0</span>; u &lt; V; u++)
+            System.arraycopy(graph[u], <span class="cn">0</span>, resGraph[u], <span class="cn">0</span>, V);
+            
+        <span class="ck">int</span>[] parent = <span class="ck">new int</span>[V];
+        <span class="ck">int</span> max_flow = <span class="cn">0</span>;
+        
+        <span class="ck">while</span> (bfs(resGraph, s, t, parent)) {
+            <span class="ck">int</span> path_flow = Integer.MAX_VALUE;
+            
+            <span class="ck">for</span> (<span class="ck">int</span> v = t; v != s; v = parent[v]) {
+                <span class="ck">int</span> u = parent[v];
+                path_flow = Math.min(path_flow, resGraph[u][v]);
+            }
+            
+            <span class="ck">for</span> (<span class="ck">int</span> v = t; v != s; v = parent[v]) {
+                <span class="ck">int</span> u = parent[v];
+                resGraph[u][v] -= path_flow;
+                resGraph[v][u] += path_flow;
+            }
+            max_flow += path_flow;
+        }
+        <span class="ck">return</span> max_flow;
+    }
+}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ── Core Graph State ── */
+        let nodes = [
+            { id: 0, label: 'S', cx: 80, cy: 240 },
+            { id: 1, label: 'A', cx: 250, cy: 120 },
+            { id: 2, label: 'B', cx: 250, cy: 360 },
+            { id: 3, label: 'C', cx: 450, cy: 120 },
+            { id: 4, label: 'D', cx: 450, cy: 360 },
+            { id: 5, label: 'T', cx: 620, cy: 240 }
+        ];
+        
+        let edges = [
+            { u: 0, v: 1, cap: 10, flow: 0 },
+            { u: 0, v: 2, cap: 10, flow: 0 },
+            { u: 1, v: 2, cap: 2, flow: 0 },
+            { u: 1, v: 3, cap: 4, flow: 0 },
+            { u: 1, v: 4, cap: 8, flow: 0 },
+            { u: 2, v: 4, cap: 9, flow: 0 },
+            { u: 3, v: 5, cap: 10, flow: 0 },
+            { u: 4, v: 3, cap: 6, flow: 0 },
+            { u: 4, v: 5, cap: 10, flow: 0 }
+        ];
+
+        let nextNodeId = 6;
+        let isBuildMode = false;
+        let buildSelectedNode = null;
+
+        /* ── Animation State ── */
+        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1500;
+
+        const svg = d3.select("#d3-container svg");
+
+        /* ── UI INITIALIZATION ── */
+        function initUI() {
+            updateDropdowns();
+            document.getElementById('source-selector').value = 0;
+            document.getElementById('sink-selector').value = 5;
+            drawGraph();
+        }
+
+        function updateDropdowns() {
+            ['source-selector', 'sink-selector'].forEach(id => {
+                const sel = document.getElementById(id);
+                let currentVal = sel.value;
+                sel.innerHTML = '';
+                nodes.forEach(n => {
+                    let opt = document.createElement('option');
+                    opt.value = n.id; opt.text = `Node ${n.label}`;
+                    sel.appendChild(opt);
+                });
+                if(nodes.find(n=>n.id == currentVal)) sel.value = currentVal;
+            });
+        }
+
+        /* ── D3 GRAPH RENDERING & BUILDER LOGIC ── */
+        function drawGraph() {
+            svg.selectAll("*").remove();
+            
+            // Build mode overlay
+            svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "transparent")
+                .on("click", function(event) {
+                    if(!isBuildMode) return;
+                    if(event.target.tagName !== 'rect') return; 
+                    const [x, y] = d3.pointer(event);
+                    nodes.push({ id: nextNodeId, label: String.fromCharCode(65 + (nextNodeId % 26)), cx: x, cy: y });
+                    nextNodeId++;
+                    updateDropdowns();
+                    drawGraph();
+                });
+
+            const edgesGroup = svg.append("g").attr("class", "edges");
+            const edgeData = edgesGroup.selectAll(".edge-group").data(edges).enter().append("g")
+                .attr("class", "edge-group").attr("id", d => `eg-${d.u}-${d.v}`);
+
+            edgeData.append("line").attr("class", "edge-line").attr("id", d => `line-${d.u}-${d.v}`)
+                .attr("x1", d => nodes.find(n => n.id === d.u).cx)
+                .attr("y1", d => nodes.find(n => n.id === d.u).cy)
+                .attr("x2", d => nodes.find(n => n.id === d.v).cx)
+                .attr("y2", d => nodes.find(n => n.id === d.v).cy)
+                .attr("marker-end", "url(#arrowhead)");
+
+            edgeData.append("rect").attr("class", "edge-weight-bg")
+                .attr("width", 50).attr("height", 24)
+                .attr("x", d => (nodes.find(n=>n.id===d.u).cx + nodes.find(n=>n.id===d.v).cx)/2 - 25)
+                .attr("y", d => (nodes.find(n=>n.id===d.u).cy + nodes.find(n=>n.id===d.v).cy)/2 - 12);
+
+            edgeData.append("text").attr("class", "edge-weight-text").attr("id", d => `txt-${d.u}-${d.v}`)
+                .attr("x", d => (nodes.find(n=>n.id===d.u).cx + nodes.find(n=>n.id===d.v).cx)/2)
+                .attr("y", d => (nodes.find(n=>n.id===d.u).cy + nodes.find(n=>n.id===d.v).cy)/2)
+                .text(d => `${d.flow} / ${d.cap}`)
+                .on("click", function(event, d) {
+                    if(!isBuildMode) return;
+                    let nw = prompt("Enter new capacity:", d.cap);
+                    if(nw && !isNaN(nw)) { d.cap = parseInt(nw); drawGraph(); }
+                });
+
+            const nodesGroup = svg.append("g").attr("class", "nodes");
+            const nodeData = nodesGroup.selectAll(".node").data(nodes).enter().append("g")
+                .attr("class", "node").attr("id", d => `node-${d.id}`)
+                .attr("transform", d => `translate(${d.cx}, ${d.cy})`)
+                .on("click", function(event, d) {
+                    if(!isBuildMode) return;
+                    if(!buildSelectedNode) {
+                        buildSelectedNode = d;
+                        d3.select(this).classed("build-selected", true);
+                    } else {
+                        if(buildSelectedNode.id !== d.id) {
+                            let exists = edges.find(e => e.u===buildSelectedNode.id && e.v===d.id);
+                            if(!exists) {
+                                let w = prompt(`Enter capacity for ${buildSelectedNode.label} -> ${d.label}:`, "10");
+                                if(w && !isNaN(w)) {
+                                    edges.push({u: buildSelectedNode.id, v: d.id, cap: parseInt(w), flow: 0});
+                                }
+                            }
+                        }
+                        buildSelectedNode = null;
+                        drawGraph();
+                    }
+                });
+
+            nodeData.append("circle").attr("r", 24);
+            nodeData.append("text").text(d => d.label);
+
+            let srcId = parseInt(document.getElementById('source-selector').value);
+            let snkId = parseInt(document.getElementById('sink-selector').value);
+            d3.select(`#node-${srcId}`).classed('source', true);
+            d3.select(`#node-${snkId}`).classed('sink', true);
+        }
+
+        /* ── BUILDER TOOLS ── */
+        function toggleBuildMode() {
+            isBuildMode = !isBuildMode;
+            buildSelectedNode = null;
+            document.getElementById('build-overlay').style.display = isBuildMode ? 'block' : 'none';
+            document.getElementById('btn-build').innerHTML = isBuildMode ? `<i class="ph-bold ph-check"></i> <span>Finish Building</span>` : `<i class="ph-bold ph-pencil-simple"></i> <span>Build Graph</span>`;
+            document.getElementById('btn-build').style.background = isBuildMode ? 'rgba(52, 211, 153, 0.15)' : '';
+            document.getElementById('btn-build').style.color = isBuildMode ? 'var(--green)' : '';
+            document.getElementById('btn-build').style.borderColor = isBuildMode ? 'rgba(52, 211, 153, 0.4)' : '';
+            
+            if(isBuildMode) { resetAnim(); drawGraph(); }
+            else { d3.selectAll(".node").classed("build-selected", false); }
+        }
+
+        function clearGraph() {
+            if(!confirm("Clear all nodes and edges?")) return;
+            nodes = []; edges = []; nextNodeId = 0;
+            updateDropdowns(); document.getElementById('exam-table-body').innerHTML = ''; drawGraph(); resetAnim();
+        }
+
+        /* ── MAX FLOW ENGINE (Edmonds-Karp) ── */
+        function generateMaxFlow() {
+            if(isBuildMode) toggleBuildMode();
+            stopAnim();
+            document.getElementById('exam-table-body').innerHTML = '';
+            
+            const s = parseInt(document.getElementById('source-selector').value);
+            const t = parseInt(document.getElementById('sink-selector').value);
+            if(isNaN(s) || isNaN(t) || s === t) { alert("Invalid Source or Sink"); return; }
+
+            // Reset flows
+            edges.forEach(e => e.flow = 0);
+            drawGraph();
+
+            steps = [];
+            let totalFlow = 0;
+            let rows = []; // Track table rows for animation
+
+            // Build residual graph structure
+            // resMap[u][v] = { cap, isForward }
+            function getResMap() {
+                let map = {};
+                nodes.forEach(n => map[n.id] = {});
+                edges.forEach(e => {
+                    map[e.u][e.v] = { cap: e.cap - e.flow, isForward: true, ref: e };
+                    if(!map[e.v][e.u]) map[e.v][e.u] = { cap: 0, isForward: false, ref: e }; // Only add back-edge if not already a forward edge
+                    map[e.v][e.u].cap = e.flow; // Update backward capacity
+                });
+                return map;
+            }
+
+            function pushStep(psLine, hlPath, activeNodes, bottleneck, newRow, msg) {
+                // Snapshot flows
+                let flows = {};
+                edges.forEach(e => flows[`${e.u}-${e.v}`] = {flow: e.flow, cap: e.cap});
+                
+                steps.push({
+                    psLine, hlPath: [...hlPath], activeNodes: [...activeNodes], bottleneck,
+                    flows, totalFlow, msg, tableRows: [...rows]
+                });
+            }
+
+            pushStep(3, [], [], 0, null, `<span class="status-badge">Init</span> Flows set to 0. Looking for augmenting path from ${getNode(s).label} to ${getNode(t).label}.`);
+
+            while(true) {
+                let resMap = getResMap();
+                let parent = {}; nodes.forEach(n => parent[n.id] = null);
+                let visited = new Set([s]);
+                let queue = [s];
+
+                // BFS
+                let foundPath = false;
+                while(queue.length > 0) {
+                    let u = queue.shift();
+                    if(u === t) { foundPath = true; break; }
+                    
+                    for(let vId in resMap[u]) {
+                        let v = parseInt(vId);
+                        if(!visited.has(v) && resMap[u][v].cap > 0) {
+                            visited.add(v);
+                            parent[v] = {u: u, isFwd: resMap[u][v].isForward, ref: resMap[u][v].ref};
+                            queue.push(v);
+                        }
+                    }
+                }
+
+                if(!foundPath) break;
+
+                // Reconstruct path
+                let curr = t;
+                let pathList = [];
+                let bottleneck = Infinity;
+                let pathNodes = [t];
+
+                while(curr !== s) {
+                    let p = parent[curr];
+                    pathList.unshift(p);
+                    pathNodes.push(p.u);
+                    
+                    let resCap = p.isFwd ? (p.ref.cap - p.ref.flow) : p.ref.flow;
+                    bottleneck = Math.min(bottleneck, resCap);
+                    curr = p.u;
+                }
+
+                let pathStr = pathNodes.reverse().map(id => getNode(id).label).join(' &rarr; ');
+                
+                pushStep(7, pathList, pathNodes, 0, null, `Path found: ${pathStr}. Calculating bottleneck.`);
+                pushStep(12, pathList, pathNodes, bottleneck, null, `Bottleneck capacity of path is <b style="color:var(--pink)">${bottleneck}</b>.`);
+
+                // Augment Flow
+                pathList.forEach(p => {
+                    if(p.isFwd) p.ref.flow += bottleneck;
+                    else p.ref.flow -= bottleneck;
+                });
+                
+                totalFlow += bottleneck;
+                rows.push(`<tr><td>${pathStr}</td><td style="color:var(--pink)">${bottleneck}</td><td style="color:var(--cyan);font-weight:800">${totalFlow}</td></tr>`);
+
+                pushStep(18, pathList, pathNodes, bottleneck, rows[rows.length-1], `Augmented flow by ${bottleneck}. Updating residual graph.`);
+            }
+
+            pushStep(22, [], [], 0, null, `✅ <b>Max Flow Complete!</b> No more augmenting paths. Maximum Flow is <b style="color:var(--cyan)">${totalFlow}</b>.`);
+            
+            enableBtns(true);
+            curStep = 0;
+            applyStep(0);
+        }
+
+        /* ── ANIMATION & RENDERING ── */
+        function getNode(id) { return nodes.find(n => n.id === id) || {label:'?'}; }
+
+        function applyStep(si) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            const srcId = parseInt(document.getElementById('source-selector').value);
+            const snkId = parseInt(document.getElementById('sink-selector').value);
+
+            // 1. Reset SVG Classes
+            d3.selectAll('.node').attr('class', 'node');
+            d3.selectAll('.edge-group').attr('class', 'edge-group');
+            d3.selectAll('.edge-line').attr('class', 'edge-line');
+            
+            d3.select(`#node-${srcId}`).classed('source', true);
+            d3.select(`#node-${snkId}`).classed('sink', true);
+
+            // 2. Apply Graph States
+            s.activeNodes.forEach(id => {
+                if(id !== srcId && id !== snkId) d3.select(`#node-${id}`).classed('evaluating', true);
+            });
+
+            // Update edge texts and default states
+            edges.forEach(e => {
+                let fData = s.flows[`${e.u}-${e.v}`];
+                if(fData) {
+                    d3.select(`#txt-${e.u}-${e.v}`).text(`${fData.flow} / ${fData.cap}`);
+                    if(fData.flow === fData.cap && fData.cap > 0) d3.select(`#eg-${e.u}-${e.v}`).classed('full', true);
+                }
+            });
+
+            // Highlight Path
+            if(s.hlPath && s.hlPath.length > 0) {
+                s.hlPath.forEach(p => {
+                    let eg = d3.select(`#eg-${p.ref.u}-${p.ref.v}`);
+                    let el = d3.select(`#line-${p.ref.u}-${p.ref.v}`);
+                    if(!eg.empty()) {
+                        eg.classed('evaluating', true);
+                        if(s.bottleneck > 0) eg.classed('bottleneck', true);
+                        
+                        if(p.isFwd) {
+                            el.classed('evaluating', true);
+                            if(s.bottleneck > 0) el.classed('bottleneck', true);
+                        } else {
+                            el.classed('backward', true);
+                        }
+                    }
+                });
+            }
+
+            // 3. Update Table
+            document.getElementById('exam-table-body').innerHTML = s.tableRows.join('');
+            
+            // 4. Update Stats & UI
+            document.getElementById('max-flow-val').textContent = s.totalFlow;
+            document.getElementById('status-text').innerHTML = s.msg;
+            document.getElementById('cur-step').textContent = si + 1;
+            document.getElementById('tot-steps').textContent = steps.length;
+
+            // Highlight Pseudo
+            document.querySelectorAll('.ps').forEach(el => el.classList.remove('active'));
+            if(document.getElementById(`ps-${s.psLine}`)) document.getElementById(`ps-${s.psLine}`).classList.add('active');
+        }
+
+        /* ── PLAYBACK CONTROLS ── */
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; applyStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function resetAnim() { stopAnim(); curStep = -1; document.getElementById('exam-table-body').innerHTML = ''; document.getElementById('max-flow-val').textContent = '0'; drawGraph(); document.getElementById('status-text').innerHTML = "Select Source and Sink, then click Run Max Flow."; enableBtns(false); document.querySelectorAll('.ps').forEach(el => el.classList.remove('active')); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+
+        function updateSpeed(v) {
+            speedMs = [2500, 1800, 1200, 700, 300][parseInt(v) - 1];
+            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '1.5×', '3.0×'][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() {
+            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+        }
+
+        function switchTab(lang) {
+            ['cpp', 'py', 'java'].forEach(l => {
+                document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+                document.getElementById('tab-' + l).classList.toggle('active', l === lang);
+            });
+        }
+
+        // Boot
+        initUI();
+    </script>
+</body>
+</html>

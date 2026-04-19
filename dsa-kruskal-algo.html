@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kruskal's Algorithm Visualizer ⚡ | Visual DSA Lab</title>
+    <meta name="description"
+        content="Insanely interactive Kruskal's Algorithm visualizer with D3.js graph rendering, Disjoint Set tracker, and premium glassmorphic UI." />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --purple: #a855f7;
+            --indigo: #6366f1;
+            --green: #34d399;
+            --pink: #f472b6;
+            --orange: #fb923c;
+            --yellow: #facc15;
+            --red: #f87171;
+            --bg: #07040a;
+            --card: rgba(20, 10, 25, 0.7);
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Premium Aurora Background ── */
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(244, 114, 182, 0.06), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05), transparent 40%);
+            animation: aurora 25s linear infinite;
+            z-index: -1; pointer-events: none;
+        }
+
+        @keyframes aurora {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #07040a; }
+        ::-webkit-scrollbar-thumb { background: #2a1a3a; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3d2555; }
+
+        /* ── Topbar ── */
+        #topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 5, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px;
+        }
+
+        .back-btn {
+            display: flex; align-items: center; gap: 6px; color: #6b7280;
+            text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s;
+        }
+        .back-btn:hover { color: #e2e8f0; }
+        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.08); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; }
+        .topbar-algo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        
+        .badge-beta {
+            font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 99px;
+            background: rgba(168, 85, 247, 0.1); color: var(--purple);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+
+        .topbar-meta { margin-left: auto; font-size: 11px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+
+        /* ── Page wrapper ── */
+        #page { max-width: 1280px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
+
+        /* ── Hero header ── */
+        .algo-hero { margin-bottom: 32px; }
+        .algo-hero h1 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+        }
+        .algo-hero h1 .icon-wrap {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(168, 85, 247, 0.15);
+        }
+
+        .complexity-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px;
+            border-radius: 99px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-time { background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); color: var(--cyan); }
+        .badge-space { background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.25); color: var(--pink); }
+        .badge-class { background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); color: var(--purple); }
+
+        .algo-desc { color: #94a3b8; font-size: 14px; line-height: 1.65; max-width: 680px; margin-top: 12px; }
+
+        /* ── Glass card ── */
+        .card {
+            background: var(--card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ── Input row ── */
+        .input-row { padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; justify-content: space-between; }
+        
+        .mst-stats { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .mst-lbl { font-size: 11px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+        .mst-val { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 800; color: var(--purple); text-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+
+        /* ── Controls ── */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+            padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.06);
+            color: #e2e8f0; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+        }
+        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .btn-primary { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.4); color: var(--purple); }
+        .btn-primary:hover:not(:disabled) { background: rgba(168, 85, 247, 0.25); box-shadow: 0 0 20px rgba(168, 85, 247, 0.25); }
+        .btn-danger { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #f87171; }
+
+        /* ── VIZ FRAME: D3 GRAPH & UNION FIND ── */
+        #viz-frame {
+            border-radius: 16px; background: rgba(10, 8, 15, 0.85); border: 1px solid rgba(168, 85, 247, 0.25);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 80px rgba(168, 85, 247, 0.05);
+            margin-bottom: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column;
+        }
+        #viz-frame::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple), transparent); opacity: 0.8;
+        }
+
+        .viz-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
+            min-height: 480px;
+        }
+        @media (max-width: 900px) { .viz-layout { grid-template-columns: 1fr; } }
+
+        /* Left: Graph */
+        #d3-container {
+            width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(168, 85, 247, 0.04) 0%, transparent 75%);
+            position: relative; border-right: 1px solid rgba(255,255,255,0.08); min-height: 400px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Right: Trackers (Improved Visibility) */
+        .tracker-section {
+            padding: 28px 24px; display: flex; flex-direction: column; gap: 28px;
+            background: rgba(15, 10, 22, 0.6); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            overflow-y: auto;
+        }
+
+        .section-header {
+            font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+            color: #94a3b8; display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+        }
+
+        /* Edge Queue */
+        .edge-queue {
+            display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;
+            padding-right: 8px;
+        }
+        .eq-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+            transition: all 0.3s ease; color: #cbd5e1;
+        }
+        .eq-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        .eq-item.active { border-color: var(--pink); background: rgba(244, 114, 182, 0.15); color: #fff; transform: scale(1.02); box-shadow: 0 4px 12px rgba(244, 114, 182, 0.1); }
+        .eq-item.accepted { border-color: var(--green); background: rgba(52, 211, 153, 0.12); color: var(--green); opacity: 0.9; }
+        .eq-item.rejected { border-color: transparent; background: rgba(0,0,0,0.2); color: #4b5563; text-decoration: line-through; opacity: 0.5; }
+        .eq-nodes { font-weight: 700; }
+        .eq-weight { color: var(--purple); font-weight: 800; }
+        .eq-item.active .eq-weight { color: var(--pink); }
+        .eq-item.accepted .eq-weight { color: var(--green); }
+
+        /* Disjoint Set UI */
+        .ds-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .ds-cell {
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 10px; transition: all 0.3s ease;
+        }
+        .ds-cell.highlight {
+            background: rgba(34, 211, 238, 0.15); border-color: var(--cyan);
+            box-shadow: 0 0 18px rgba(34, 211, 238, 0.25); transform: translateY(-2px);
+        }
+        .ds-cell.merged {
+            background: rgba(52, 211, 153, 0.15); border-color: var(--green);
+        }
+        .ds-node { font-size: 11px; font-weight: 800; color: #94a3b8; font-family: 'Space Grotesk', sans-serif; }
+        .ds-parent { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #f8fafc; transition: color 0.3s; }
+        .ds-cell.highlight .ds-parent { color: var(--cyan); }
+        .ds-cell.merged .ds-parent { color: var(--green); }
+
+        /* SVG Graph Styles (Improved Visibility) */
+        .edge-line { stroke: rgba(255, 255, 255, 0.25); stroke-width: 3px; transition: stroke 0.4s ease, stroke-width 0.4s ease; }
+        .edge-line.evaluating { stroke: var(--pink); stroke-width: 5px; stroke-dasharray: 8; animation: dashFlow 1s linear infinite; filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.7)); }
+        .edge-line.accepted { stroke: var(--green); stroke-width: 5px; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.7)); }
+        .edge-line.rejected { stroke: rgba(239, 68, 68, 0.3); stroke-width: 2px; stroke-dasharray: 4; }
+
+        @keyframes dashFlow { to { stroke-dashoffset: -16; } }
+
+        .edge-weight-bg { fill: var(--bg); stroke: rgba(255, 255, 255, 0.2); stroke-width: 1.5px; transition: all 0.4s ease; rx: 6; ry: 6; }
+        .edge-weight-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800; fill: #cbd5e1; text-anchor: middle; dominant-baseline: central; transition: all 0.4s ease; }
+
+        .edge-group.evaluating .edge-weight-bg { stroke: var(--pink); fill: rgba(244, 114, 182, 0.15); }
+        .edge-group.evaluating .edge-weight-text { fill: var(--pink); font-size: 15px; }
+        .edge-group.accepted .edge-weight-bg { stroke: var(--green); fill: rgba(52, 211, 153, 0.2); }
+        .edge-group.accepted .edge-weight-text { fill: var(--green); font-size: 15px; }
+        .edge-group.rejected .edge-weight-bg { opacity: 0; }
+        .edge-group.rejected .edge-weight-text { fill: rgba(239, 68, 68, 0.6); }
+
+        .node circle { fill: rgba(255, 255, 255, 0.08); stroke: rgba(255, 255, 255, 0.35); stroke-width: 2.5px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .node text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; fill: #f8fafc; text-anchor: middle; dominant-baseline: central; pointer-events: none; transition: fill 0.4s ease; }
+        
+        .node.evaluating circle { fill: rgba(244, 114, 182, 0.25); stroke: var(--pink); stroke-width: 4px; filter: drop-shadow(0 0 18px rgba(244, 114, 182, 0.5)); transform: scale(1.15); }
+        .node.evaluating text { fill: var(--pink); }
+        .node.mst circle { fill: rgba(52, 211, 153, 0.2); stroke: var(--green); stroke-width: 4px; filter: drop-shadow(0 0 15px rgba(52, 211, 153, 0.4)); }
+        .node.mst text { fill: var(--green); }
+
+        /* ── Status strip ── */
+        #status-strip {
+            padding: 16px 24px; font-size: 15px; font-weight: 600; color: #f8fafc;
+            background: rgba(168, 85, 247, 0.08); border-top: 1px solid rgba(168, 85, 247, 0.2);
+            text-align: center; min-height: 60px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .status-badge {
+            background: rgba(168, 85, 247, 0.2); color: var(--purple); padding: 5px 12px;
+            border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        /* ── Controls bar ── */
+        .controls-bar { padding: 18px 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .speed-wrap input[type=range] { -webkit-appearance: none; width: 110px; height: 5px; border-radius: 5px; background: rgba(255, 255, 255, 0.15); outline: none; cursor: pointer; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 12px var(--purple); cursor: pointer; transition: transform 0.2s; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.25); }
+        .step-counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #94a3b8; }
+
+        /* ── Panels Grid ── */
+        .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+        @media (max-width: 800px) { .panels-grid { grid-template-columns: 1fr; } }
+        .panel-card { padding: 22px; }
+        .panel-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #fff; }
+
+        /* ── Pseudocode ── */
+        #pseudo-panel { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; }
+        .ps { padding: 4px 12px; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; color: #94a3b8; transition: all 0.3s ease; white-space: pre; }
+        .ps.active { border-left-color: var(--purple); background: rgba(168, 85, 247, 0.1); color: #f8fafc; }
+        .kw { color: #c084fc; } .fn { color: #67e8f9; } .num { color: #fcd34d; } .cmt { color: #6b7280; font-style: italic; }
+
+        /* ── Code panel ── */
+        .code-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .code-tab { padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 12px 12px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; color: #94a3b8; background: transparent; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .code-tab.active { color: var(--purple); background: rgba(5, 5, 15, 0.95); border-color: rgba(255, 255, 255, 0.1); border-bottom-color: rgba(5, 5, 15, 0.95); }
+        .code-block { background: rgba(5, 5, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0 12px 12px 12px; padding: 20px 22px; color: #e2e8f0; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; white-space: pre; margin-top: -1px; }
+        .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+    </style>
+</head>
+
+<body>
+
+    <header id="topbar">
+        <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
+        <div class="sep"></div>
+        <div class="topbar-title">
+            <span style="font-size:1.2rem">⚡</span>
+            <span class="topbar-algo-name">Kruskal's Algorithm</span>
+            <span class="badge-beta">MST Module</span>
+        </div>
+        <div class="topbar-meta"><i class="ph-fill ph-graph" style="color:var(--purple)"></i> DAA · Bennett University</div>
+    </header>
+
+    <div id="page">
+
+        <div class="algo-hero">
+            <h1>
+                <div class="icon-wrap"><i class="ph-fill ph-graph" style="color:var(--purple)"></i></div>
+                Kruskal's Algorithm (MST)
+            </h1>
+            <div class="complexity-row">
+                <span class="badge badge-time"><i class="ph-fill ph-clock"></i> Time: O(E log E)</span>
+                <span class="badge badge-space"><i class="ph-fill ph-stack"></i> Space: O(V + E)</span>
+                <span class="badge badge-class"><i class="ph-fill ph-lightning"></i> Greedy Approach</span>
+            </div>
+            <p class="algo-desc">
+                Kruskal's algorithm builds the Minimum Spanning Tree (MST) by sorting all edges by weight, then greedily picking the smallest edge. It uses a <strong style="color:var(--cyan)">Disjoint Set (Union-Find)</strong> data structure to efficiently check if adding the edge would form a cycle.
+            </p>
+        </div>
+
+        <div class="card input-row">
+            <div>
+                <button class="btn btn-primary" onclick="generate()">
+                    <i class="ph-bold ph-play-circle"></i> Initialize Graph
+                </button>
+            </div>
+            <div class="mst-stats">
+                <span class="mst-lbl">Total MST Weight:</span>
+                <span class="mst-val" id="tot-weight">0</span>
+            </div>
+        </div>
+
+        <div id="viz-frame">
+            <div class="viz-layout">
+                <div id="d3-container">
+                    <svg width="100%" height="100%" viewBox="0 0 680 450" preserveAspectRatio="xMidYMid meet"></svg>
+                </div>
+                
+                <div class="tracker-section">
+                    <div>
+                        <div class="section-header"><i class="ph-bold ph-sort-ascending"></i> Sorted Edges</div>
+                        <div class="edge-queue" id="ui-edge-queue">
+                            </div>
+                    </div>
+                    
+                    <div>
+                        <div class="section-header"><i class="ph-bold ph-git-merge"></i> Disjoint Set (Parents)</div>
+                        <div class="ds-grid" id="ui-ds-grid">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status-strip">
+                <i class="ph-fill ph-info" style="color:var(--purple)"></i>
+                <span id="status-text">Click "Initialize Graph" to setup the environment.</span>
+            </div>
+        </div>
+
+        <div class="card controls-bar">
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i> Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
+            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+
+            <div class="speed-wrap">
+                <i class="ph-bold ph-tortoise" style="color:#94a3b8"></i>
+                <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
+                <i class="ph-bold ph-rabbit" style="color:#94a3b8"></i>
+                <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
+            </div>
+            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span id="tot-steps">0</span></div>
+        </div>
+
+        <div class="panels-grid">
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-code" style="color:var(--purple)"></i> Kruskal's Logic</div>
+                <div id="pseudo-panel">
+                    <div class="ps"><span class="kw">function</span> <span class="fn">KruskalMST</span>(Vertices, Edges):</div>
+                    <div class="ps">  mst ← []</div>
+                    <div class="ps">  uf ← new <span class="fn">UnionFind</span>(Vertices)</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">  <span class="cmt">// Step 1: Sort all edges by weight</span></div>
+                    <div class="ps">  Edges.<span class="fn">sort</span>(ascending)</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">  <span class="cmt">// Step 2: Iterate through sorted edges</span></div>
+                    <div class="ps">  <span class="kw">for</span> each (u, v, weight) <span class="kw">in</span> Edges:</div>
+                    <div class="ps">    <span class="cmt">// Step 3: Check for cycle using Find</span></div>
+                    <div class="ps">    root_u ← uf.<span class="fn">find</span>(u)</div>
+                    <div class="ps">    root_v ← uf.<span class="fn">find</span>(v)</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">    <span class="kw">if</span> root_u != root_v: <span class="cmt">← NO CYCLE</span></div>
+                    <div class="ps">      mst.<span class="fn">append</span>((u, v, weight))</div>
+                    <div class="ps">      uf.<span class="fn">union</span>(u, v)</div>
+                    <div class="ps">    <span class="kw">else</span>:</div>
+                    <div class="ps">      <span class="cmt">// Forms a cycle, discard edge</span></div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">  <span class="kw">return</span> mst</div>
+                </div>
+            </div>
+
+            <div class="card panel-card">
+                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--cyan)"></i> Implementation</div>
+                <div class="code-tabs">
+                    <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
+                    <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
+                    <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
+                </div>
+                
+                <div id="code-cpp" class="code-block"><span class="cm">// C++ Kruskal's using Disjoint Set</span>
+<span class="ck">#include</span> &lt;iostream&gt;
+<span class="ck">#include</span> &lt;vector&gt;
+<span class="ck">#include</span> &lt;algorithm&gt;
+<span class="ck">using namespace</span> std;
+
+<span class="ck">struct</span> Edge {
+    <span class="ck">int</span> u, v, weight;
+    <span class="ck">bool</span> <span class="ct">operator</span>&lt;(Edge <span class="ck">const</span>&amp; other) <span class="ck">const</span> {
+        <span class="ck">return</span> weight &lt; other.weight;
+    }
+};
+
+<span class="ck">class</span> UnionFind {
+<span class="ck">private</span>:
+    <span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; parent;
+<span class="ck">public</span>:
+    UnionFind(<span class="ck">int</span> n) {
+        parent.<span class="ct">resize</span>(n);
+        <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i &lt; n; i++) parent[i] = i;
+    }
+    <span class="ck">int</span> <span class="ct">find</span>(<span class="ck">int</span> i) {
+        <span class="ck">if</span> (parent[i] == i) <span class="ck">return</span> i;
+        <span class="ck">return</span> parent[i] = <span class="ct">find</span>(parent[i]); <span class="cm">// Path compression</span>
+    }
+    <span class="ck">bool</span> <span class="ct">unite</span>(<span class="ck">int</span> i, <span class="ck">int</span> j) {
+        <span class="ck">int</span> root_i = <span class="ct">find</span>(i), root_j = <span class="ct">find</span>(j);
+        <span class="ck">if</span> (root_i != root_j) {
+            parent[root_i] = root_j;
+            <span class="ck">return true</span>;
+        }
+        <span class="ck">return false</span>;
+    }
+};
+
+<span class="ck">void</span> <span class="ct">kruskalMST</span>(<span class="ck">int</span> V, <span class="ct">vector</span>&lt;Edge&gt;&amp; edges) {
+    UnionFind <span class="ct">uf</span>(V);
+    <span class="ct">vector</span>&lt;Edge&gt; mst;
+    <span class="ct">sort</span>(edges.begin(), edges.end());
+
+    <span class="ck">for</span> (Edge e : edges) {
+        <span class="ck">if</span> (uf.<span class="ct">unite</span>(e.u, e.v)) {
+            mst.<span class="ct">push_back</span>(e);
+        }
+    }
+}</div>
+
+                <div id="code-py" class="code-block" style="display:none"><span class="cm"># Python Kruskal's using Disjoint Set</span>
+<span class="ck">class</span> UnionFind:
+    <span class="ck">def</span> <span class="ct">__init__</span>(self, vertices):
+        self.parent = {v: v <span class="ck">for</span> v <span class="ck">in</span> vertices}
+
+    <span class="ck">def</span> <span class="ct">find</span>(self, item):
+        <span class="ck">if</span> self.parent[item] == item:
+            <span class="ck">return</span> item
+        self.parent[item] = self.find(self.parent[item])
+        <span class="ck">return</span> self.parent[item]
+
+    <span class="ck">def</span> <span class="ct">union</span>(self, x, y):
+        xroot = self.find(x)
+        yroot = self.find(y)
+        <span class="ck">if</span> xroot != yroot:
+            self.parent[xroot] = yroot
+            <span class="ck">return True</span>
+        <span class="ck">return False</span>
+
+<span class="ck">def</span> <span class="ct">kruskal_mst</span>(vertices, edges):
+    mst = []
+    uf = UnionFind(vertices)
+    
+    <span class="cm"># Sort all edges by weight</span>
+    edges.sort(key=<span class="ck">lambda</span> edge: edge[<span class="cn">2</span>])
+    
+    <span class="ck">for</span> u, v, weight <span class="ck">in</span> edges:
+        <span class="ck">if</span> uf.union(u, v):
+            mst.append((u, v, weight))
+            
+    <span class="ck">return</span> mst</div>
+
+                <div id="code-java" class="code-block" style="display:none"><span class="cm">// Java Kruskal's using Disjoint Set</span>
+<span class="ck">import</span> java.util.*;
+
+<span class="ck">class</span> Edge <span class="ck">implements</span> Comparable&lt;Edge&gt; {
+    <span class="ck">int</span> u, v, weight;
+    <span class="ck">public</span> <span class="ck">int</span> <span class="ct">compareTo</span>(Edge other) {
+        <span class="ck">return</span> <span class="ck">this</span>.weight - other.weight;
+    }
+}
+
+<span class="ck">class</span> UnionFind {
+    <span class="ck">int</span>[] parent;
+    <span class="ck">public</span> <span class="ct">UnionFind</span>(<span class="ck">int</span> n) {
+        parent = <span class="ck">new</span> <span class="ck">int</span>[n];
+        <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">0</span>; i &lt; n; i++) parent[i] = i;
+    }
+    <span class="ck">public</span> <span class="ck">int</span> <span class="ct">find</span>(<span class="ck">int</span> i) {
+        <span class="ck">if</span> (parent[i] == i) <span class="ck">return</span> i;
+        <span class="ck">return</span> parent[i] = <span class="ct">find</span>(parent[i]);
+    }
+    <span class="ck">public</span> <span class="ck">boolean</span> <span class="ct">union</span>(<span class="ck">int</span> i, <span class="ck">int</span> j) {
+        <span class="ck">int</span> rootI = <span class="ct">find</span>(i), rootJ = <span class="ct">find</span>(j);
+        <span class="ck">if</span> (rootI != rootJ) {
+            parent[rootI] = rootJ;
+            <span class="ck">return true</span>;
+        }
+        <span class="ck">return false</span>;
+    }
+}
+
+<span class="ck">void</span> <span class="ct">kruskalMST</span>(<span class="ck">int</span> V, List&lt;Edge&gt; edges) {
+    UnionFind uf = <span class="ck">new</span> UnionFind(V);
+    List&lt;Edge&gt; mst = <span class="ck">new</span> ArrayList&lt;&gt;();
+    Collections.sort(edges);
+
+    <span class="ck">for</span> (Edge e : edges) {
+        <span class="ck">if</span> (uf.union(e.u, e.v)) {
+            mst.add(e);
+        }
+    }
+}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ── Graph Data ── */
+        const graph = {
+            nodes: [
+                { id: 0, label: '0', cx: 80, cy: 220 },
+                { id: 1, label: '1', cx: 250, cy: 80 },
+                { id: 2, label: '2', cx: 250, cy: 360 },
+                { id: 3, label: '3', cx: 420, cy: 80 },
+                { id: 4, label: '4', cx: 420, cy: 360 },
+                { id: 5, label: '5', cx: 590, cy: 220 }
+            ],
+            edges: [
+                { id: 'e0', source: 0, target: 1, weight: 4 },
+                { id: 'e1', source: 0, target: 2, weight: 2 },
+                { id: 'e2', source: 1, target: 2, weight: 1 },
+                { id: 'e3', source: 1, target: 3, weight: 5 },
+                { id: 'e4', source: 2, target: 3, weight: 8 },
+                { id: 'e5', source: 2, target: 4, weight: 10 },
+                { id: 'e6', source: 3, target: 4, weight: 2 },
+                { id: 'e7', source: 3, target: 5, weight: 6 },
+                { id: 'e8', source: 4, target: 5, weight: 3 }
+            ]
+        };
+
+        let sortedEdges = [];
+
+        /* ── State Management ── */
+        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1200;
+
+        const PHASE = {
+            init: 2, sort: 5,
+            eval: 7, find: 9, 
+            accept: 12, reject: 15,
+            done: 17
+        };
+
+        /* ── Algorithm Engine ── */
+        function makeSteps() {
+            let snaps = [];
+            sortedEdges = [...graph.edges].sort((a,b) => a.weight - b.weight);
+            
+            let parent = [0,1,2,3,4,5];
+            let mstEdges = new Set();
+            let rejectedEdges = new Set();
+            let mstNodes = new Set();
+            let currentWeight = 0;
+
+            function pushSnap(phase, evalEdge, dsHighlight, mergedNode, msg) {
+                snaps.push({
+                    phase, msg, evalEdge,
+                    dsState: [...parent], dsHighlight: [...(dsHighlight||[])], mergedNode,
+                    mstEdges: new Set(mstEdges), rejectedEdges: new Set(rejectedEdges), mstNodes: new Set(mstNodes),
+                    totW: currentWeight
+                });
+            }
+
+            pushSnap('init', null, [], null, `<span class="status-badge">Initialization</span> Disjoint Set arrays initialized. Nodes are their own parents.`);
+            pushSnap('sort', null, [], null, `Sorted all edges by weight in ascending order.`);
+
+            function find(i) {
+                if (parent[i] === i) return i;
+                return parent[i] = find(parent[i]);
+            }
+
+            for (let i = 0; i < sortedEdges.length; i++) {
+                let e = sortedEdges[i];
+                pushSnap('eval', e.id, [], null, `Evaluating edge <strong style="color:var(--pink)">${e.source}-${e.target}</strong> (Weight: ${e.weight}).`);
+
+                let rootU = find(e.source);
+                let rootV = find(e.target);
+
+                pushSnap('find', e.id, [e.source, e.target, rootU, rootV], null, `Find roots: Root(${e.source}) = <strong style="color:var(--cyan)">${rootU}</strong>, Root(${e.target}) = <strong style="color:var(--cyan)">${rootV}</strong>.`);
+
+                if (rootU !== rootV) {
+                    // Accept
+                    parent[rootU] = rootV;
+                    mstEdges.add(e.id);
+                    mstNodes.add(e.source); mstNodes.add(e.target);
+                    currentWeight += e.weight;
+                    pushSnap('accept', e.id, [rootU], rootU, `<strong style="color:var(--green)">No Cycle!</strong> Different roots. Accept edge and Union sets (Parent of ${rootU} becomes ${rootV}).`);
+                } else {
+                    // Reject
+                    rejectedEdges.add(e.id);
+                    pushSnap('reject', e.id, [], null, `<strong style="color:var(--red)">Cycle Detected!</strong> Same root (${rootU}). Reject edge.`);
+                }
+
+                if (mstEdges.size === graph.nodes.length - 1) break; // MST complete
+            }
+
+            pushSnap('done', null, [], null, `✅ <strong>MST Complete!</strong> Kruskal's Algorithm successfully connected all nodes.`);
+            return snaps;
+        }
+
+        /* ── DOM Generation ── */
+        function initDOM() {
+            // 1. Setup D3 Graph
+            const svg = d3.select("#d3-container svg");
+            svg.selectAll("*").remove();
+
+            const edgesGroup = svg.append("g").attr("class", "edges");
+            const edgeData = edgesGroup.selectAll(".edge-group").data(graph.edges).enter().append("g")
+                .attr("class", "edge-group").attr("id", d => `eg-${d.id}`);
+
+            edgeData.append("line").attr("class", "edge-line").attr("id", d => `line-${d.id}`)
+                .attr("x1", d => graph.nodes.find(n => n.id === d.source).cx)
+                .attr("y1", d => graph.nodes.find(n => n.id === d.source).cy)
+                .attr("x2", d => graph.nodes.find(n => n.id === d.target).cx)
+                .attr("y2", d => graph.nodes.find(n => n.id === d.target).cy);
+
+            edgeData.append("rect").attr("class", "edge-weight-bg")
+                .attr("width", 26).attr("height", 24)
+                .attr("x", d => (graph.nodes.find(n=>n.id===d.source).cx + graph.nodes.find(n=>n.id===d.target).cx)/2 - 13)
+                .attr("y", d => (graph.nodes.find(n=>n.id===d.source).cy + graph.nodes.find(n=>n.id===d.target).cy)/2 - 12);
+
+            edgeData.append("text").attr("class", "edge-weight-text")
+                .attr("x", d => (graph.nodes.find(n=>n.id===d.source).cx + graph.nodes.find(n=>n.id===d.target).cx)/2)
+                .attr("y", d => (graph.nodes.find(n=>n.id===d.source).cy + graph.nodes.find(n=>n.id===d.target).cy)/2)
+                .text(d => d.weight);
+
+            const nodesGroup = svg.append("g").attr("class", "nodes");
+            const nodeData = nodesGroup.selectAll(".node").data(graph.nodes).enter().append("g")
+                .attr("class", "node").attr("id", d => `node-${d.id}`)
+                .attr("transform", d => `translate(${d.cx}, ${d.cy})`);
+
+            nodeData.append("circle").attr("r", 24);
+            nodeData.append("text").text(d => d.label);
+
+            // 2. Setup Sorted Edge Queue
+            const qCont = document.getElementById('ui-edge-queue');
+            qCont.innerHTML = '';
+            let dispEdges = [...graph.edges].sort((a,b) => a.weight - b.weight); // just for initial display
+            dispEdges.forEach(e => {
+                let div = document.createElement('div');
+                div.className = 'eq-item';
+                div.id = `eq-${e.id}`;
+                div.innerHTML = `<span class="eq-nodes">${e.source}-${e.target}</span> <span class="eq-weight">w: ${e.weight}</span>`;
+                qCont.appendChild(div);
+            });
+
+            // 3. Setup Disjoint Set UI
+            const dsCont = document.getElementById('ui-ds-grid');
+            dsCont.innerHTML = '';
+            graph.nodes.forEach(n => {
+                let div = document.createElement('div');
+                div.className = 'ds-cell';
+                div.id = `ds-${n.id}`;
+                div.innerHTML = `<span class="ds-node">Node ${n.id}</span> <span class="ds-parent" id="dsp-${n.id}">${n.id}</span>`;
+                dsCont.appendChild(div);
+            });
+        }
+
+        /* ── Step Application ── */
+        function applyStep(si) {
+            if (si < 0 || si >= steps.length) return;
+            const s = steps[si];
+
+            // 1. Graph Updates
+            graph.edges.forEach(e => {
+                let eGroup = document.getElementById(`eg-${e.id}`);
+                let eLine = document.getElementById(`line-${e.id}`);
+                eGroup.setAttribute('class', 'edge-group'); eLine.setAttribute('class', 'edge-line');
+
+                if (s.mstEdges.has(e.id)) { eGroup.classList.add('accepted'); eLine.classList.add('accepted'); }
+                else if (s.evalEdge === e.id) { eGroup.classList.add('evaluating'); eLine.classList.add('evaluating'); }
+                else if (s.rejectedEdges.has(e.id) || (s.phase==='done' && !s.mstEdges.has(e.id))) { eGroup.classList.add('rejected'); eLine.classList.add('rejected'); }
+            });
+
+            graph.nodes.forEach(n => {
+                let node = document.getElementById(`node-${n.id}`);
+                node.setAttribute('class', 'node');
+                if (s.mstNodes.has(n.id)) node.classList.add('mst');
+                if (s.evalEdge) {
+                    let e = graph.edges.find(edge => edge.id === s.evalEdge);
+                    if (e.source === n.id || e.target === n.id) node.classList.add('evaluating');
+                }
+            });
+
+            // 2. Queue Updates
+            sortedEdges.forEach(e => {
+                let eq = document.getElementById(`eq-${e.id}`);
+                eq.className = 'eq-item';
+                if (s.mstEdges.has(e.id)) eq.classList.add('accepted');
+                else if (s.rejectedEdges.has(e.id)) eq.classList.add('rejected');
+                else if (s.evalEdge === e.id) { eq.classList.add('active'); eq.scrollIntoView({behavior: "smooth", block: "center"}); }
+            });
+
+            // 3. Disjoint Set Updates
+            graph.nodes.forEach(n => {
+                let dsCell = document.getElementById(`ds-${n.id}`);
+                let dsParent = document.getElementById(`dsp-${n.id}`);
+                dsCell.className = 'ds-cell';
+                dsParent.textContent = s.dsState[n.id];
+
+                if(s.dsHighlight.includes(n.id)) dsCell.classList.add('highlight');
+                if(s.mergedNode === n.id) dsCell.classList.add('merged');
+            });
+
+            // 4. Stats & Status
+            document.getElementById('tot-weight').textContent = s.totW;
+            document.getElementById('status-text').innerHTML = s.msg;
+            highlightPseudo(s.phase);
+            document.getElementById('cur-step').textContent = si + 1;
+            document.getElementById('tot-steps').textContent = steps.length;
+        }
+
+        function highlightPseudo(phase) {
+            const lines = document.querySelectorAll('#pseudo-panel .ps');
+            const active = PHASE[phase] ?? -1;
+            lines.forEach((l, i) => l.classList.toggle('active', i === active));
+        }
+
+        /* ── Controls ── */
+        function generate() {
+            stopAnim();
+            initDOM();
+            steps = makeSteps();
+            applyStep(0); curStep = 0;
+            enableBtns(true);
+        }
+
+        function togglePlay() {
+            if (isPlaying) { pauseAnim(); return; }
+            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            isPlaying = true; updatePlayBtn();
+            (function tick() {
+                if (curStep < steps.length - 1) {
+                    curStep++; applyStep(curStep);
+                    timer = setTimeout(tick, speedMs);
+                } else { isPlaying = false; updatePlayBtn(); }
+            })();
+        }
+
+        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+        function stopAnim() { pauseAnim(); }
+        function resetAnim() { stopAnim(); curStep = 0; applyStep(0); }
+        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+
+        function updateSpeed(v) {
+            speedMs = [1800, 1300, 900, 500, 200][parseInt(v) - 1];
+            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
+        }
+
+        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+        function updatePlayBtn() {
+            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+        }
+
+        function switchTab(lang) {
+            ['cpp', 'py', 'java'].forEach(l => {
+                document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+                document.getElementById('tab-' + l).classList.toggle('active', l === lang);
+            });
+        }
+        
+        // Init silently
+        initDOM();
+    </script>
+</body>
+</html>

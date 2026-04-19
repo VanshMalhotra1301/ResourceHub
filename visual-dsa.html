@@ -412,15 +412,139 @@
                     </div>
                 </a>
 
-                <div class="algo-card opacity-50 pointer-events-none"
-                    style="border-style: dashed; background: transparent;">
-                    <div class="icon-box bg-slate-800/50 border-slate-700 text-slate-500"><i
-                            class="ph-fill ph-graph"></i></div>
-                    <h3 class="font-display font-bold text-lg text-white mb-2">Kruskal's MST</h3>
-                    <p class="text-slate-400 text-sm mb-4">Finding the minimum spanning tree using Disjoint Sets.</p>
-                    <div class="px-3 py-1 bg-slate-800/80 rounded-md text-xs font-bold text-slate-400 self-start">Coming
-                        Soon</div>
+            </div>
+        </div>
+
+        <!-- MODULE 3: GRAPHS & TREES -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
+                    <i class="ph-bold ph-number-circle-three text-xl"></i>
                 </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Graphs & Trees</h2>
+                    <p class="text-slate-500 text-sm">Traversals, shortest paths, and minimum spanning trees.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="dsa-dfs-applications.html" class="algo-card green">
+                    <div class="icon-box"><i class="ph-fill ph-path"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">DFS Applications</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Graph traversal for cycles, connected
+                        components, and topological sorting.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(V+E)</span>
+                        <span class="complexity-badge">O(V)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-dijkstra-algo.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-navigation-arrow"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Dijkstra's Algorithm</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Finding the shortest path between
+                        nodes in a graph.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O((V+E) log V)</span>
+                        <span class="complexity-badge">O(V)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-prims-algo.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-share-network"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Prim's MST</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Greedy algorithm to find the minimum
+                        spanning tree.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(E log V)</span>
+                        <span class="complexity-badge">O(V)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-kruskal-algo.html" class="algo-card cyan">
+                    <div class="icon-box"><i class="ph-fill ph-graph"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Kruskal's MST</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Finding the minimum spanning tree
+                        using Disjoint Sets.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(E log V)</span>
+                        <span class="complexity-badge">O(V)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-ford-fulkerson.html" class="algo-card green">
+                    <div class="icon-box"><i class="ph-fill ph-flow-arrow"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Ford-Fulkerson</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Computing the maximum flow in a flow
+                        network.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(E*f)</span>
+                        <span class="complexity-badge">O(V)</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- MODULE 4: DYNAMIC PROGRAMMING -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                    <i class="ph-bold ph-number-circle-four text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl font-bold text-white">Dynamic Programming</h2>
+                    <p class="text-slate-500 text-sm">Solving complex tasks by breaking them down into simpler
+                        overlapping subproblems.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                <a href="dsa-0-1-knapsack_dp.html" class="algo-card purple">
+                    <div class="icon-box"><i class="ph-fill ph-backpack"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">0/1 Knapsack</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Maximize value without exceeding
+                        weight capacity using DP.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N*W)</span>
+                        <span class="complexity-badge">O(N*W)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-lcs.html" class="algo-card cyan">
+                    <div class="icon-box"><i class="ph-fill ph-text-aa"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">LCS</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Finding the longest sequence that
+                        appears in both strings.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N*M)</span>
+                        <span class="complexity-badge">O(N*M)</span>
+                    </div>
+                </a>
+
+                <a href="dsa-mcm.html" class="algo-card pink">
+                    <div class="icon-box"><i class="ph-fill ph-squares-four"></i></div>
+                    <div class="nav-link-arr"><i class="ph-bold ph-arrow-right"></i></div>
+                    <h3 class="font-display font-bold text-lg text-white mb-2">Matrix Chain Mult.</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed flex-1">Finding the most efficient way to
+                        multiply a chain of matrices.</p>
+                    <div class="flex gap-2">
+                        <span class="complexity-badge">O(N³)</span>
+                        <span class="complexity-badge">O(N²)</span>
+                    </div>
+                </a>
+
             </div>
         </div>
 
