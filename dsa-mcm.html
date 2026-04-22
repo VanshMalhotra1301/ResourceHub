@@ -23,12 +23,17 @@
             --rose: #f43f5e;
             --orange: #fb923c;
             --yellow: #facc15;
-            --bg: #08050a; /* Deep rose/purple dark */
+            --bg: #08050a;
+            /* Deep rose/purple dark */
             --card: rgba(18, 10, 15, 0.75);
             --border: rgba(255, 255, 255, 0.08);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             background: var(--bg);
@@ -40,213 +45,673 @@
 
         /* ── Premium Aurora Background ── */
         body::before {
-            content: ''; position: fixed; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: 
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
                 radial-gradient(circle at 20% 50%, rgba(244, 114, 182, 0.08), transparent 50%),
                 radial-gradient(circle at 80% 30%, rgba(244, 63, 94, 0.08), transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.05), transparent 50%);
             animation: aurora 25s linear infinite;
-            z-index: -1; pointer-events: none;
+            z-index: -1;
+            pointer-events: none;
         }
 
         @keyframes aurora {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #08050a; }
-        ::-webkit-scrollbar-thumb { background: #3d2230; border-radius: 8px; }
-        ::-webkit-scrollbar-thumb:hover { background: #5a3246; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #08050a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3d2230;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a3246;
+        }
 
         /* ── Topbar ── */
         #topbar {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(8, 5, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(8, 5, 10, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 28px;
+            height: 60px;
         }
 
         .back-btn {
-            display: flex; align-items: center; gap: 6px; color: #6b7280;
-            text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s;
         }
-        .back-btn:hover { color: #e2e8f0; }
-        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.08); }
-        .topbar-title { display: flex; align-items: center; gap: 10px; }
-        .topbar-algo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
-        
+
+        .back-btn:hover {
+            color: #e2e8f0;
+        }
+
+        .sep {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .topbar-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-algo-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #fff;
+        }
+
         .badge-beta {
-            font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
-            padding: 2px 8px; border-radius: 99px;
-            background: rgba(244, 114, 182, 0.1); color: var(--pink);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 99px;
+            background: rgba(244, 114, 182, 0.1);
+            color: var(--pink);
             border: 1px solid rgba(244, 114, 182, 0.25);
         }
 
-        .topbar-meta { margin-left: auto; font-size: 11px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+        .topbar-meta {
+            margin-left: auto;
+            font-size: 11px;
+            color: #6b7280;
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-        #page { max-width: 1200px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
+        #page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 28px 80px;
+            position: relative;
+            z-index: 1;
+        }
 
         /* ── Hero header ── */
-        .algo-hero { margin-bottom: 32px; }
+        .algo-hero {
+            margin-bottom: 32px;
+        }
+
         .algo-hero h1 {
-            font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
+
         .algo-hero h1 .icon-wrap {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.2);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(244, 114, 182, 0.15);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(244, 114, 182, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 0 25px rgba(244, 114, 182, 0.15);
         }
 
-        .complexity-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .complexity-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
         .badge {
-            display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px;
-            border-radius: 99px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 13px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .badge-time { background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.25); color: var(--pink); }
-        .badge-space { background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); color: var(--rose); }
-        .badge-class { background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); color: var(--purple); }
 
-        .algo-desc { color: #94a3b8; font-size: 14px; line-height: 1.65; max-width: 780px; margin-top: 12px; }
+        .badge-time {
+            background: rgba(244, 114, 182, 0.08);
+            border: 1px solid rgba(244, 114, 182, 0.25);
+            color: var(--pink);
+        }
+
+        .badge-space {
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            color: var(--rose);
+        }
+
+        .badge-class {
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            color: var(--purple);
+        }
+
+        .algo-desc {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.65;
+            max-width: 780px;
+            margin-top: 12px;
+        }
 
         /* ── Glass card ── */
         .card {
-            background: var(--card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         /* ── Input row ── */
-        .input-row { padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .input-label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
-        .input-field {
-            background: rgba(5, 5, 10, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px;
-            padding: 8px 14px; color: #e2e8f0; font-size: 13px; font-family: 'JetBrains Mono', monospace;
-            outline: none; transition: all 0.3s; min-width: 200px;
+        .input-row {
+            padding: 18px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
         }
-        .input-field:focus { border-color: rgba(244, 114, 182, 0.5); box-shadow: 0 0 15px rgba(244, 114, 182, 0.15); }
+
+        .input-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            background: rgba(5, 5, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 8px 14px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .input-field:focus {
+            border-color: rgba(244, 114, 182, 0.5);
+            box-shadow: 0 0 15px rgba(244, 114, 182, 0.15);
+        }
 
         .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-            padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04);
-            color: #e2e8f0; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Inter', sans-serif;
         }
-        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-1px); }
-        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-        
-        .btn-primary { background: rgba(244, 114, 182, 0.15); border-color: rgba(244, 114, 182, 0.35); color: #fbcfe8; }
-        .btn-primary:hover:not(:disabled) { background: rgba(244, 114, 182, 0.25); box-shadow: 0 0 20px rgba(244, 114, 182, 0.2); }
-        .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #f87171; }
+
+        .btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: rgba(244, 114, 182, 0.15);
+            border-color: rgba(244, 114, 182, 0.35);
+            color: #fbcfe8;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: rgba(244, 114, 182, 0.25);
+            box-shadow: 0 0 20px rgba(244, 114, 182, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
 
         /* ── Matrices Display Strip ── */
         #matrix-strip {
-            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; padding: 0 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 0 24px;
         }
+
         .matrix-box {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; gap: 8px;
-            font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #94a3b8;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #94a3b8;
         }
-        .matrix-box strong { color: #e2e8f0; font-family: 'Space Grotesk', sans-serif; font-size: 15px; }
+
+        .matrix-box strong {
+            color: #e2e8f0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+        }
 
         /* ── VIZ FRAME: DP MATRIX ── */
         #viz-frame {
-            border-radius: 16px; background: rgba(12, 5, 10, 0.85); border: 1px solid rgba(244, 114, 182, 0.2);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 80px rgba(244, 114, 182, 0.03);
-            margin-bottom: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column;
+            border-radius: 16px;
+            background: rgba(12, 5, 10, 0.85);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 80px rgba(244, 114, 182, 0.03);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
+
         #viz-frame::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--pink), transparent); opacity: 0.6;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pink), transparent);
+            opacity: 0.6;
         }
 
         .viz-section-label {
-            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
-            color: #6b7280; padding: 20px 24px 10px; display: flex; align-items: center; justify-content: space-between;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6b7280;
+            padding: 20px 24px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         #dp-container {
-            display: flex; justify-content: center; align-items: center; padding: 10px 24px 30px;
-            overflow-x: auto; min-height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 24px 30px;
+            overflow-x: auto;
+            min-height: 280px;
         }
 
         .dp-grid {
-            display: grid; gap: 4px; padding: 10px;
-            background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
+            display: grid;
+            gap: 4px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .dp-cell {
-            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-direction: column;
-            font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
-            border-radius: 8px; transition: all 0.3s ease; position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .split-k {
-            font-size: 9px; color: #6b7280; position: absolute; bottom: 2px; right: 4px; font-weight: 400;
+            font-size: 9px;
+            color: #6b7280;
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-weight: 400;
         }
 
         /* Base DP table cell */
-        .dp-val { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); color: #94a3b8; }
-        
+        .dp-val {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+        }
+
         /* Headers */
-        .dp-char { background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.2); color: var(--pink); }
-        
+        .dp-char {
+            background: rgba(244, 114, 182, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+            color: var(--pink);
+        }
+
         /* Unused Lower Triangle */
-        .dp-unused { background: rgba(0,0,0,0.6); border: 1px dashed rgba(255,255,255,0.05); color: #334155; opacity: 0.5; }
+        .dp-unused {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px dashed rgba(255, 255, 255, 0.05);
+            color: #334155;
+            opacity: 0.5;
+        }
 
         /* Animation States */
-        .dp-val.c-eval { background: rgba(250, 204, 21, 0.15); border-color: var(--yellow); color: var(--yellow); transform: scale(1.1); box-shadow: 0 0 20px rgba(250, 204, 21, 0.2); z-index: 10; }
-        .dp-val.c-dep { background: rgba(168, 85, 247, 0.15); border-color: var(--purple); color: #d8b4fe; transform: scale(1.05); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); z-index: 5; }
-        .dp-val.c-update { background: rgba(52, 211, 153, 0.2); border-color: var(--green); color: var(--green); transform: scale(1.15); box-shadow: 0 0 25px rgba(52, 211, 153, 0.3); z-index: 10; }
-        .dp-val.c-done { background: rgba(244, 114, 182, 0.15); border-color: var(--pink); color: #fff; }
+        .dp-val.c-eval {
+            background: rgba(250, 204, 21, 0.15);
+            border-color: var(--yellow);
+            color: var(--yellow);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
+            z-index: 10;
+        }
+
+        .dp-val.c-dep {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: var(--purple);
+            color: #d8b4fe;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+            z-index: 5;
+        }
+
+        .dp-val.c-update {
+            background: rgba(52, 211, 153, 0.2);
+            border-color: var(--green);
+            color: var(--green);
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(52, 211, 153, 0.3);
+            z-index: 10;
+        }
+
+        .dp-val.c-done {
+            background: rgba(244, 114, 182, 0.15);
+            border-color: var(--pink);
+            color: #fff;
+        }
 
         #status-strip {
-            padding: 14px 24px; font-size: 14px; font-weight: 600; color: #e2e8f0;
-            background: rgba(244, 114, 182, 0.05); border-top: 1px solid rgba(244, 114, 182, 0.15);
-            text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            background: rgba(244, 114, 182, 0.05);
+            border-top: 1px solid rgba(244, 114, 182, 0.15);
+            text-align: center;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
+
         .status-badge {
-            background: rgba(244, 114, 182, 0.15); color: #fbcfe8; padding: 4px 10px;
-            border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid rgba(244, 114, 182, 0.3);
+            background: rgba(244, 114, 182, 0.15);
+            color: #fbcfe8;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            border: 1px solid rgba(244, 114, 182, 0.3);
         }
 
         #result-box {
-            display: none; padding: 12px 24px; background: rgba(52, 211, 153, 0.1); border-top: 1px solid rgba(52, 211, 153, 0.2);
-            color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; align-items: center; gap: 10px; justify-content: center;
+            display: none;
+            padding: 12px 24px;
+            background: rgba(52, 211, 153, 0.1);
+            border-top: 1px solid rgba(52, 211, 153, 0.2);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
         }
-        .parens-hl { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 20px; letter-spacing: 2px; }
+
+        .parens-hl {
+            color: var(--green);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
 
         /* ── Controls bar ── */
-        .controls-bar { padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-        .speed-wrap input[type=range] { -webkit-appearance: none; width: 100px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); outline: none; cursor: pointer; }
-        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 10px var(--pink); cursor: pointer; transition: transform 0.2s; }
-        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-        .step-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; }
+        .controls-bar {
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .speed-wrap {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speed-wrap input[type=range] {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-wrap input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--pink);
+            box-shadow: 0 0 10px var(--pink);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .step-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #94a3b8;
+        }
 
         /* ── Panels Grid ── */
-        .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        @media (max-width: 800px) { .panels-grid { grid-template-columns: 1fr; } }
-        .panel-card { padding: 20px; }
-        .panel-title { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; color: #fff; }
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 800px) {
+            .panels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            padding: 20px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+        }
 
         /* ── Pseudocode ── */
-        #pseudo-panel { font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; }
-        .ps { padding: 4px 12px; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; color: #6b7280; transition: all 0.3s ease; white-space: pre; }
-        .ps.active { border-left-color: var(--pink); background: rgba(244, 114, 182, 0.08); color: #e2e8f0; }
-        .kw { color: #c084fc; } .fn { color: #67e8f9; } .num { color: #fcd34d; } .cmt { color: #4b5563; font-style: italic; }
+        #pseudo-panel {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .ps {
+            padding: 4px 12px;
+            border-left: 2px solid transparent;
+            border-radius: 0 6px 6px 0;
+            color: #6b7280;
+            transition: all 0.3s ease;
+            white-space: pre;
+        }
+
+        .ps.active {
+            border-left-color: var(--pink);
+            background: rgba(244, 114, 182, 0.08);
+            color: #e2e8f0;
+        }
+
+        .kw {
+            color: #c084fc;
+        }
+
+        .fn {
+            color: #67e8f9;
+        }
+
+        .num {
+            color: #fcd34d;
+        }
+
+        .cmt {
+            color: #4b5563;
+            font-style: italic;
+        }
 
         /* ── Code panel ── */
-        .code-tabs { display: flex; gap: 4px; margin-bottom: 0; }
-        .code-tab { padding: 8px 18px; font-size: 12px; font-weight: 700; border-radius: 10px 10px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; color: #6b7280; background: transparent; transition: all 0.2s; font-family: 'Inter', sans-serif; }
-        .code-tab.active { color: var(--pink); background: rgba(10, 5, 10, 0.9); border-color: rgba(255, 255, 255, 0.08); border-bottom-color: rgba(10, 5, 10, 0.9); }
-        .code-block { background: rgba(10, 5, 10, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0 12px 12px 12px; padding: 18px 20px; color: #d1d5db; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; margin-top: -1px; }
-        .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+        .code-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 0;
+        }
+
+        .code-tab {
+            padding: 8px 18px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 10px 10px 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            cursor: pointer;
+            color: #6b7280;
+            background: transparent;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .code-tab.active {
+            color: var(--pink);
+            background: rgba(10, 5, 10, 0.9);
+            border-color: rgba(255, 255, 255, 0.08);
+            border-bottom-color: rgba(10, 5, 10, 0.9);
+        }
+
+        .code-block {
+            background: rgba(10, 5, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0 12px 12px 12px;
+            padding: 18px 20px;
+            color: #d1d5db;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.8;
+            white-space: pre;
+            margin-top: -1px;
+        }
+
+        .ck {
+            color: #c084fc;
+        }
+
+        .ct {
+            color: #67e8f9;
+        }
+
+        .cm {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .cn {
+            color: #fcd34d;
+        }
     </style>
 </head>
 
@@ -260,7 +725,8 @@
             <span class="topbar-algo-name">Matrix Chain Multiplication</span>
             <span class="badge-beta">DP Module</span>
         </div>
-        <div class="topbar-meta"><i class="ph-fill ph-books" style="color:var(--pink)"></i> DAA · Bennett University</div>
+        <div class="topbar-meta"><i class="ph-fill ph-books" style="color:var(--pink)"></i> DAA · Bennett University
+        </div>
     </header>
 
     <div id="page">
@@ -276,27 +742,31 @@
                 <span class="badge badge-class"><i class="ph-fill ph-graph"></i> Dynamic Programming</span>
             </div>
             <p class="algo-desc">
-                Given a sequence of matrices, find the most efficient way to multiply them together. The problem is not actually to perform the multiplications, but merely to decide the order. We solve this by finding the cost of chains of length 1, then length 2, and so on, building up to the full chain diagonally across the DP table.
+                Given a sequence of matrices, find the most efficient way to multiply them together. The problem is not
+                actually to perform the multiplications, but merely to decide the order. We solve this by finding the
+                cost of chains of length 1, then length 2, and so on, building up to the full chain diagonally across
+                the DP table.
             </p>
         </div>
 
         <div class="card input-row">
             <span class="input-label">Dimensions Array</span>
-            <input type="text" id="arr-input" class="input-field" value="4, 2, 3, 1, 3" placeholder="e.g., 4, 2, 3, 1, 3" />
+            <input type="text" id="arr-input" class="input-field" value="4, 2, 3, 1, 3"
+                placeholder="e.g., 4, 2, 3, 1, 3" />
             <button class="btn btn-primary" onclick="generate()">
                 <i class="ph-bold ph-play-circle"></i> Initialize Matrix
             </button>
         </div>
 
         <div id="matrix-strip">
-            </div>
+        </div>
 
         <div id="viz-frame">
             <div class="viz-section-label">
                 <span><i class="ph-bold ph-table"></i> Optimal Cost Table (m)</span>
                 <span id="dp-info" style="color:var(--pink); font-family:'JetBrains Mono'"></span>
             </div>
-            
+
             <div id="dp-container">
                 <div style="color:#6b7280; font-size:14px; margin-top:20px;">
                     Press <strong style="color:var(--pink)">Initialize Matrix</strong> to build the DP grid.
@@ -304,7 +774,7 @@
             </div>
 
             <div id="result-box">
-                <i class="ph-fill ph-check-circle" style="color:var(--green); font-size:20px"></i> 
+                <i class="ph-fill ph-check-circle" style="color:var(--green); font-size:20px"></i>
                 Optimal Parenthesization: <span id="opt-parens" class="parens-hl"></span>
             </div>
 
@@ -315,10 +785,14 @@
         </div>
 
         <div class="card controls-bar">
-            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
-            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i> Step</button>
-            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
-            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon"
+                    class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i>
+                Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i>
+                Back</button>
+            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i
+                    class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
 
             <div class="speed-wrap">
                 <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
@@ -326,7 +800,8 @@
                 <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
                 <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
             </div>
-            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span id="tot-steps">0</span></div>
+            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span
+                    id="tot-steps">0</span></div>
         </div>
 
         <div class="panels-grid">
@@ -334,399 +809,474 @@
                 <div class="panel-title"><i class="ph-fill ph-code" style="color:var(--pink)"></i> DP Strategy</div>
                 <div id="pseudo-panel">
                     <div class="ps"><span class="kw">function</span> <span class="fn">MatrixChainOrder</span>(p):</div>
-                    <div class="ps">  n ← length(p) - 1</div>
-                    <div class="ps">  m ← matrix(n, n), s ← matrix(n, n)</div>
+                    <div class="ps"> n ← length(p) - 1</div>
+                    <div class="ps"> m ← matrix(n, n), s ← matrix(n, n)</div>
                     <div class="ps" style="height:4px"></div>
-                    <div class="ps">  <span class="kw">for</span> i ← 1 to n: <span class="cmt">// Cost of 1 matrix is 0</span></div>
-                    <div class="ps">    m[i][i] ← 0</div>
+                    <div class="ps"> <span class="kw">for</span> i ← 1 to n: <span class="cmt">// Cost of 1 matrix is
+                            0</span></div>
+                    <div class="ps"> m[i][i] ← 0</div>
                     <div class="ps" style="height:4px"></div>
-                    <div class="ps">  <span class="kw">for</span> L ← 2 to n: <span class="cmt">// Chain length L</span></div>
-                    <div class="ps">    <span class="kw">for</span> i ← 1 to n - L + 1:</div>
-                    <div class="ps">      j ← i + L - 1</div>
-                    <div class="ps">      m[i][j] ← ∞</div>
-                    <div class="ps">      <span class="kw">for</span> k ← i to j - 1: <span class="cmt">// Test split at k</span></div>
-                    <div class="ps">        q ← m[i][k] + m[k+1][j] + (p[i-1]*p[k]*p[j])</div>
-                    <div class="ps">        <span class="kw">if</span> q < m[i][j]:</div>
-                    <div class="ps">          m[i][j] ← q</div>
-                    <div class="ps">          s[i][j] ← k <span class="cmt">// Save split point</span></div>
-                    <div class="ps" style="height:4px"></div>
-                    <div class="ps">  <span class="kw">return</span> m[1][n], s</div>
+                    <div class="ps"> <span class="kw">for</span> L ← 2 to n: <span class="cmt">// Chain length L</span>
+                    </div>
+                    <div class="ps"> <span class="kw">for</span> i ← 1 to n - L + 1:</div>
+                    <div class="ps"> j ← i + L - 1</div>
+                    <div class="ps"> m[i][j] ← ∞</div>
+                    <div class="ps"> <span class="kw">for</span> k ← i to j - 1: <span class="cmt">// Test split at
+                            k</span></div>
+                    <div class="ps"> q ← m[i][k] + m[k+1][j] + (p[i-1]*p[k]*p[j])</div>
+                    <div class="ps"> <span class="kw">if</span> q < m[i][j]:</div>
+                            <div class="ps"> m[i][j] ← q</div>
+                            <div class="ps"> s[i][j] ← k <span class="cmt">// Save split point</span></div>
+                            <div class="ps" style="height:4px"></div>
+                            <div class="ps"> <span class="kw">return</span> m[1][n], s</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card panel-card">
-                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--cyan)"></i> Implementation</div>
-                <div class="code-tabs">
-                    <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
-                    <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
-                    <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
+                <div class="card panel-card">
+                    <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--cyan)"></i>
+                        Implementation</div>
+                    <div class="code-tabs">
+                        <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
+                        <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
+                        <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
+                    </div>
+
+                    <div id="code-cpp" class="code-block"><span class="ck">int</span> <span
+                            class="ct">matrixChainOrder</span>(<span class="ct">vector</span>&lt;<span
+                            class="ck">int</span>&gt;&amp; p) {
+                        <span class="ck">int</span> n = p.size() - <span class="cn">1</span>;
+                        <span class="ct">vector</span>&lt;<span class="ct">vector</span>&lt;<span
+                            class="ck">int</span>&gt;&gt; m(n + <span class="cn">1</span>, <span
+                            class="ct">vector</span>&lt;<span class="ck">int</span>&gt;(n + <span class="cn">1</span>,
+                        <span class="cn">0</span>));
+
+                        <span class="cm">// L is chain length</span>
+                        <span class="ck">for</span> (<span class="ck">int</span> L = <span class="cn">2</span>; L &lt;=
+                        n; L++) {
+                        <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">1</span>; i &lt;=
+                        n - L + <span class="cn">1</span>; i++) {
+                        <span class="ck">int</span> j = i + L - <span class="cn">1</span>;
+                        m[i][j] = INT_MAX;
+
+                        <span class="ck">for</span> (<span class="ck">int</span> k = i; k &lt;= j - <span
+                            class="cn">1</span>; k++) {
+                        <span class="ck">int</span> q = m[i][k] + m[k + <span class="cn">1</span>][j] +
+                        p[i - <span class="cn">1</span>] * p[k] * p[j];
+                        <span class="ck">if</span> (q &lt; m[i][j]) {
+                        m[i][j] = q;
+                        }
+                        }
+                        }
+                        }
+                        <span class="ck">return</span> m[<span class="cn">1</span>][n];
+                        }
+                    </div>
+
+                    <div id="code-py" class="code-block" style="display:none"><span class="ck">import</span> sys
+
+                        <span class="ck">def</span> <span class="ct">matrixChainOrder</span>(p):
+                        n = len(p) - <span class="cn">1</span>
+                        m = [[<span class="cn">0</span> <span class="ck">for</span> _ <span class="ck">in</span> range(n
+                        + <span class="cn">1</span>)] <span class="ck">for</span> _ <span class="ck">in</span> range(n +
+                        <span class="cn">1</span>)]
+
+                        <span class="ck">for</span> L <span class="ck">in</span> range(<span class="cn">2</span>, n +
+                        <span class="cn">1</span>):
+                        <span class="ck">for</span> i <span class="ck">in</span> range(<span class="cn">1</span>, n - L
+                        + <span class="cn">2</span>):
+                        j = i + L - <span class="cn">1</span>
+                        m[i][j] = sys.maxsize
+
+                        <span class="ck">for</span> k <span class="ck">in</span> range(i, j):
+                        q = m[i][k] + m[k + <span class="cn">1</span>][j] + \
+                        (p[i - <span class="cn">1</span>] * p[k] * p[j])
+                        <span class="ck">if</span> q &lt; m[i][j]:
+                        m[i][j] = q
+
+                        <span class="ck">return</span> m[<span class="cn">1</span>][n]
+                    </div>
+
+                    <div id="code-java" class="code-block" style="display:none"><span class="ck">public int</span> <span
+                            class="ct">matrixChainOrder</span>(<span class="ck">int</span>[] p) {
+                        <span class="ck">int</span> n = p.length - <span class="cn">1</span>;
+                        <span class="ck">int</span>[][] m = <span class="ck">new int</span>[n + <span
+                            class="cn">1</span>][n + <span class="cn">1</span>];
+
+                        <span class="ck">for</span> (<span class="ck">int</span> L = <span class="cn">2</span>; L &lt;=
+                        n; L++) {
+                        <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">1</span>; i &lt;=
+                        n - L + <span class="cn">1</span>; i++) {
+                        <span class="ck">int</span> j = i + L - <span class="cn">1</span>;
+                        m[i][j] = Integer.MAX_VALUE;
+
+                        <span class="ck">for</span> (<span class="ck">int</span> k = i; k &lt;= j - <span
+                            class="cn">1</span>; k++) {
+                        <span class="ck">int</span> q = m[i][k] + m[k + <span class="cn">1</span>][j] +
+                        p[i - <span class="cn">1</span>] * p[k] * p[j];
+                        <span class="ck">if</span> (q &lt; m[i][j]) {
+                        m[i][j] = q;
+                        }
+                        }
+                        }
+                        }
+                        <span class="ck">return</span> m[<span class="cn">1</span>][n];
+                        }
+                    </div>
                 </div>
-                
-                <div id="code-cpp" class="code-block"><span class="ck">int</span> <span class="ct">matrixChainOrder</span>(<span class="ct">vector</span>&lt;<span class="ck">int</span>&gt;&amp; p) {
-    <span class="ck">int</span> n = p.size() - <span class="cn">1</span>;
-    <span class="ct">vector</span>&lt;<span class="ct">vector</span>&lt;<span class="ck">int</span>&gt;&gt; m(n + <span class="cn">1</span>, <span class="ct">vector</span>&lt;<span class="ck">int</span>&gt;(n + <span class="cn">1</span>, <span class="cn">0</span>));
-    
-    <span class="cm">// L is chain length</span>
-    <span class="ck">for</span> (<span class="ck">int</span> L = <span class="cn">2</span>; L &lt;= n; L++) {
-        <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">1</span>; i &lt;= n - L + <span class="cn">1</span>; i++) {
-            <span class="ck">int</span> j = i + L - <span class="cn">1</span>;
-            m[i][j] = INT_MAX;
-            
-            <span class="ck">for</span> (<span class="ck">int</span> k = i; k &lt;= j - <span class="cn">1</span>; k++) {
-                <span class="ck">int</span> q = m[i][k] + m[k + <span class="cn">1</span>][j] + 
-                        p[i - <span class="cn">1</span>] * p[k] * p[j];
-                <span class="ck">if</span> (q &lt; m[i][j]) {
-                    m[i][j] = q;
-                }
-            }
-        }
-    }
-    <span class="ck">return</span> m[<span class="cn">1</span>][n];
-}</div>
-
-                <div id="code-py" class="code-block" style="display:none"><span class="ck">import</span> sys
-
-<span class="ck">def</span> <span class="ct">matrixChainOrder</span>(p):
-    n = len(p) - <span class="cn">1</span>
-    m = [[<span class="cn">0</span> <span class="ck">for</span> _ <span class="ck">in</span> range(n + <span class="cn">1</span>)] <span class="ck">for</span> _ <span class="ck">in</span> range(n + <span class="cn">1</span>)]
-    
-    <span class="ck">for</span> L <span class="ck">in</span> range(<span class="cn">2</span>, n + <span class="cn">1</span>):
-        <span class="ck">for</span> i <span class="ck">in</span> range(<span class="cn">1</span>, n - L + <span class="cn">2</span>):
-            j = i + L - <span class="cn">1</span>
-            m[i][j] = sys.maxsize
-            
-            <span class="ck">for</span> k <span class="ck">in</span> range(i, j):
-                q = m[i][k] + m[k + <span class="cn">1</span>][j] + \
-                    (p[i - <span class="cn">1</span>] * p[k] * p[j])
-                <span class="ck">if</span> q &lt; m[i][j]:
-                    m[i][j] = q
-                    
-    <span class="ck">return</span> m[<span class="cn">1</span>][n]</div>
-
-                <div id="code-java" class="code-block" style="display:none"><span class="ck">public int</span> <span class="ct">matrixChainOrder</span>(<span class="ck">int</span>[] p) {
-    <span class="ck">int</span> n = p.length - <span class="cn">1</span>;
-    <span class="ck">int</span>[][] m = <span class="ck">new int</span>[n + <span class="cn">1</span>][n + <span class="cn">1</span>];
-    
-    <span class="ck">for</span> (<span class="ck">int</span> L = <span class="cn">2</span>; L &lt;= n; L++) {
-        <span class="ck">for</span> (<span class="ck">int</span> i = <span class="cn">1</span>; i &lt;= n - L + <span class="cn">1</span>; i++) {
-            <span class="ck">int</span> j = i + L - <span class="cn">1</span>;
-            m[i][j] = Integer.MAX_VALUE;
-            
-            <span class="ck">for</span> (<span class="ck">int</span> k = i; k &lt;= j - <span class="cn">1</span>; k++) {
-                <span class="ck">int</span> q = m[i][k] + m[k + <span class="cn">1</span>][j] + 
-                        p[i - <span class="cn">1</span>] * p[k] * p[j];
-                <span class="ck">if</span> (q &lt; m[i][j]) {
-                    m[i][j] = q;
-                }
-            }
-        }
-    }
-    <span class="ck">return</span> m[<span class="cn">1</span>][n];
-}</div>
             </div>
         </div>
-    </div>
 
-    <script>
-        /* ── State Management ── */
-        let dims = [];
-        let N = 0;
-        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 700;
+        <script>
+            /* ── State Management ── */
+            let dims = [];
+            let N = 0;
+            let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 700;
 
-        const PHASE = {
-            init: 4,
-            len_loop: 7,
-            k_loop: 11,
-            calc: 12,
-            update: 14,
-            done: 18
-        };
+            const PHASE = {
+                init: 4,
+                len_loop: 7,
+                k_loop: 11,
+                calc: 12,
+                update: 14,
+                done: 18
+            };
 
-        function copyMatrix(mat) {
-            return mat.map(row => [...row]);
-        }
-
-        /* ── Generator Engine ── */
-        function makeSteps(p) {
-            let n = p.length - 1;
-            let m = Array(n + 1).fill().map(() => Array(n + 1).fill(null));
-            let s = Array(n + 1).fill().map(() => Array(n + 1).fill(null));
-            let snaps = [];
-
-            // Phase 1: Init Diagonals
-            for (let i = 1; i <= n; i++) {
-                m[i][i] = 0;
+            function copyMatrix(mat) {
+                return mat.map(row => [...row]);
             }
-            snaps.push({
-                phase: 'init', m: copyMatrix(m), s: copyMatrix(s), 
-                active: [], deps: [], msg: `<span class="status-badge">Initialization</span> Base case: Cost of multiplying one matrix is 0 (m[i][i] = 0).`
-            });
 
-            // Phase 2: DP loops
-            for (let L = 2; L <= n; L++) {
-                for (let i = 1; i <= n - L + 1; i++) {
-                    let j = i + L - 1;
-                    m[i][j] = Infinity;
-                    snaps.push({
-                        phase: 'len_loop', m: copyMatrix(m), s: copyMatrix(s), 
-                        active: [[i, j]], deps: [], 
-                        msg: `<span class="status-badge">Length ${L}</span> Evaluating chain A${i}...A${j}. Setting initial cost to ∞.`
-                    });
+            /* ── Generator Engine ── */
+            function makeSteps(p) {
+                let n = p.length - 1;
+                let m = Array(n + 1).fill().map(() => Array(n + 1).fill(null));
+                let s = Array(n + 1).fill().map(() => Array(n + 1).fill(null));
+                let snaps = [];
 
-                    for (let k = i; k <= j - 1; k++) {
-                        let cost = m[i][k] + m[k + 1][j] + (p[i - 1] * p[k] * p[j]);
-                        let dMsg = `${m[i][k]} + ${m[k+1][j]} + (${p[i-1]}×${p[k]}×${p[j]}) = <b>${cost}</b>`;
-                        
+                // Phase 1: Init Diagonals
+                for (let i = 1; i <= n; i++) {
+                    m[i][i] = 0;
+                }
+                snaps.push({
+                    phase: 'init', m: copyMatrix(m), s: copyMatrix(s),
+                    active: [], deps: [], msg: `<span class="status-badge">Initialization</span> Base case: Cost of multiplying one matrix is 0 (m[i][i] = 0).`
+                });
+
+                // Phase 2: DP loops
+                for (let L = 2; L <= n; L++) {
+                    for (let i = 1; i <= n - L + 1; i++) {
+                        let j = i + L - 1;
+                        m[i][j] = Infinity;
                         snaps.push({
-                            phase: 'calc', m: copyMatrix(m), s: copyMatrix(s), 
-                            active: [[i, j]], deps: [[i, k], [k + 1, j]], 
-                            msg: `Testing split at k=${k} (A${i}..A${k} × A${k+1}..A${j}).<br>Cost = ${dMsg}`
+                            phase: 'len_loop', m: copyMatrix(m), s: copyMatrix(s),
+                            active: [[i, j]], deps: [],
+                            msg: `<span class="status-badge">Length ${L}</span> Evaluating chain A${i}...A${j}. Setting initial cost to ∞.`
                         });
 
-                        if (cost < m[i][j]) {
-                            m[i][j] = cost;
-                            s[i][j] = k;
+                        for (let k = i; k <= j - 1; k++) {
+                            let cost = m[i][k] + m[k + 1][j] + (p[i - 1] * p[k] * p[j]);
+                            let dMsg = `${m[i][k]} + ${m[k + 1][j]} + (${p[i - 1]}×${p[k]}×${p[j]}) = <b>${cost}</b>`;
+
                             snaps.push({
-                                phase: 'update', m: copyMatrix(m), s: copyMatrix(s), 
-                                active: [[i, j]], deps: [[i, k], [k + 1, j]], 
-                                msg: `<span style="color:var(--green)">New Min Found!</span> Updating m[${i}][${j}] = ${cost}. Saved split point s[${i}][${j}] = ${k}.`
+                                phase: 'calc', m: copyMatrix(m), s: copyMatrix(s),
+                                active: [[i, j]], deps: [[i, k], [k + 1, j]],
+                                msg: `Testing split at k=${k} (A${i}..A${k} × A${k + 1}..A${j}).<br>Cost = ${dMsg}`
                             });
+
+                            if (cost < m[i][j]) {
+                                m[i][j] = cost;
+                                s[i][j] = k;
+                                snaps.push({
+                                    phase: 'update', m: copyMatrix(m), s: copyMatrix(s),
+                                    active: [[i, j]], deps: [[i, k], [k + 1, j]],
+                                    msg: `<span style="color:var(--green)">New Min Found!</span> Updating m[${i}][${j}] = ${cost}. Saved split point s[${i}][${j}] = ${k}.`
+                                });
+                            }
                         }
                     }
                 }
-            }
 
-            // Build optimal parens string
-            function printParens(i, j) {
-                if (i === j) return `A${i}`;
-                return `(${printParens(i, s[i][j])}${printParens(s[i][j] + 1, j)})`;
-            }
-            let finalStr = printParens(1, n);
-
-            snaps.push({
-                phase: 'done', m: copyMatrix(m), s: copyMatrix(s), active: [[1, n]], deps: [], 
-                result: finalStr, 
-                msg: `✅ DP Complete! Minimum multiplications: <b>${m[1][n]}</b>.`
-            });
-
-            return snaps;
-        }
-
-        /* ── DOM Generation ── */
-        function initDOM() {
-            N = dims.length - 1;
-            document.getElementById('dp-info').textContent = `Matrices: ${N} | Grid: ${N}×${N}`;
-            document.getElementById('result-box').style.display = 'none';
-
-            // Top Array Strip
-            const mStrip = document.getElementById('matrix-strip');
-            mStrip.innerHTML = '';
-            for(let i=0; i<N; i++) {
-                let div = document.createElement('div');
-                div.className = 'matrix-box';
-                div.innerHTML = `<strong>A${i+1}</strong> ${dims[i]} × ${dims[i+1]}`;
-                mStrip.appendChild(div);
-            }
-
-            // DP Grid
-            const cont = document.getElementById('dp-container');
-            cont.innerHTML = '';
-            
-            const grid = document.createElement('div');
-            grid.className = 'dp-grid';
-            grid.style.gridTemplateColumns = `repeat(${N + 1}, 1fr)`;
-
-            // Header row
-            grid.appendChild(createCell('', 'dp-cell'));
-            for(let j=1; j<=N; j++) grid.appendChild(createCell(j, 'dp-cell dp-char'));
-
-            // Matrix rows
-            for(let i=1; i<=N; i++) {
-                grid.appendChild(createCell(i, 'dp-cell dp-char'));
-                for(let j=1; j<=N; j++) {
-                    let cell = document.createElement('div');
-                    cell.id = `cell-${i}-${j}`;
-                    
-                    if (j < i) {
-                        cell.className = 'dp-cell dp-unused';
-                        cell.innerHTML = '×';
-                    } else {
-                        cell.className = 'dp-cell dp-val';
-                        cell.innerHTML = `<span class="val">-</span><span class="split-k"></span>`;
-                    }
-                    grid.appendChild(cell);
+                // Build optimal parens string
+                function printParens(i, j) {
+                    if (i === j) return `A${i}`;
+                    return `(${printParens(i, s[i][j])}${printParens(s[i][j] + 1, j)})`;
                 }
-            }
-            cont.appendChild(grid);
-        }
+                let finalStr = printParens(1, n);
 
-        function createCell(text, className) {
-            let el = document.createElement('div');
-            el.className = className;
-            el.textContent = text;
-            return el;
-        }
-
-        /* ── Step Application ── */
-        function applyStep(si) {
-            if (si < 0 || si >= steps.length) return;
-            const s = steps[si];
-
-            // Reset cells
-            for(let i=1; i<=N; i++) {
-                for(let j=i; j<=N; j++) {
-                    let cell = document.getElementById(`cell-${i}-${j}`);
-                    if (!cell) continue;
-                    
-                    cell.className = 'dp-cell dp-val';
-                    
-                    let valSpan = cell.querySelector('.val');
-                    let kSpan = cell.querySelector('.split-k');
-                    
-                    if (s.m[i][j] === Infinity) valSpan.textContent = '∞';
-                    else if (s.m[i][j] !== null) valSpan.textContent = s.m[i][j];
-                    else valSpan.textContent = '-';
-
-                    if (s.s[i][j] !== null) kSpan.textContent = `k=${s.s[i][j]}`;
-                    else kSpan.textContent = '';
-                }
-            }
-
-            // Highlights
-            if (s.deps) {
-                s.deps.forEach(d => {
-                    let cell = document.getElementById(`cell-${d[0]}-${d[1]}`);
-                    if(cell) cell.classList.add('c-dep');
+                snaps.push({
+                    phase: 'done', m: copyMatrix(m), s: copyMatrix(s), active: [[1, n]], deps: [],
+                    result: finalStr,
+                    msg: `✅ DP Complete! Minimum multiplications: <b>${m[1][n]}</b>.`
                 });
+
+                return snaps;
             }
 
-            if (s.active) {
-                s.active.forEach(a => {
-                    let cell = document.getElementById(`cell-${a[0]}-${a[1]}`);
-                    if (cell) {
-                        if(s.phase === 'update') cell.classList.add('c-update');
-                        else if(s.phase === 'done') cell.classList.add('c-done');
-                        else cell.classList.add('c-eval');
-                    }
-                });
-            }
-
-            // Final Result
-            if (s.result) {
-                document.getElementById('result-box').style.display = 'flex';
-                document.getElementById('opt-parens').textContent = s.result;
-            } else {
+            /* ── DOM Generation ── */
+            function initDOM() {
+                N = dims.length - 1;
+                document.getElementById('dp-info').textContent = `Matrices: ${N} | Grid: ${N}×${N}`;
                 document.getElementById('result-box').style.display = 'none';
+
+                // Top Array Strip
+                const mStrip = document.getElementById('matrix-strip');
+                mStrip.innerHTML = '';
+                for (let i = 0; i < N; i++) {
+                    let div = document.createElement('div');
+                    div.className = 'matrix-box';
+                    div.innerHTML = `<strong>A${i + 1}</strong> ${dims[i]} × ${dims[i + 1]}`;
+                    mStrip.appendChild(div);
+                }
+
+                // DP Grid
+                const cont = document.getElementById('dp-container');
+                cont.innerHTML = '';
+
+                const grid = document.createElement('div');
+                grid.className = 'dp-grid';
+                grid.style.gridTemplateColumns = `repeat(${N + 1}, 1fr)`;
+
+                // Header row
+                grid.appendChild(createCell('', 'dp-cell'));
+                for (let j = 1; j <= N; j++) grid.appendChild(createCell(j, 'dp-cell dp-char'));
+
+                // Matrix rows
+                for (let i = 1; i <= N; i++) {
+                    grid.appendChild(createCell(i, 'dp-cell dp-char'));
+                    for (let j = 1; j <= N; j++) {
+                        let cell = document.createElement('div');
+                        cell.id = `cell-${i}-${j}`;
+
+                        if (j < i) {
+                            cell.className = 'dp-cell dp-unused';
+                            cell.innerHTML = '×';
+                        } else {
+                            cell.className = 'dp-cell dp-val';
+                            cell.innerHTML = `<span class="val">-</span><span class="split-k"></span>`;
+                        }
+                        grid.appendChild(cell);
+                    }
+                }
+                cont.appendChild(grid);
             }
 
-            document.getElementById('status-text').innerHTML = s.msg;
-            highlightPseudo(s.phase);
-            document.getElementById('cur-step').textContent = si + 1;
-            document.getElementById('tot-steps').textContent = steps.length;
-        }
-
-        function highlightPseudo(phase) {
-            const lines = document.querySelectorAll('#pseudo-panel .ps');
-            const active = PHASE[phase] ?? -1;
-            lines.forEach((l, i) => l.classList.toggle('active', i === active));
-        }
-
-        /* ── Controls ── */
-        function generate() {
-            const raw = document.getElementById('arr-input').value;
-            dims = raw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
-            
-            if (dims.length < 3) { 
-                document.getElementById('status-text').innerHTML = '⚠️ Enter at least 3 dimensions (for 2 matrices).'; 
-                return; 
-            }
-            if (dims.length > 7) {
-                document.getElementById('status-text').innerHTML = '⚠️ Max 7 dimensions (6 matrices) supported for visual clarity.'; 
-                dims = dims.slice(0, 7);
-                document.getElementById('arr-input').value = dims.join(', ');
+            function createCell(text, className) {
+                let el = document.createElement('div');
+                el.className = className;
+                el.textContent = text;
+                return el;
             }
 
-            stopAnim();
-            initDOM();
-            steps = makeSteps(dims);
-            applyStep(0); curStep = 0;
-            enableBtns(true);
-        }
+            /* ── Step Application ── */
+            function applyStep(si) {
+                if (si < 0 || si >= steps.length) return;
+                const s = steps[si];
 
-        function togglePlay() {
-            if (isPlaying) { pauseAnim(); return; }
-            if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
-            isPlaying = true; updatePlayBtn();
-            (function tick() {
-                if (curStep < steps.length - 1) {
-                    curStep++; applyStep(curStep);
-                    timer = setTimeout(tick, speedMs);
-                } else { isPlaying = false; updatePlayBtn(); }
-            })();
-        }
+                // Reset cells
+                for (let i = 1; i <= N; i++) {
+                    for (let j = i; j <= N; j++) {
+                        let cell = document.getElementById(`cell-${i}-${j}`);
+                        if (!cell) continue;
 
-        function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
-        function stopAnim() { pauseAnim(); }
-        function resetAnim() { stopAnim(); curStep = 0; applyStep(0); }
-        function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
-        function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+                        cell.className = 'dp-cell dp-val';
 
-        function updateSpeed(v) {
-            speedMs = [1400, 1000, 600, 300, 100][parseInt(v) - 1];
-            document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
-        }
+                        let valSpan = cell.querySelector('.val');
+                        let kSpan = cell.querySelector('.split-k');
 
-        function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
-        function updatePlayBtn() {
-            document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
-            document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
-        }
+                        if (s.m[i][j] === Infinity) valSpan.textContent = '∞';
+                        else if (s.m[i][j] !== null) valSpan.textContent = s.m[i][j];
+                        else valSpan.textContent = '-';
 
-        function switchTab(lang) {
-            ['cpp', 'py', 'java'].forEach(l => {
-                document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
-                document.getElementById('tab-' + l).classList.toggle('active', l === lang);
-            });
-        }
-    </script>
+                        if (s.s[i][j] !== null) kSpan.textContent = `k=${s.s[i][j]}`;
+                        else kSpan.textContent = '';
+                    }
+                }
 
-    <style>
-        /* ── Navigation Footer ── */
-        .algo-nav {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(8, 5, 10, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 24px; z-index: 1000;
-        }
-        .nav-btn {
-            display: flex; align-items: center; gap: 8px; color: #94a3b8;
-            text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s;
-            padding: 8px 16px; border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .nav-btn:hover { color: #e2e8f0; background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
-        .nav-center {
-            display: flex; align-items: center; gap: 6px; color: var(--pink);
-            text-decoration: none; font-size: 14px; font-weight: 700;
-            font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
-        }
-        .nav-center:hover { filter: brightness(1.2); text-shadow: 0 0 10px rgba(244, 114, 182, 0.4); }
-        body { padding-bottom: 70px !important; }
-        @media (max-width: 600px) {
-            .algo-nav { padding: 10px 12px; }
-            .nav-btn { padding: 6px 10px; font-size: 11px; }
-            .nav-center { font-size: 12px; }
-            .nav-btn span.lbl-txt { display: none; }
-        }
-    </style>
+                // Highlights
+                if (s.deps) {
+                    s.deps.forEach(d => {
+                        let cell = document.getElementById(`cell-${d[0]}-${d[1]}`);
+                        if (cell) cell.classList.add('c-dep');
+                    });
+                }
 
-    <nav class="algo-nav">
-        <a href="dsa-lcs.html" class="nav-btn"><i class="ph-bold ph-arrow-left"></i> <span class="lbl-txt">Longest Common Subsequence</span></a>
-        <a href="visual-dsa.html" class="nav-center">⚡ <span class="lbl-txt">All Algorithms</span></a>
-        <a href="dsa-bellman-ford.html" class="nav-btn"><span class="lbl-txt">Bellman-Ford</span> <i class="ph-bold ph-arrow-right"></i></a>
-    </nav>
-    
+                if (s.active) {
+                    s.active.forEach(a => {
+                        let cell = document.getElementById(`cell-${a[0]}-${a[1]}`);
+                        if (cell) {
+                            if (s.phase === 'update') cell.classList.add('c-update');
+                            else if (s.phase === 'done') cell.classList.add('c-done');
+                            else cell.classList.add('c-eval');
+                        }
+                    });
+                }
+
+                // Final Result
+                if (s.result) {
+                    document.getElementById('result-box').style.display = 'flex';
+                    document.getElementById('opt-parens').textContent = s.result;
+                } else {
+                    document.getElementById('result-box').style.display = 'none';
+                }
+
+                document.getElementById('status-text').innerHTML = s.msg;
+                highlightPseudo(s.phase);
+                document.getElementById('cur-step').textContent = si + 1;
+                document.getElementById('tot-steps').textContent = steps.length;
+            }
+
+            function highlightPseudo(phase) {
+                const lines = document.querySelectorAll('#pseudo-panel .ps');
+                const active = PHASE[phase] ?? -1;
+                lines.forEach((l, i) => l.classList.toggle('active', i === active));
+            }
+
+            /* ── Controls ── */
+            function generate() {
+                const raw = document.getElementById('arr-input').value;
+                dims = raw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+
+                if (dims.length < 3) {
+                    document.getElementById('status-text').innerHTML = '⚠️ Enter at least 3 dimensions (for 2 matrices).';
+                    return;
+                }
+                if (dims.length > 7) {
+                    document.getElementById('status-text').innerHTML = '⚠️ Max 7 dimensions (6 matrices) supported for visual clarity.';
+                    dims = dims.slice(0, 7);
+                    document.getElementById('arr-input').value = dims.join(', ');
+                }
+
+                stopAnim();
+                initDOM();
+                steps = makeSteps(dims);
+                applyStep(0); curStep = 0;
+                enableBtns(true);
+            }
+
+            function togglePlay() {
+                if (isPlaying) { pauseAnim(); return; }
+                if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+                isPlaying = true; updatePlayBtn();
+                (function tick() {
+                    if (curStep < steps.length - 1) {
+                        curStep++; applyStep(curStep);
+                        timer = setTimeout(tick, speedMs);
+                    } else { isPlaying = false; updatePlayBtn(); }
+                })();
+            }
+
+            function pauseAnim() { isPlaying = false; clearTimeout(timer); updatePlayBtn(); }
+            function stopAnim() { pauseAnim(); }
+            function resetAnim() { stopAnim(); curStep = 0; applyStep(0); }
+            function stepFwd() { pauseAnim(); if (curStep < steps.length - 1) { curStep++; applyStep(curStep); } }
+            function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
+
+            function updateSpeed(v) {
+                speedMs = [1400, 1000, 600, 300, 100][parseInt(v) - 1];
+                document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
+            }
+
+            function enableBtns(on) { ['btn-play', 'btn-step', 'btn-back', 'btn-reset'].forEach(id => document.getElementById(id).disabled = !on); }
+            function updatePlayBtn() {
+                document.getElementById('play-icon').className = isPlaying ? 'ph-bold ph-pause' : 'ph-bold ph-play';
+                document.getElementById('play-label').textContent = isPlaying ? 'Pause' : 'Play';
+            }
+
+            function switchTab(lang) {
+                ['cpp', 'py', 'java'].forEach(l => {
+                    document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
+                    document.getElementById('tab-' + l).classList.toggle('active', l === lang);
+                });
+            }
+        </script>
+
+        <style>
+            /* ── Navigation Footer ── */
+            .algo-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(8, 5, 10, 0.85);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 24px;
+                z-index: 1000;
+            }
+
+            .nav-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 600;
+                transition: all 0.2s;
+                padding: 8px 16px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .nav-btn:hover {
+                color: #e2e8f0;
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-center {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                color: var(--pink);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: 'Space Grotesk', sans-serif;
+                transition: all 0.2s;
+            }
+
+            .nav-center:hover {
+                filter: brightness(1.2);
+                text-shadow: 0 0 10px rgba(244, 114, 182, 0.4);
+            }
+
+            body {
+                padding-bottom: 70px !important;
+            }
+
+            @media (max-width: 600px) {
+                .algo-nav {
+                    padding: 10px 12px;
+                }
+
+                .nav-btn {
+                    padding: 6px 10px;
+                    font-size: 11px;
+                }
+
+                .nav-center {
+                    font-size: 12px;
+                }
+
+                .nav-btn span.lbl-txt {
+                    display: none;
+                }
+            }
+        </style>
+
+        <nav class="algo-nav">
+            <a href="dsa-lcs.html" class="nav-btn"><i class="ph-bold ph-arrow-left"></i> <span class="lbl-txt">Longest
+                    Common Subsequence</span></a>
+            <a href="visual-dsa.html" class="nav-center">⚡ <span class="lbl-txt">All Algorithms</span></a>
+            <a href="dsa-bellman-ford.html" class="nav-btn"><span class="lbl-txt">Bellman-Ford</span> <i
+                    class="ph-bold ph-arrow-right"></i></a>
+        </nav>
+
 </body>
+
 </html>
