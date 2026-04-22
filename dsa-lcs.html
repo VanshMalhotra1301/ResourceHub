@@ -35,6 +35,7 @@
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         /* ── Premium Aurora Background ── */
@@ -140,6 +141,18 @@
         .btn-primary { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.35); color: #d8b4fe; }
         .btn-primary:hover:not(:disabled) { background: rgba(168, 85, 247, 0.25); box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #f87171; }
+        .btn-success { background: rgba(52, 211, 153, 0.15); border-color: rgba(52, 211, 153, 0.35); color: var(--green); }
+        .btn-success:hover:not(:disabled) { background: rgba(52, 211, 153, 0.25); box-shadow: 0 0 20px rgba(52, 211, 153, 0.2); }
+
+        /* ── NEW: Interactive Mode Toggle ── */
+        .toggle-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .toggle-label { font-size: 12px; font-weight: 600; color: var(--yellow); display: flex; align-items: center; gap: 6px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--yellow); box-shadow: 0 0 10px rgba(250, 204, 21, 0.4); }
+        input:checked + .slider:before { transform: translateX(14px); }
 
         /* ── VIZ FRAME: DP MATRIX ── */
         #viz-frame {
@@ -157,14 +170,22 @@
             color: #6b7280; padding: 20px 24px 10px; display: flex; align-items: center; justify-content: space-between;
         }
 
+        /* ── NEW: DP Insight Panel ── */
+        .dp-insights {
+            display: flex; gap: 16px; padding: 0 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8;
+        }
+        .insight-pill { background: rgba(255,255,255,0.03); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .insight-pill span { color: #fff; font-weight: 700; margin-left: 4px; }
+
         #dp-container {
             display: flex; justify-content: center; align-items: center; padding: 10px 24px 30px;
-            overflow-x: auto; min-height: 250px;
+            overflow-x: auto; min-height: 250px; position: relative;
         }
 
         .dp-grid {
             display: grid; gap: 4px; padding: 10px;
             background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.5s ease;
         }
 
         .dp-cell {
@@ -193,6 +214,17 @@
         .dp-val.c-path { background: rgba(168, 85, 247, 0.25); border-color: var(--purple); color: #fff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
         .dp-val.c-path-match { background: rgba(34, 211, 238, 0.25); border-color: var(--cyan); color: #fff; box-shadow: 0 0 20px rgba(34, 211, 238, 0.5); }
 
+        /* ── NEW: Interactive Guessing Overlay ── */
+        #interactive-guess-panel {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(10, 10, 18, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid var(--yellow); padding: 16px 24px; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(250,204,21,0.2);
+            text-align: center; display: none; z-index: 20; animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #interactive-guess-panel p { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+        .guess-actions { display: flex; gap: 10px; justify-content: center; }
+
         #lcs-result-strip {
             padding: 14px 24px; font-size: 15px; font-weight: 700; color: #e2e8f0;
             background: rgba(34, 211, 238, 0.05); border-top: 1px solid rgba(34, 211, 238, 0.15);
@@ -214,6 +246,7 @@
             padding: 14px 24px; font-size: 14px; font-weight: 600; color: #e2e8f0;
             background: rgba(168, 85, 247, 0.05); border-top: 1px solid rgba(168, 85, 247, 0.15);
             text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.3s;
         }
         .status-badge {
             background: rgba(168, 85, 247, 0.15); color: #d8b4fe; padding: 4px 10px;
@@ -222,7 +255,7 @@
 
         /* ── Controls bar ── */
         .controls-bar { padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .speed-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+        .speed-wrap { display: flex; align-items: center; gap: 8px; }
         .speed-wrap input[type=range] { -webkit-appearance: none; width: 100px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); outline: none; cursor: pointer; }
         .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 10px var(--purple); cursor: pointer; transition: transform 0.2s; }
         .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
@@ -246,6 +279,54 @@
         .code-tab.active { color: var(--purple); background: rgba(5, 5, 10, 0.9); border-color: rgba(255, 255, 255, 0.08); border-bottom-color: rgba(5, 5, 10, 0.9); }
         .code-block { background: rgba(5, 5, 10, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0 12px 12px 12px; padding: 18px 20px; color: #d1d5db; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; margin-top: -1px; }
         .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+
+        /* ── NEW: LEARNING MODULE STYLES ── */
+        .learning-section { margin-top: 40px; }
+        .learning-header { font-family: 'Space Grotesk', sans-serif; font-size: 24px; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .lrn-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+        .lrn-tab { 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); 
+            padding: 10px 20px; border-radius: 99px; color: #94a3b8; font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: all 0.3s; white-space: nowrap; font-family: 'Space Grotesk', sans-serif;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .lrn-tab:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .lrn-tab.active { background: rgba(168, 85, 247, 0.15); border-color: var(--purple); color: #fff; box-shadow: 0 0 15px rgba(168,85,247,0.2); }
+
+        .lrn-pane { display: none; animation: popIn 0.4s ease; line-height: 1.7; }
+        .lrn-pane.active { display: block; }
+        
+        .lrn-pane h3 { color: var(--purple); font-family: 'Space Grotesk', sans-serif; margin: 24px 0 12px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .lrn-pane h3:first-child { margin-top: 0; }
+        .lrn-pane p { color: #cbd5e1; margin-bottom: 16px; font-size: 14.5px; }
+        .lrn-pane ul, .lrn-pane ol { margin-left: 20px; margin-bottom: 16px; color: #cbd5e1; font-size: 14.5px; }
+        .lrn-pane li { margin-bottom: 8px; }
+        .lrn-pane li strong { color: #fff; }
+
+        .math-box { 
+            background: rgba(0,0,0,0.5); border-left: 4px solid var(--cyan); padding: 16px; 
+            border-radius: 0 8px 8px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e2e8f0; margin-bottom: 16px;
+        }
+
+        /* Subjective Exam Layout */
+        .exam-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; }
+        .exam-btn { padding: 8px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: transparent; color: #94a3b8; transition: 0.2s; }
+        .exam-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); box-shadow: 0 0 15px rgba(168,85,247,0.4); }
+
+        .exam-answer { display: none; background: rgba(10,10,18,0.6); padding: 30px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
+        .exam-answer.active { display: block; animation: popIn 0.3s ease; }
+        .ans-heading { font-weight: 700; color: var(--yellow); text-decoration: underline; margin-top: 20px; margin-bottom: 10px; }
+
+        /* Variation Cards */
+        .var-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .var-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; transition: transform 0.2s; }
+        .var-card:hover { transform: translateY(-5px); border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
+        .var-card h4 { color: var(--cyan); margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; }
+
+        /* Note highlights */
+        .highlight { color: var(--yellow); font-weight: 600; }
+        .highlight-p { color: var(--purple); font-weight: 600; }
     </style>
 </head>
 
@@ -288,6 +369,14 @@
             <button class="btn btn-primary" onclick="generate()">
                 <i class="ph-bold ph-play-circle"></i> Build Matrix
             </button>
+
+            <div class="toggle-wrap" title="Pause animation to let you guess the next DP value">
+                <span class="toggle-label"><i class="ph-fill ph-brain"></i> Interactive Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="interactive-toggle" onchange="toggleInteractive()">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
         <div id="viz-frame">
@@ -295,16 +384,31 @@
                 <span><i class="ph-bold ph-table"></i> DP Memoization Table</span>
                 <span id="dp-info" style="color:var(--purple); font-family:'JetBrains Mono'"></span>
             </div>
+
+            <div class="dp-insights">
+                <div class="insight-pill">States Evaluated: <span id="states-filled">0</span> / <span id="total-states">0</span></div>
+                <div class="insight-pill">Subproblems: <span style="color:var(--cyan)">Overlapping</span></div>
+            </div>
             
             <div id="dp-container">
                 <div style="color:#6b7280; font-size:14px; margin-top:20px;">
                     Press <strong style="color:var(--purple)">Build Matrix</strong> to initialize the grid.
+                </div>
+
+                <div id="interactive-guess-panel">
+                    <p>What goes in this cell?</p>
+                    <div class="guess-actions">
+                        <button class="btn btn-success" onclick="makeGuess('match')">Diagonal + 1 (Match)</button>
+                        <button class="btn btn-danger" onclick="makeGuess('top')">Max(Top)</button>
+                        <button class="btn btn-danger" onclick="makeGuess('left')">Max(Left)</button>
+                    </div>
                 </div>
             </div>
 
             <div id="lcs-result-strip" style="display: none;">
                 <span><i class="ph-bold ph-text-aa"></i> LCS Found: </span>
                 <div id="lcs-output" class="lcs-chars"></div>
+                <span style="margin-left:auto; font-size:12px; color:#94a3b8">Length: <strong style="color:var(--cyan)" id="lcs-length-out"></strong></span>
             </div>
 
             <div id="status-strip">
@@ -319,13 +423,13 @@
             <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
             <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
 
-            <div class="speed-wrap">
+            <div class="speed-wrap" style="margin-left:auto;">
                 <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
                 <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
                 <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
-                <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
+                <span id="speed-label" class="step-counter" style="width:36px; margin-left:8px;">1.0×</span>
             </div>
-            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span id="tot-steps">0</span></div>
+            <div class="step-counter" style="margin-left:16px">Step <span id="cur-step">0</span> / <span id="tot-steps">0</span></div>
         </div>
 
         <div class="panels-grid">
@@ -413,13 +517,200 @@
 }</div>
             </div>
         </div>
+
+        <div class="learning-section">
+            <h2 class="learning-header"><i class="ph-fill ph-student" style="color:var(--cyan)"></i> DAA Exam & Theory Hub</h2>
+            
+            <div class="lrn-tabs">
+                <button class="lrn-tab active" onclick="switchLrnTab('theory')"><i class="ph-bold ph-book-open"></i> Full Theory</button>
+                <button class="lrn-tab" onclick="switchLrnTab('exam')"><i class="ph-bold ph-pencil-line"></i> Subjective Exam Mode</button>
+                <button class="lrn-tab" onclick="switchLrnTab('intuition')"><i class="ph-bold ph-lightbulb"></i> Intuition</button>
+                <button class="lrn-tab" onclick="switchLrnTab('variations')"><i class="ph-bold ph-git-branch"></i> Variations</button>
+                <button class="lrn-tab" onclick="switchLrnTab('revision')"><i class="ph-bold ph-push-pin"></i> Quick Notes</button>
+            </div>
+
+            <div class="card panel-card">
+                
+                <div id="lrn-theory" class="lrn-pane active">
+                    <h3>Definition</h3>
+                    <p>The <strong>Longest Common Subsequence (LCS)</strong> problem is a classic dynamic programming challenge where the goal is to find the longest subsequence common to all sequences in a set of sequences (usually just two). A subsequence is a sequence that can be derived from another sequence by deleting some elements without changing the order of the remaining elements. (e.g., "ACE" is a subsequence of "ABCDE").</p>
+
+                    <h3>Working of the Algorithm</h3>
+                    <p>Instead of generating all possible subsequences ($2^n$ combinations) and comparing them, we break the problem down using a 2D Matrix:</p>
+                    <ol>
+                        <li><strong>Initialization:</strong> Create a 2D array <code>DP[m+1][n+1]</code> where $m$ and $n$ are lengths of strings X and Y. Fill the first row and first column with 0s (Base Case: comparing with an empty string yields 0 length).</li>
+                        <li><strong>Matrix Filling:</strong> Iterate through the characters of both strings.
+                            <ul>
+                                <li>If characters match: Add 1 to the result of the sequences without these current characters (diagonal value).</li>
+                                <li>If they do not match: Take the maximum of the LCS formed by excluding the current character of X, or excluding the current character of Y (max of top or left cell).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Backtracking (Reconstruction):</strong> Start from the bottom-right corner <code>DP[m][n]</code>. If characters match, include it in the LCS and move diagonally up-left. If they don't, move in the direction of the larger value (top or left) until you hit a 0.</li>
+                    </ol>
+
+                    <h3>Recurrence Relation</h3>
+                    <div class="math-box">
+                        LCS(X[1..i], Y[1..j]) = <br><br>
+                        &nbsp;&nbsp;0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if i = 0 or j = 0 <br>
+                        &nbsp;&nbsp;LCS(X[1..i-1], Y[1..j-1]) + 1 &nbsp;&nbsp; if X[i] == Y[j] <br>
+                        &nbsp;&nbsp;max( LCS(X[1..i-1], Y[j]), <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LCS(X[1..i], Y[j-1]) ) &nbsp;&nbsp;&nbsp;&nbsp; if X[i] != Y[j]
+                    </div>
+
+                    <h3>Complexity Analysis</h3>
+                    <ul>
+                        <li><strong>Time Complexity: <span class="highlight-p">O(m × n)</span></strong> - We use two nested loops to fill a table of size $(m+1) \times (n+1)$. Each table entry takes $O(1)$ time to compute.</li>
+                        <li><strong>Space Complexity: <span class="highlight-p">O(m × n)</span></strong> - Required to store the DP table. <em>Note: Space can be optimized to $O(\min(m,n))$ if we only need the length, by just keeping two rows in memory.</em></li>
+                    </ul>
+                </div>
+
+                <div id="lrn-exam" class="lrn-pane">
+                    <div class="exam-toggle">
+                        <button class="exam-btn active" onclick="switchExamAns('5mark')">5 Marks Answer</button>
+                        <button class="exam-btn" onclick="switchExamAns('10mark')">10 Marks Answer</button>
+                    </div>
+
+                    <div id="ans-5mark" class="exam-answer active">
+                        <h4 style="color: #fff; margin-bottom: 12px; font-family:'Space Grotesk'">Q: Explain the Longest Common Subsequence (LCS) problem and write its recurrence relation. (5 Marks)</h4>
+                        <p class="ans-heading">1. Definition:</p>
+                        <p>A subsequence is a sequence derived from another by deleting elements without changing the order. The LCS problem aims to find the longest sequence present in both given strings.</p>
+                        
+                        <p class="ans-heading">2. Approach:</p>
+                        <p>It is solved efficiently using Dynamic Programming because it possesses the Optimal Substructure and Overlapping Subproblems properties. We build a bottom-up 2D table to avoid redundant calculations.</p>
+
+                        <p class="ans-heading">3. Recurrence Relation:</p>
+                        <div class="math-box" style="margin-bottom:0">
+                            If X[i] == Y[j]: DP[i][j] = DP[i-1][j-1] + 1 <br>
+                            If X[i] != Y[j]: DP[i][j] = max(DP[i-1][j], DP[i][j-1])
+                        </div>
+                    </div>
+
+                    <div id="ans-10mark" class="exam-answer">
+                        <h4 style="color: #fff; margin-bottom: 12px; font-family:'Space Grotesk'">Q: Define LCS. Write the algorithm to find the length of LCS and analyze its complexity. (10 Marks)</h4>
+                        <p class="ans-heading">1. Introduction & Definition:</p>
+                        <p>Given two sequences, find the length of longest subsequence present in both. It is widely used in DNA sequence alignment and file comparison (like 'diff' tools).</p>
+
+                        <p class="ans-heading">2. Dynamic Programming Formulation:</p>
+                        <ul>
+                            <li><strong>State Definition:</strong> Let <code>DP[i][j]</code> be the length of LCS of prefix X[0...i-1] and Y[0...j-1].</li>
+                            <li><strong>Base Case:</strong> <code>DP[i][0] = 0</code> and <code>DP[0][j] = 0</code> for all $i, j$.</li>
+                        </ul>
+
+                        <p class="ans-heading">3. Algorithm:</p>
+                        <div class="math-box">
+LCS-LENGTH(X, Y)
+1. m = length(X), n = length(Y)
+2. Let DP[0..m, 0..n] be a new table
+3. For i = 0 to m: DP[i, 0] = 0
+4. For j = 0 to n: DP[0, j] = 0
+5. For i = 1 to m:
+6.   For j = 1 to n:
+7.     if X[i] == Y[j]:
+8.        DP[i, j] = DP[i-1, j-1] + 1
+9.     else:
+10.       DP[i, j] = max(DP[i-1, j], DP[i, j-1])
+11. Return DP[m, n]
+                        </div>
+
+                        <p class="ans-heading">4. Complexity Analysis:</p>
+                        <p><strong>Time Complexity:</strong> The algorithm contains nested loops iterating $m$ and $n$ times. Inside the loop, constant time operations are performed. Thus, Time Complexity is <strong>O(m × n)</strong>.</p>
+                        <p><strong>Space Complexity:</strong> The 2D table requires $(m+1) \times (n+1)$ memory allocations. Thus, Space Complexity is <strong>O(m × n)</strong>.</p>
+                    </div>
+                </div>
+
+                <div id="lrn-intuition" class="lrn-pane">
+                    <h3>Why Does DP Work Here?</h3>
+                    <p>To use Dynamic Programming, a problem must satisfy two strict conditions. LCS perfectly demonstrates both:</p>
+                    
+                    <h4 style="color:var(--cyan); margin-top:20px;">1. Optimal Substructure</h4>
+                    <p>A problem has optimal substructure if an optimal solution can be constructed from optimal solutions of its subproblems. In LCS, if the last characters of X and Y match, the LCS must end with this character. The problem immediately reduces to finding the LCS of the remaining prefixes. If they don't match, the LCS is simply the longest found by either dropping the last character of X or Y.</p>
+
+                    <h4 style="color:var(--yellow); margin-top:20px;">2. Overlapping Subproblems</h4>
+                    <p>If you implement LCS using pure recursion, you will solve the exact same subproblem multiple times. By using the DP matrix, we <em>memoize</em> (or tabulate) the results. When we need the LCS of prefixes of length $i$ and $j$, we just look it up in <code>DP[i][j]</code> in $O(1)$ time instead of recalculating it.</p>
+                </div>
+
+                <div id="lrn-variations" class="lrn-pane">
+                    <p style="margin-bottom: 20px;">The LCS algorithm is a foundation. By slightly tweaking the recurrence relation or the backtracking logic, you can solve many famous string processing problems:</p>
+                    
+                    <div class="var-grid">
+                        <div class="var-card">
+                            <h4>Longest Common Substring</h4>
+                            <p style="font-size: 13px; color: #94a3b8;">Unlike subsequences, substrings must be contiguous. The DP is similar, but if <code>X[i] != Y[j]</code>, we reset <code>DP[i][j] = 0</code> instead of taking the maximum.</p>
+                        </div>
+                        <div class="var-card">
+                            <h4>Edit Distance (Levenshtein)</h4>
+                            <p style="font-size: 13px; color: #94a3b8;">Finds minimum operations (insert, delete, replace) to convert string A to B. It uses a very similar DP matrix but tracks penalty costs instead of string lengths.</p>
+                        </div>
+                        <div class="var-card">
+                            <h4>Shortest Common Supersequence</h4>
+                            <p style="font-size: 13px; color: #94a3b8;">Finds the shortest string that has both A and B as subsequences. Length is simply: <code>Length(A) + Length(B) - LCS(A,B)</code>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lrn-revision" class="lrn-pane">
+                    <h3><i class="ph-bold ph-lightning" style="color:var(--yellow)"></i> Quick Revision Flashcards</h3>
+                    <ul>
+                        <li><span class="highlight">Core Concept:</span> Subsequence = characters in order, but not necessarily consecutive.</li>
+                        <li><span class="highlight">Data Structure:</span> 2D Matrix of size (m+1) × (n+1).</li>
+                        <li><span class="highlight">Base Case:</span> Row 0 and Col 0 are entirely 0.</li>
+                        <li><span class="highlight">Match Condition:</span> Diagonal value + 1.</li>
+                        <li><span class="highlight">Mismatch Condition:</span> Max of Top OR Left value.</li>
+                        <li><span class="highlight">Backtracking:</span> Start at bottom right. Move diagonal if match, otherwise move towards the larger adjacent number.</li>
+                        <li><span class="highlight">Time Complexity:</span> O(m × n).</li>
+                        <li><span class="highlight">Space Complexity:</span> O(m × n) standard, O(min(m,n)) optimized.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
     </div>
+
+    <style>
+        .algo-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(5, 5, 10, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 24px; z-index: 1000;
+        }
+        .nav-btn {
+            display: flex; align-items: center; gap: 8px; color: #94a3b8;
+            text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s;
+            padding: 8px 16px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-btn:hover { color: #e2e8f0; background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
+        .nav-center {
+            display: flex; align-items: center; gap: 6px; color: var(--purple);
+            text-decoration: none; font-size: 14px; font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
+        }
+        .nav-center:hover { filter: brightness(1.2); text-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+        body { padding-bottom: 70px !important; }
+        @media (max-width: 600px) {
+            .algo-nav { padding: 10px 12px; }
+            .nav-btn { padding: 6px 10px; font-size: 11px; }
+            .nav-center { font-size: 12px; }
+            .nav-btn span.lbl-txt { display: none; }
+        }
+    </style>
+
+    <nav class="algo-nav">
+        <a href="dsa-01-knapsack.html" class="nav-btn"><i class="ph-bold ph-arrow-left"></i> <span class="lbl-txt">0/1 Knapsack</span></a>
+        <a href="visual-dsa.html" class="nav-center">⚡ <span class="lbl-txt">All Algorithms</span></a>
+        <a href="dsa-matrix-chain.html" class="nav-btn"><span class="lbl-txt">Matrix Chain Mult.</span> <i class="ph-bold ph-arrow-right"></i></a>
+    </nav>
 
     <script>
         /* ── State Management ── */
         let strA = "", strB = "";
         let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 700;
         let m = 0, n = 0;
+        let interactiveMode = false; /* NEW */
+        let statesCalculated = 0; /* NEW */
 
         const PHASE = {
             init: 2,
@@ -445,28 +736,36 @@
             // Init Zeros
             for(let i=0; i<=m; i++) dp[i][0] = 0;
             for(let j=0; j<=n; j++) dp[0][j] = 0;
-            snaps.push({phase: 'init', dp: copyDP(dp), active: [], deps: [], hlChars: [], msg: `<span class="status-badge">Initialization</span> Base cases: First row and column filled with 0.`});
+            snaps.push({phase: 'init', dp: copyDP(dp), active: [], deps: [], hlChars: [], msg: `<span class="status-badge">Initialization</span> Base cases: First row and column filled with 0.`, states: 0});
+
+            let sc = 0; // states count
 
             // DP Fill
             for (let i = 1; i <= m; i++) {
                 for (let j = 1; j <= n; j++) {
+                    
+                    let expectedChoice = s1[i-1] === s2[j-1] ? 'match' : (dp[i-1][j] > dp[i][j-1] ? 'top' : 'left');
+
                     // Compare Phase
                     snaps.push({
                         phase: 'compare', dp: copyDP(dp), active: [i, j], deps: [], hlChars: [i-1, j-1], 
-                        msg: `Evaluating cell [${i}][${j}]. Comparing '${s1[i-1]}' and '${s2[j-1]}'.`
+                        msg: `Evaluating cell [${i}][${j}]. Comparing '${s1[i-1]}' and '${s2[j-1]}'.`,
+                        states: sc, expChoice: expectedChoice
                     });
 
                     if (s1[i - 1] === s2[j - 1]) {
                         dp[i][j] = dp[i - 1][j - 1] + 1;
+                        sc++;
                         snaps.push({
                             phase: 'match', dp: copyDP(dp), active: [i, j], deps: [[i-1, j-1]], hlChars: [i-1, j-1],
-                            msg: `<span style="color:var(--green)">Match!</span> Take diagonal + 1 ➔ dp[${i}][${j}] = ${dp[i-1][j-1]} + 1 = <b>${dp[i][j]}</b>`
+                            msg: `<span style="color:var(--green)">Match!</span> Take diagonal + 1 ➔ dp[${i}][${j}] = ${dp[i-1][j-1]} + 1 = <b>${dp[i][j]}</b>`, states: sc
                         });
                     } else {
                         dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                        sc++;
                         snaps.push({
                             phase: 'mismatch', dp: copyDP(dp), active: [i, j], deps: [[i-1, j], [i, j-1]], hlChars: [i-1, j-1],
-                            msg: `<span style="color:var(--orange)">Mismatch.</span> Take max of Top or Left ➔ max(${dp[i-1][j]}, ${dp[i][j-1]}) = <b>${dp[i][j]}</b>`
+                            msg: `<span style="color:var(--orange)">Mismatch.</span> Take max of Top or Left ➔ max(${dp[i-1][j]}, ${dp[i][j-1]}) = <b>${dp[i][j]}</b>`, states: sc
                         });
                     }
                 }
@@ -478,29 +777,31 @@
             let path = [[i, j]];
             
             while (i > 0 && j > 0) {
-                snaps.push({phase: 'backtrack', dp: copyDP(dp), path: [...path], active: [i,j], hlChars: [i-1, j-1], lcs: [...lcsArr], msg: `<span class="status-badge">Backtracking</span> Analyzing path at [${i}][${j}]`});
+                snaps.push({phase: 'backtrack', dp: copyDP(dp), path: [...path], active: [i,j], hlChars: [i-1, j-1], lcs: [...lcsArr], msg: `<span class="status-badge">Backtracking</span> Analyzing path at [${i}][${j}]`, states: sc});
                 
                 if (s1[i - 1] === s2[j - 1]) {
                     lcsArr.unshift(s1[i - 1]);
-                    snaps.push({phase: 'backtrack_match', dp: copyDP(dp), path: [...path], active: [i,j], hlChars: [i-1, j-1], lcs: [...lcsArr], msg: `Found Match '${s1[i-1]}'. Adding to LCS and moving diagonally up-left.`});
+                    snaps.push({phase: 'backtrack_match', dp: copyDP(dp), path: [...path], active: [i,j], hlChars: [i-1, j-1], lcs: [...lcsArr], msg: `Found Match '${s1[i-1]}'. Adding to LCS and moving diagonally up-left.`, states: sc});
                     i--; j--;
                 } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                    snaps.push({phase: 'backtrack_move', dp: copyDP(dp), path: [...path], active: [i,j], deps: [[i-1, j]], hlChars: [], lcs: [...lcsArr], msg: `Top is greater (${dp[i-1][j]} > ${dp[i][j-1]}). Moving up.`});
+                    snaps.push({phase: 'backtrack_move', dp: copyDP(dp), path: [...path], active: [i,j], deps: [[i-1, j]], hlChars: [], lcs: [...lcsArr], msg: `Top is greater (${dp[i-1][j]} > ${dp[i][j-1]}). Moving up.`, states: sc});
                     i--;
                 } else {
-                    snaps.push({phase: 'backtrack_move', dp: copyDP(dp), path: [...path], active: [i,j], deps: [[i, j-1]], hlChars: [], lcs: [...lcsArr], msg: `Left is greater or equal (${dp[i][j-1]} >= ${dp[i-1][j]}). Moving left.`});
+                    snaps.push({phase: 'backtrack_move', dp: copyDP(dp), path: [...path], active: [i,j], deps: [[i, j-1]], hlChars: [], lcs: [...lcsArr], msg: `Left is greater or equal (${dp[i][j-1]} >= ${dp[i-1][j]}). Moving left.`, states: sc});
                     j--;
                 }
                 path.push([i, j]);
             }
             
-            snaps.push({phase: 'done', dp: copyDP(dp), path: [...path], active: [], deps: [], hlChars: [], lcs: [...lcsArr], msg: `✅ DP Complete! Length of LCS is <b>${dp[m][n]}</b>.`});
+            snaps.push({phase: 'done', dp: copyDP(dp), path: [...path], active: [], deps: [], hlChars: [], lcs: [...lcsArr], msg: `✅ DP Complete! Length of LCS is <b>${dp[m][n]}</b>.`, states: sc});
             return snaps;
         }
 
         /* ── DOM Generation ── */
         function initDOM(s1, s2) {
             document.getElementById('dp-info').textContent = `Matrix Size: ${m+1} × ${n+1}`;
+            document.getElementById('total-states').textContent = m * n; // NEW
+            document.getElementById('states-filled').textContent = '0'; // NEW
             document.getElementById('lcs-result-strip').style.display = 'none';
             document.getElementById('lcs-output').innerHTML = '';
 
@@ -529,6 +830,19 @@
                 }
             }
             cont.appendChild(grid);
+            
+            // Add Interactive Overlay Back
+            const overlay = document.createElement('div');
+            overlay.id = 'interactive-guess-panel';
+            overlay.innerHTML = `
+                <p><i class="ph-fill ph-brain"></i> Interactive Mode: Predict DP[<span id="g-i"></span>][<span id="g-j"></span>]</p>
+                <div class="guess-actions">
+                    <button class="btn btn-success" onclick="makeGuess('match')">Diagonal + 1</button>
+                    <button class="btn btn-danger" onclick="makeGuess('top')">Max(Top)</button>
+                    <button class="btn btn-danger" onclick="makeGuess('left')">Max(Left)</button>
+                </div>
+            `;
+            cont.appendChild(overlay);
         }
 
         function createCell(text, className) {
@@ -542,6 +856,11 @@
         function applyStep(si) {
             if (si < 0 || si >= steps.length) return;
             const s = steps[si];
+
+            // Update States Tracker
+            if(s.states !== undefined) {
+                document.getElementById('states-filled').textContent = s.states;
+            }
 
             // Reset all cells
             document.querySelectorAll('.dp-val').forEach(c => c.className = 'dp-cell dp-val' + (c.textContent === '0' ? ' dp-zero' : ''));
@@ -599,9 +918,14 @@
             if (s.lcs) {
                 let resWrap = document.getElementById('lcs-result-strip');
                 let resCont = document.getElementById('lcs-output');
-                if (s.lcs.length > 0) {
+                let lenOut = document.getElementById('lcs-length-out');
+                
+                if (s.lcs.length > 0 || s.phase === 'done') {
                     resWrap.style.display = 'flex';
                     resCont.innerHTML = s.lcs.map(char => `<div class="lcs-char-box">${char}</div>`).join('');
+                    lenOut.textContent = s.lcs.length;
+                } else {
+                    resWrap.style.display = 'none';
                 }
             }
 
@@ -609,6 +933,40 @@
             highlightPseudo(s.phase);
             document.getElementById('cur-step').textContent = si + 1;
             document.getElementById('tot-steps').textContent = steps.length;
+
+            /* ── NEW: Interactive Mode Trigger ── */
+            let guessPanel = document.getElementById('interactive-guess-panel');
+            if (interactiveMode && s.phase === 'compare' && isPlaying) {
+                pauseAnim();
+                document.getElementById('g-i').textContent = s.active[0];
+                document.getElementById('g-j').textContent = s.active[1];
+                guessPanel.style.display = 'block';
+            } else {
+                guessPanel.style.display = 'none';
+            }
+        }
+
+        /* ── NEW: Interactive Logic ── */
+        function toggleInteractive() {
+            interactiveMode = document.getElementById('interactive-toggle').checked;
+            document.getElementById('interactive-guess-panel').style.display = 'none';
+        }
+
+        function makeGuess(choice) {
+            let s = steps[curStep];
+            if (s.expChoice === choice || (s.expChoice === 'left' && choice === 'top' && steps[curStep+1].msg.includes(">="))) {
+                // Correct guess or tie edge case
+                document.getElementById('interactive-guess-panel').style.display = 'none';
+                document.getElementById('status-text').innerHTML = `<span style="color:var(--green)"><i class="ph-fill ph-check-circle"></i> Correct! Continuing...</span>`;
+                setTimeout(() => { stepFwd(); togglePlay(); }, 600);
+            } else {
+                // Wrong guess
+                document.getElementById('status-text').innerHTML = `<span style="color:var(--orange)"><i class="ph-fill ph-warning-circle"></i> Incorrect. Check if characters match, or find max of Top/Left. Try again!</span>`;
+                let panel = document.getElementById('interactive-guess-panel');
+                panel.style.animation = 'none';
+                void panel.offsetWidth; // trigger reflow
+                panel.style.animation = 'popIn 0.3s ease';
+            }
         }
 
         function highlightPseudo(phase) {
@@ -634,11 +992,17 @@
         function togglePlay() {
             if (isPlaying) { pauseAnim(); return; }
             if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            
+            // Hide guess panel if play is pressed manually
+            document.getElementById('interactive-guess-panel').style.display = 'none';
+
             isPlaying = true; updatePlayBtn();
             (function tick() {
+                if(!isPlaying) return; // catch if paused by interactive mode
                 if (curStep < steps.length - 1) {
                     curStep++; applyStep(curStep);
-                    timer = setTimeout(tick, speedMs);
+                    // if interactive paused it, don't set next timeout
+                    if(isPlaying) timer = setTimeout(tick, speedMs);
                 } else { isPlaying = false; updatePlayBtn(); }
             })();
         }
@@ -666,45 +1030,29 @@
                 document.getElementById('tab-' + l).classList.toggle('active', l === lang);
             });
         }
+
+        /* ── NEW: Learning Tabs Logic ── */
+        function switchLrnTab(tabId) {
+            let tabs = ['theory', 'exam', 'intuition', 'variations', 'revision'];
+            tabs.forEach(t => {
+                document.getElementById('lrn-' + t).classList.toggle('active', t === tabId);
+            });
+            let btns = document.querySelectorAll('.lrn-tab');
+            btns.forEach((btn, idx) => {
+                btn.classList.toggle('active', tabs[idx] === tabId);
+            });
+        }
+
+        function switchExamAns(type) {
+            document.getElementById('ans-5mark').classList.toggle('active', type === '5mark');
+            document.getElementById('ans-10mark').classList.toggle('active', type === '10mark');
+            let btns = document.querySelectorAll('.exam-btn');
+            btns[0].classList.toggle('active', type === '5mark');
+            btns[1].classList.toggle('active', type === '10mark');
+        }
+
+        // Initialize empty grid on load
+        generate();
     </script>
-
-    <style>
-        /* ── Navigation Footer ── */
-        .algo-nav {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(5, 5, 10, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 24px; z-index: 1000;
-        }
-        .nav-btn {
-            display: flex; align-items: center; gap: 8px; color: #94a3b8;
-            text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s;
-            padding: 8px 16px; border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .nav-btn:hover { color: #e2e8f0; background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
-        .nav-center {
-            display: flex; align-items: center; gap: 6px; color: var(--purple);
-            text-decoration: none; font-size: 14px; font-weight: 700;
-            font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
-        }
-        .nav-center:hover { filter: brightness(1.2); text-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
-        body { padding-bottom: 70px !important; }
-        @media (max-width: 600px) {
-            .algo-nav { padding: 10px 12px; }
-            .nav-btn { padding: 6px 10px; font-size: 11px; }
-            .nav-center { font-size: 12px; }
-            .nav-btn span.lbl-txt { display: none; }
-        }
-    </style>
-
-    <nav class="algo-nav">
-        <a href="dsa-01-knapsack.html" class="nav-btn"><i class="ph-bold ph-arrow-left"></i> <span class="lbl-txt">0/1 Knapsack</span></a>
-        <a href="visual-dsa.html" class="nav-center">⚡ <span class="lbl-txt">All Algorithms</span></a>
-        <a href="dsa-matrix-chain.html" class="nav-btn"><span class="lbl-txt">Matrix Chain Mult.</span> <i class="ph-bold ph-arrow-right"></i></a>
-    </nav>
-    
 </body>
 </html>

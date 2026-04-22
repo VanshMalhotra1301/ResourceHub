@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prim's Algorithm Visualizer ⚡ | Visual DSA Lab</title>
+    <title>Prim's Algorithm ⚡ | Visual DSA Lab</title>
     <meta name="description"
-        content="Insanely interactive Prim's Algorithm visualizer with D3.js graph rendering, crossing-edge evaluation, and premium glassmorphic UI." />
+        content="Interactive Prim's Minimum Spanning Tree visualizer with graph traversal animations." />
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
         rel="stylesheet" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
 
     <style>
         :root {
@@ -23,16 +22,12 @@
             --pink: #f472b6;
             --orange: #fb923c;
             --yellow: #facc15;
-            --bg: #050806;
-            --card: rgba(10, 20, 15, 0.7);
+            --bg: #05050a;
+            --card: rgba(10, 10, 18, 0.75);
             --border: rgba(255, 255, 255, 0.08);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background: var(--bg);
@@ -40,665 +35,263 @@
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         /* ── Premium Aurora Background ── */
         body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background:
-                radial-gradient(circle at 20% 30%, rgba(52, 211, 153, 0.08), transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(250, 204, 21, 0.06), transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.05), transparent 40%);
+            content: ''; position: fixed; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 30% 60%, rgba(34, 211, 238, 0.08), transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(52, 211, 153, 0.08), transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.05), transparent 50%);
             animation: aurora 25s linear infinite;
-            z-index: -1;
-            pointer-events: none;
+            z-index: -1; pointer-events: none;
         }
 
         @keyframes aurora {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* ── Scrollbar ── */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #050806;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1a2e24;
-            border-radius: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #244233;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050508; }
+        ::-webkit-scrollbar-thumb { background: #2d2d3d; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4a4a6a; }
 
         /* ── Topbar ── */
         #topbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(5, 10, 8, 0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(5, 5, 10, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 0 28px;
-            height: 60px;
+            display: flex; align-items: center; gap: 16px; padding: 0 28px; height: 60px;
         }
 
         .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #6b7280;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: color 0.2s;
+            display: flex; align-items: center; gap: 6px; color: #6b7280;
+            text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s;
         }
-
-        .back-btn:hover {
-            color: #e2e8f0;
-        }
-
-        .sep {
-            width: 1px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .topbar-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-algo-name {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 17px;
-            color: #fff;
-        }
-
+        .back-btn:hover { color: #e2e8f0; }
+        .sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.08); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; }
+        .topbar-algo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        
         .badge-beta {
-            font-size: 9px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 99px;
-            background: rgba(52, 211, 153, 0.1);
-            color: var(--green);
+            font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 99px;
+            background: rgba(52, 211, 153, 0.1); color: var(--green);
             border: 1px solid rgba(52, 211, 153, 0.25);
         }
 
-        .topbar-meta {
-            margin-left: auto;
-            font-size: 11px;
-            color: #6b7280;
-            font-family: 'JetBrains Mono', monospace;
-        }
+        .topbar-meta { margin-left: auto; font-size: 11px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
 
-        /* ── Page wrapper ── */
-        #page {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 36px 28px 80px;
-            position: relative;
-            z-index: 1;
-        }
+        #page { max-width: 1200px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
 
         /* ── Hero header ── */
-        .algo-hero {
-            margin-bottom: 32px;
-        }
-
+        .algo-hero { margin-bottom: 32px; }
         .algo-hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
         }
-
         .algo-hero h1 .icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(52, 211, 153, 0.1);
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-            box-shadow: 0 0 25px rgba(52, 211, 153, 0.15);
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(52, 211, 153, 0.15);
         }
 
-        .complexity-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
+        .complexity-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 13px;
-            border-radius: 99px;
-            font-size: 12px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px;
+            border-radius: 99px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
         }
+        .badge-time { background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); color: var(--purple); }
+        .badge-space { background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); color: var(--cyan); }
+        .badge-class { background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.25); color: var(--yellow); }
 
-        .badge-time {
-            background: rgba(34, 211, 238, 0.08);
-            border: 1px solid rgba(34, 211, 238, 0.25);
-            color: var(--cyan);
-        }
+        .algo-desc { color: #94a3b8; font-size: 14px; line-height: 1.65; max-width: 750px; margin-top: 12px; }
 
-        .badge-space {
-            background: rgba(168, 85, 247, 0.08);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            color: var(--purple);
-        }
-
-        .badge-class {
-            background: rgba(52, 211, 153, 0.08);
-            border: 1px solid rgba(52, 211, 153, 0.25);
-            color: var(--green);
-        }
-
-        .algo-desc {
-            color: #94a3b8;
-            font-size: 14px;
-            line-height: 1.65;
-            max-width: 680px;
-            margin-top: 12px;
-        }
-
-        /* ── Glass card ── */
         .card {
-            background: var(--card);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            background: var(--card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
-        /* ── Input row ── */
-        .input-row {
-            padding: 18px 20px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            justify-content: space-between;
-        }
-
-        .mst-stats {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .mst-lbl {
-            font-size: 11px;
-            font-weight: 800;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .mst-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--green);
-            text-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
-        }
-
-        /* ── Controls ── */
+        .input-row { padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+        
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            padding: 9px 18px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.04);
-            color: #e2e8f0;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+            padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Inter', sans-serif;
         }
+        .btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-primary { background: rgba(52, 211, 153, 0.15); border-color: rgba(52, 211, 153, 0.35); color: var(--green); }
+        .btn-primary:hover:not(:disabled) { background: rgba(52, 211, 153, 0.25); box-shadow: 0 0 20px rgba(52, 211, 153, 0.2); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #f87171; }
+        .btn-success { background: rgba(34, 211, 238, 0.15); border-color: rgba(34, 211, 238, 0.35); color: var(--cyan); }
+        .btn-success:hover:not(:disabled) { background: rgba(34, 211, 238, 0.25); box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
 
-        .btn:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.09);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
+        .toggle-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .toggle-label { font-size: 12px; font-weight: 600; color: var(--yellow); display: flex; align-items: center; gap: 6px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--yellow); box-shadow: 0 0 10px rgba(250, 204, 21, 0.4); }
+        input:checked + .slider:before { transform: translateX(14px); }
 
-        .btn:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background: rgba(52, 211, 153, 0.12);
-            border-color: rgba(52, 211, 153, 0.35);
-            color: var(--green);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: rgba(52, 211, 153, 0.22);
-            box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
-        }
-
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.3);
-            color: #f87171;
-        }
-
-        /* ── VIZ FRAME: D3 GRAPH ── */
+        /* ── VIZ FRAME: GRAPH ── */
         #viz-frame {
-            border-radius: 16px;
-            background: rgba(5, 10, 8, 0.85);
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 80px rgba(52, 211, 153, 0.03);
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            border-radius: 16px; background: rgba(5, 5, 12, 0.85); border: 1px solid rgba(52, 211, 153, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 80px rgba(52, 211, 153, 0.03);
+            margin-bottom: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
-
         #viz-frame::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--green), transparent);
-            opacity: 0.6;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0.6;
         }
 
-        #d3-container {
-            width: 100%;
-            height: 450px;
-            background: radial-gradient(circle at center, rgba(52, 211, 153, 0.03) 0%, transparent 70%);
-            position: relative;
+        .viz-section-label {
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+            color: #6b7280; padding: 20px 24px 10px; display: flex; align-items: center; justify-content: space-between;
         }
 
-        /* SVG Graph Styles */
-        .edge-line {
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 2px;
-            transition: stroke 0.4s ease, stroke-width 0.4s ease;
+        .dp-insights {
+            display: flex; gap: 16px; padding: 0 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8;
+        }
+        .insight-pill { background: rgba(255,255,255,0.03); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .insight-pill span { color: #fff; font-weight: 700; margin-left: 4px; }
+
+        #graph-container {
+            width: 100%; height: 350px; position: relative; display: flex; justify-content: center; align-items: center;
         }
 
-        .edge-line.candidate {
-            stroke: rgba(250, 204, 21, 0.5);
-            stroke-width: 3px;
-            stroke-dasharray: 6;
-            animation: dashFlow 1s linear infinite;
+        svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        .g-edge { stroke: rgba(255,255,255,0.1); stroke-width: 3; transition: all 0.4s ease; stroke-dasharray: 1000; stroke-dashoffset: 0; }
+        .g-edge.candidate { stroke: var(--orange); stroke-width: 4; stroke-dasharray: 8; animation: dash 1s linear infinite; opacity: 0.8; }
+        .g-edge.eval { stroke: var(--yellow); stroke-width: 6; filter: drop-shadow(0 0 8px var(--yellow)); }
+        .g-edge.mst { stroke: var(--cyan); stroke-width: 6; filter: drop-shadow(0 0 10px var(--cyan)); }
+        .g-edge.rejected { stroke: rgba(239, 68, 68, 0.3); stroke-dasharray: 4; }
+
+        @keyframes dash { to { stroke-dashoffset: -16; } }
+
+        .weight-label {
+            position: absolute; background: rgba(5, 5, 12, 0.9); border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+            padding: 2px 6px; border-radius: 4px; transform: translate(-50%, -50%); z-index: 2; transition: all 0.3s;
+        }
+        .weight-label.eval { background: var(--yellow); color: #000; border-color: var(--yellow); transform: translate(-50%, -50%) scale(1.2); }
+        .weight-label.mst { background: var(--cyan); color: #000; border-color: var(--cyan); }
+
+        .g-node {
+            width: 40px; height: 40px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%; position: absolute; transform: translate(-50%, -50%); z-index: 3;
+            display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; color: #94a3b8; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .g-node.visited { background: rgba(52, 211, 153, 0.2); border-color: var(--green); color: #fff; box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); transform: translate(-50%, -50%) scale(1.1); }
+        .g-node.active { background: rgba(250, 204, 21, 0.2); border-color: var(--yellow); color: #fff; box-shadow: 0 0 25px rgba(250, 204, 21, 0.5); transform: translate(-50%, -50%) scale(1.2); }
+
+        #interactive-guess-panel {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(10, 10, 18, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid var(--yellow); padding: 16px 24px; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(250,204,21,0.2);
+            text-align: center; display: none; z-index: 20; animation: popIn 0.3s ease;
+        }
+        #interactive-guess-panel p { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+        #mst-result-strip {
+            padding: 14px 24px; font-size: 15px; font-weight: 700; color: #e2e8f0;
+            background: rgba(52, 211, 153, 0.05); border-top: 1px solid rgba(52, 211, 153, 0.15);
+            display: flex; align-items: center; gap: 12px; font-family: 'Space Grotesk', sans-serif;
         }
 
-        .edge-line.evaluating {
-            stroke: var(--yellow);
-            stroke-width: 5px;
-            filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.8));
-        }
-
-        .edge-line.mst {
-            stroke: var(--green);
-            stroke-width: 4px;
-            filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.6));
-        }
-
-        .edge-line.rejected {
-            stroke: rgba(255, 255, 255, 0.05);
-            stroke-width: 1px;
-        }
-
-        @keyframes dashFlow {
-            to {
-                stroke-dashoffset: -12;
-            }
-        }
-
-        .edge-weight-bg {
-            fill: var(--bg);
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 1px;
-            transition: all 0.4s ease;
-            rx: 4;
-            ry: 4;
-        }
-
-        .edge-weight-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 800;
-            fill: #94a3b8;
-            text-anchor: middle;
-            dominant-baseline: central;
-            transition: all 0.4s ease;
-        }
-
-        .edge-group.candidate .edge-weight-bg {
-            stroke: var(--yellow);
-            fill: rgba(250, 204, 21, 0.1);
-        }
-
-        .edge-group.candidate .edge-weight-text {
-            fill: var(--yellow);
-        }
-
-        .edge-group.evaluating .edge-weight-bg {
-            stroke: var(--yellow);
-            fill: var(--yellow);
-        }
-
-        .edge-group.evaluating .edge-weight-text {
-            fill: #000;
-            font-size: 14px;
-        }
-
-        .edge-group.mst .edge-weight-bg {
-            stroke: var(--green);
-            fill: rgba(52, 211, 153, 0.15);
-        }
-
-        .edge-group.mst .edge-weight-text {
-            fill: var(--green);
-            font-size: 14px;
-        }
-
-        .edge-group.rejected .edge-weight-bg {
-            opacity: 0;
-        }
-
-        .edge-group.rejected .edge-weight-text {
-            fill: #4b5563;
-        }
-
-        .node circle {
-            fill: rgba(255, 255, 255, 0.05);
-            stroke: rgba(255, 255, 255, 0.2);
-            stroke-width: 2px;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .node text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            fill: #e2e8f0;
-            text-anchor: middle;
-            dominant-baseline: central;
-            pointer-events: none;
-            transition: fill 0.4s ease;
-        }
-
-        .node.visited circle {
-            fill: rgba(52, 211, 153, 0.15);
-            stroke: var(--green);
-            stroke-width: 3px;
-            filter: drop-shadow(0 0 12px rgba(52, 211, 153, 0.4));
-            transform: scale(1.1);
-        }
-
-        .node.visited text {
-            fill: var(--green);
-        }
-
-        .node.evaluating circle {
-            fill: rgba(250, 204, 21, 0.2);
-            stroke: var(--yellow);
-            stroke-width: 3px;
-            filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.5));
-            transform: scale(1.2);
-        }
-
-        .node.evaluating text {
-            fill: var(--yellow);
-        }
-
-        /* ── Status strip ── */
         #status-strip {
-            padding: 14px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #e2e8f0;
-            background: rgba(52, 211, 153, 0.05);
-            border-top: 1px solid rgba(52, 211, 153, 0.15);
-            text-align: center;
-            min-height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            padding: 14px 24px; font-size: 14px; font-weight: 600; color: #e2e8f0;
+            background: rgba(52, 211, 153, 0.05); border-top: 1px solid rgba(52, 211, 153, 0.15);
+            text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-
         .status-badge {
-            background: rgba(52, 211, 153, 0.15);
-            color: var(--green);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            border: 1px solid rgba(52, 211, 153, 0.3);
+            background: rgba(52, 211, 153, 0.15); color: var(--green); padding: 4px 10px;
+            border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid rgba(52, 211, 153, 0.3);
         }
 
         /* ── Controls bar ── */
-        .controls-bar {
-            padding: 16px 20px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .speed-wrap {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .speed-wrap input[type=range] {
-            -webkit-appearance: none;
-            width: 100px;
-            height: 4px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            outline: none;
-            cursor: pointer;
-        }
-
-        .speed-wrap input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 10px var(--green);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .speed-wrap input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .step-counter {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: #94a3b8;
-        }
+        .controls-bar { padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .speed-wrap input[type=range] { -webkit-appearance: none; width: 100px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); outline: none; cursor: pointer; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); cursor: pointer; transition: transform 0.2s; }
+        .speed-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .step-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; }
 
         /* ── Panels Grid ── */
-        .panels-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 800px) {
-            .panels-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel-card {
-            padding: 20px;
-        }
-
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            color: #fff;
-        }
+        .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media (max-width: 800px) { .panels-grid { grid-template-columns: 1fr; } }
+        .panel-card { padding: 20px; }
+        .panel-title { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; color: #fff; }
 
         /* ── Pseudocode ── */
-        #pseudo-panel {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            line-height: 1.8;
-        }
-
-        .ps {
-            padding: 4px 12px;
-            border-left: 2px solid transparent;
-            border-radius: 0 6px 6px 0;
-            color: #6b7280;
-            transition: all 0.3s ease;
-            white-space: pre;
-        }
-
-        .ps.active {
-            border-left-color: var(--green);
-            background: rgba(52, 211, 153, 0.08);
-            color: #e2e8f0;
-        }
-
-        .kw {
-            color: #c084fc;
-        }
-
-        .fn {
-            color: #67e8f9;
-        }
-
-        .num {
-            color: #fcd34d;
-        }
-
-        .cmt {
-            color: #4b5563;
-            font-style: italic;
-        }
+        #pseudo-panel { font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; }
+        .ps { padding: 4px 12px; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; color: #6b7280; transition: all 0.3s ease; white-space: pre; }
+        .ps.active { border-left-color: var(--green); background: rgba(52, 211, 153, 0.08); color: #e2e8f0; }
+        .kw { color: #c084fc; } .fn { color: #67e8f9; } .num { color: #fcd34d; } .cmt { color: #4b5563; font-style: italic; }
 
         /* ── Code panel ── */
-        .code-tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 0;
+        .code-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .code-tab { padding: 8px 18px; font-size: 12px; font-weight: 700; border-radius: 10px 10px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; color: #6b7280; background: transparent; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .code-tab.active { color: var(--green); background: rgba(5, 5, 10, 0.9); border-color: rgba(255, 255, 255, 0.08); border-bottom-color: rgba(5, 5, 10, 0.9); }
+        .code-block { background: rgba(5, 5, 10, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0 12px 12px 12px; padding: 18px 20px; color: #d1d5db; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; margin-top: -1px; }
+        .ck { color: #c084fc; } .ct { color: #67e8f9; } .cm { color: #6b7280; font-style: italic; } .cn { color: #fcd34d; }
+
+        /* ── LEARNING MODULE STYLES ── */
+        .learning-section { margin-top: 40px; }
+        .learning-header { font-family: 'Space Grotesk', sans-serif; font-size: 24px; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .lrn-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+        .lrn-tab { 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); 
+            padding: 10px 20px; border-radius: 99px; color: #94a3b8; font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: all 0.3s; white-space: nowrap; font-family: 'Space Grotesk', sans-serif;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .lrn-tab:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .lrn-tab.active { background: rgba(52, 211, 153, 0.15); border-color: var(--green); color: #fff; box-shadow: 0 0 15px rgba(52,211,153,0.2); }
+
+        .lrn-pane { display: none; animation: popIn 0.4s ease; line-height: 1.7; }
+        .lrn-pane.active { display: block; }
+        
+        .lrn-pane h3 { color: var(--green); font-family: 'Space Grotesk', sans-serif; margin: 24px 0 12px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .lrn-pane h3:first-child { margin-top: 0; }
+        .lrn-pane p { color: #cbd5e1; margin-bottom: 16px; font-size: 14.5px; }
+        .lrn-pane ul, .lrn-pane ol { margin-left: 20px; margin-bottom: 16px; color: #cbd5e1; font-size: 14.5px; }
+        .lrn-pane li { margin-bottom: 8px; }
+        .lrn-pane li strong { color: #fff; }
+
+        .math-box { 
+            background: rgba(0,0,0,0.5); border-left: 4px solid var(--cyan); padding: 16px; 
+            border-radius: 0 8px 8px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e2e8f0; margin-bottom: 16px;
         }
 
-        .code-tab {
-            padding: 8px 18px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 10px 10px 0 0;
-            border: 1px solid transparent;
-            border-bottom: none;
-            cursor: pointer;
-            color: #6b7280;
-            background: transparent;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-        }
+        .exam-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; }
+        .exam-btn { padding: 8px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: transparent; color: #94a3b8; transition: 0.2s; }
+        .exam-btn.active { background: var(--green); color: #000; border-color: var(--green); box-shadow: 0 0 15px rgba(52,211,153,0.4); }
 
-        .code-tab.active {
-            color: var(--green);
-            background: rgba(5, 5, 15, 0.9);
-            border-color: rgba(255, 255, 255, 0.08);
-            border-bottom-color: rgba(5, 5, 15, 0.9);
-        }
+        .exam-answer { display: none; background: rgba(10,10,18,0.6); padding: 30px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
+        .exam-answer.active { display: block; animation: popIn 0.3s ease; }
+        .ans-heading { font-weight: 700; color: var(--yellow); text-decoration: underline; margin-top: 20px; margin-bottom: 10px; }
 
-        .code-block {
-            background: rgba(5, 5, 15, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0 12px 12px 12px;
-            padding: 18px 20px;
-            color: #d1d5db;
-            overflow-x: auto;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            line-height: 1.8;
-            white-space: pre;
-            margin-top: -1px;
-        }
+        .var-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .var-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; transition: transform 0.2s; }
+        .var-card:hover { transform: translateY(-5px); border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
+        .var-card h4 { color: var(--cyan); margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; }
 
-        .ck {
-            color: #c084fc;
-        }
-
-        .ct {
-            color: #67e8f9;
-        }
-
-        .cm {
-            color: #6b7280;
-            font-style: italic;
-        }
-
-        .cn {
-            color: #fcd34d;
-        }
+        .highlight { color: var(--yellow); font-weight: 600; }
+        .highlight-p { color: var(--green); font-weight: 600; }
     </style>
 </head>
 
@@ -708,423 +301,643 @@
         <a href="visual-dsa.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i><span>All Algorithms</span></a>
         <div class="sep"></div>
         <div class="topbar-title">
-            <span style="font-size:1.2rem">⚡</span>
-            <span class="topbar-algo-name">Prim's Algorithm</span>
-            <span class="badge-beta">MST Module</span>
+            <span style="font-size:1.2rem">🌲</span>
+            <span class="topbar-algo-name">Prim's Algorithm (MST)</span>
+            <span class="badge-beta">Graph Module</span>
         </div>
-        <div class="topbar-meta"><i class="ph-fill ph-graph" style="color:var(--green)"></i> DAA · Bennett University
-        </div>
+        <div class="topbar-meta"><i class="ph-fill ph-books" style="color:var(--green)"></i> DAA · Bennett University</div>
     </header>
 
     <div id="page">
 
         <div class="algo-hero">
             <h1>
-                <div class="icon-wrap"><i class="ph-fill ph-graph" style="color:var(--green)"></i></div>
-                Prim's Algorithm (MST)
+                <div class="icon-wrap"><i class="ph-fill ph-share-network" style="color:var(--green)"></i></div>
+                Prim's Minimum Spanning Tree
             </h1>
             <div class="complexity-row">
                 <span class="badge badge-time"><i class="ph-fill ph-clock"></i> Time: O(E log V)</span>
                 <span class="badge badge-space"><i class="ph-fill ph-stack"></i> Space: O(V + E)</span>
-                <span class="badge badge-class"><i class="ph-fill ph-lightning"></i> Greedy Approach</span>
+                <span class="badge badge-class" style="color:var(--orange); border-color:rgba(251,146,60,0.3); background:rgba(251,146,60,0.1)"><i class="ph-fill ph-lightbulb-filament"></i> Greedy Strategy</span>
             </div>
             <p class="algo-desc">
-                Prim's algorithm finds a Minimum Spanning Tree (MST) for a weighted undirected graph. It builds the MST
-                one vertex at a time, from an arbitrary starting vertex. At each step, it greedily adds the <strong
-                    style="color:var(--yellow)">cheapest possible edge</strong> from the tree to another vertex.
+                Prim's algorithm finds the Minimum Spanning Tree (MST) of a weighted undirected graph. It starts from an arbitrary node and <strong style="color:var(--green)">greedily</strong> grows the spanning tree one edge at a time. At each step, it selects the minimum weight edge that connects a visited node to an unvisited node.
             </p>
         </div>
 
         <div class="card input-row">
-            <div>
-                <button class="btn btn-primary" onclick="generate()">
-                    <i class="ph-bold ph-play-circle"></i> Initialize Graph
-                </button>
-            </div>
-            <div class="mst-stats">
-                <span class="mst-lbl">Total MST Weight:</span>
-                <span class="mst-val" id="tot-weight">0</span>
+            <span class="input-label" style="margin-right:auto">Graph loaded successfully.</span>
+            <button class="btn btn-primary" onclick="generate()">
+                <i class="ph-bold ph-play-circle"></i> Run Algorithm
+            </button>
+            <div class="toggle-wrap" title="Pause animation to let you guess the next Edge">
+                <span class="toggle-label"><i class="ph-fill ph-brain"></i> Interactive Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="interactive-toggle" onchange="toggleInteractive()">
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
 
         <div id="viz-frame">
-            <div id="d3-container">
-                <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="viz-section-label">
+                <span><i class="ph-bold ph-graph"></i> Graph Visualization</span>
+                <span id="dp-info" style="color:var(--green); font-family:'JetBrains Mono'">Nodes: 6 | Edges: 9</span>
+            </div>
+
+            <div class="dp-insights">
+                <div class="insight-pill">MST Weight: <span id="mst-weight-track" style="color:var(--cyan)">0</span></div>
+                <div class="insight-pill">Nodes Visited: <span id="nodes-visited" style="color:var(--yellow)">0</span> / 6</div>
+            </div>
+            
+            <div id="graph-container">
+                <svg id="g-svg"></svg>
+                <div id="g-nodes"></div>
+                <div id="g-labels"></div>
+
+                <div id="interactive-guess-panel">
+                    <p>Which edge will Prim's pick next?</p>
+                    <div class="guess-actions" id="guess-buttons">
+                        </div>
+                </div>
+            </div>
+
+            <div id="mst-result-strip" style="display: none;">
+                <span><i class="ph-bold ph-check-circle"></i> MST Completed! </span>
+                <span style="margin-left:auto; font-size:14px; color:#94a3b8">Total Weight: <strong style="color:var(--cyan); font-size:18px" id="final-weight"></strong></span>
             </div>
 
             <div id="status-strip">
-                <i class="ph-fill ph-info" style="color:var(--green)"></i>
-                <span id="status-text">Click "Initialize Graph" to setup the environment.</span>
+                <i class="ph-fill ph-info" style="color:#34d399"></i>
+                <span id="status-text">Click Run Algorithm to start finding the MST.</span>
             </div>
         </div>
 
         <div class="card controls-bar">
-            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon"
-                    class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
-            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i>
-                Step</button>
-            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i>
-                Back</button>
-            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i
-                    class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+            <button id="btn-play" class="btn btn-primary" onclick="togglePlay()" disabled><i id="play-icon" class="ph-bold ph-play"></i><span id="play-label">Play</span></button>
+            <button id="btn-step" class="btn" onclick="stepFwd()" disabled><i class="ph-bold ph-skip-forward"></i> Step</button>
+            <button id="btn-back" class="btn" onclick="stepBack()" disabled><i class="ph-bold ph-skip-back"></i> Back</button>
+            <button id="btn-reset" class="btn btn-danger" onclick="resetAnim()" disabled><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
 
-            <div class="speed-wrap">
+            <div class="speed-wrap" style="margin-left:auto;">
                 <i class="ph-bold ph-tortoise" style="color:#6b7280"></i>
                 <input type="range" id="speed-slider" min="1" max="5" value="3" oninput="updateSpeed(this.value)" />
                 <i class="ph-bold ph-rabbit" style="color:#6b7280"></i>
-                <span id="speed-label" class="step-counter" style="width:36px">1.0×</span>
+                <span id="speed-label" class="step-counter" style="width:36px; margin-left:8px;">1.0×</span>
             </div>
-            <div class="step-counter" style="margin-left:8px">Step <span id="cur-step">0</span> / <span
-                    id="tot-steps">0</span></div>
+            <div class="step-counter" style="margin-left:16px">Step <span id="cur-step">0</span> / <span id="tot-steps">0</span></div>
         </div>
 
         <div class="panels-grid">
             <div class="card panel-card">
-                <div class="panel-title"><i class="ph-fill ph-code" style="color:var(--green)"></i> Prim's Logic</div>
+                <div class="panel-title"><i class="ph-fill ph-code" style="color:var(--green)"></i> Prim's Algorithm Logic</div>
                 <div id="pseudo-panel">
-                    <div class="ps"><span class="kw">function</span> <span class="fn">PrimMST</span>(Graph, startNode):
-                    </div>
-                    <div class="ps"> visited ← {startNode}</div>
-                    <div class="ps"> mstEdges ← {}</div>
-                    <div class="ps"> totalWeight ← <span class="num">0</span></div>
+                    <div class="ps"><span class="kw">function</span> <span class="fn">PrimMST</span>(Graph):</div>
+                    <div class="ps">  visited ← empty set</div>
+                    <div class="ps">  MST ← empty list</div>
+                    <div class="ps">  PQ ← MinPriorityQueue()</div>
                     <div class="ps" style="height:4px"></div>
-                    <div class="ps"> <span class="kw">while</span> visited.size() &lt; Graph.nodes.size():</div>
-                    <div class="ps"> <span class="cmt">// Find all edges crossing from visited to unvisited</span></div>
-                    <div class="ps"> candidates ← getCrossingEdges(visited)</div>
+                    <div class="ps">  <span class="cmt">// Start from an arbitrary node (e.g., node A)</span></div>
+                    <div class="ps">  visited.add(A)</div>
+                    <div class="ps">  <span class="kw">for</span> each edge (A, v, weight) in Graph:</div>
+                    <div class="ps">    PQ.insert(A, v, weight)</div>
                     <div class="ps" style="height:4px"></div>
-                    <div class="ps"> <span class="cmt">// Greedy Choice</span></div>
-                    <div class="ps"> minEdge ← edge <span class="kw">in</span> candidates with smallest weight</div>
+                    <div class="ps">  <span class="kw">while</span> PQ is not empty <span class="kw">and</span> visited.size < V:</div>
+                    <div class="ps">    <span class="cmt">// Greedily pick the minimum weight edge</span></div>
+                    <div class="ps">    (u, v, weight) ← PQ.extractMin()</div>
                     <div class="ps" style="height:4px"></div>
-                    <div class="ps"> <span class="cmt">// Add to MST</span></div>
-                    <div class="ps"> mstEdges.<span class="fn">add</span>(minEdge)</div>
-                    <div class="ps"> visited.<span class="fn">add</span>(minEdge.targetNode)</div>
-                    <div class="ps"> totalWeight ← totalWeight + minEdge.weight</div>
+                    <div class="ps">    <span class="kw">if</span> v <span class="kw">in</span> visited:</div>
+                    <div class="ps">      <span class="kw">continue</span> <span class="cmt">// Avoid cycles</span></div>
                     <div class="ps" style="height:4px"></div>
-                    <div class="ps"> <span class="kw">return</span> mstEdges</div>
+                    <div class="ps">    MST.append((u, v, weight))</div>
+                    <div class="ps">    visited.add(v)</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">    <span class="cmt">// Add new frontier edges to PQ</span></div>
+                    <div class="ps">    <span class="kw">for</span> each edge (v, next, w) in Graph:</div>
+                    <div class="ps">      <span class="kw">if</span> next <span class="kw">not in</span> visited:</div>
+                    <div class="ps">        PQ.insert(v, next, w)</div>
+                    <div class="ps" style="height:4px"></div>
+                    <div class="ps">  <span class="kw">return</span> MST</div>
                 </div>
             </div>
 
             <div class="card panel-card">
-                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--cyan)"></i>
-                    Implementation</div>
+                <div class="panel-title"><i class="ph-fill ph-terminal-window" style="color:var(--cyan)"></i> Implementation</div>
                 <div class="code-tabs">
-                    <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++</button>
+                    <button class="code-tab active" id="tab-cpp" onclick="switchTab('cpp')">C++ (PQ)</button>
                     <button class="code-tab" id="tab-py" onclick="switchTab('py')">Python</button>
                     <button class="code-tab" id="tab-java" onclick="switchTab('java')">Java</button>
                 </div>
+                
+                <div id="code-cpp" class="code-block"><span class="ck">int</span> <span class="ct">spanningTree</span>(<span class="ck">int</span> V, <span class="ct">vector</span>&lt;<span class="ct">vector</span>&lt;<span class="ck">int</span>&gt;&gt; adj[]) {
+    <span class="ct">priority_queue</span>&lt;pair&lt;<span class="ck">int</span>, <span class="ck">int</span>&gt;, 
+                  <span class="ct">vector</span>&lt;pair&lt;<span class="ck">int</span>, <span class="ck">int</span>&gt;&gt;, 
+                  <span class="ct">greater</span>&lt;pair&lt;<span class="ck">int</span>, <span class="ck">int</span>&gt;&gt;&gt; pq;
+                  
+    <span class="ct">vector</span>&lt;<span class="ck">int</span>&gt; vis(V, <span class="cn">0</span>);
+    <span class="cm">// {weight, node}</span>
+    pq.push({<span class="cn">0</span>, <span class="cn">0</span>}); 
+    <span class="ck">int</span> sum = <span class="cn">0</span>;
+    
+    <span class="ck">while</span> (!pq.empty()) {
+        <span class="ck">auto</span> it = pq.top();
+        pq.pop();
+        
+        <span class="ck">int</span> wt = it.first;
+        <span class="ck">int</span> node = it.second;
+        
+        <span class="ck">if</span> (vis[node] == <span class="cn">1</span>) <span class="ck">continue</span>;
+        
+        <span class="cm">// Add to MST</span>
+        vis[node] = <span class="cn">1</span>;
+        sum += wt;
+        
+        <span class="ck">for</span> (<span class="ck">auto</span> it : adj[node]) {
+            <span class="ck">int</span> adjNode = it[<span class="cn">0</span>];
+            <span class="ck">int</span> edgW = it[<span class="cn">1</span>];
+            <span class="ck">if</span> (!vis[adjNode]) {
+                pq.push({edgW, adjNode});
+            }
+        }
+    }
+    <span class="ck">return</span> sum;
+}</div>
 
-                <div id="code-cpp" class="code-block"><span class="cm">// C++ Prim's using Priority Queue</span>
-                    <span class="ck">void</span> <span class="ct">primMST</span>(<span class="ck">int</span> V, <span
-                        class="ct">vector</span>&lt;<span class="ct">vector</span>&lt;<span
-                        class="ct">pair</span>&lt;<span class="ck">int</span>, <span
-                        class="ck">int</span>&gt;&gt;&gt;&amp; adj) {
-                    <span class="ct">priority_queue</span>&lt;<span class="ct">pair</span>&lt;<span
-                        class="ck">int</span>, <span class="ck">int</span>&gt;, <span class="ct">vector</span>&lt;<span
-                        class="ct">pair</span>&lt;<span class="ck">int</span>, <span class="ck">int</span>&gt;&gt;,
-                    greater&lt;&gt;&gt; pq;
-                    <span class="ct">vector</span>&lt;<span class="ck">bool</span>&gt; inMST(V, <span
-                        class="ck">false</span>);
-                    <span class="ck">int</span> res = <span class="cn">0</span>;
+                <div id="code-py" class="code-block" style="display:none"><span class="ck">import</span> heapq
 
-                    pq.<span class="ct">push</span>({<span class="cn">0</span>, <span class="cn">0</span>}); <span
-                        class="cm">// {weight, vertex}</span>
+<span class="ck">def</span> <span class="ct">spanningTree</span>(V: <span class="ck">int</span>, adj: list) -&gt; <span class="ck">int</span>:
+    pq = []
+    vis = [<span class="cn">False</span>] * V
+    <span class="cm"># (weight, node)</span>
+    heapq.heappush(pq, (<span class="cn">0</span>, <span class="cn">0</span>)) 
+    mst_sum = <span class="cn">0</span>
+    
+    <span class="ck">while</span> pq:
+        wt, node = heapq.heappop(pq)
+        
+        <span class="ck">if</span> vis[node]:
+            <span class="ck">continue</span>
+            
+        vis[node] = <span class="cn">True</span>
+        mst_sum += wt
+        
+        <span class="ck">for</span> adjNode, edgeWt <span class="ck">in</span> adj[node]:
+            <span class="ck">if not</span> vis[adjNode]:
+                heapq.heappush(pq, (edgeWt, adjNode))
+                
+    <span class="ck">return</span> mst_sum</div>
 
-                    <span class="ck">while</span> (!pq.<span class="ct">empty</span>()) {
-                    <span class="ck">int</span> wt = pq.<span class="ct">top</span>().first;
-                    <span class="ck">int</span> u = pq.<span class="ct">top</span>().second;
-                    pq.<span class="ct">pop</span>();
+                <div id="code-java" class="code-block" style="display:none"><span class="ck">class</span> <span class="ct">Pair</span> <span class="ck">implements</span> Comparable&lt;Pair&gt; {
+    <span class="ck">int</span> wt, node;
+    Pair(<span class="ck">int</span> wt, <span class="ck">int</span> node) {
+        <span class="ck">this</span>.wt = wt;
+        <span class="ck">this</span>.node = node;
+    }
+    <span class="ck">public int</span> compareTo(Pair that) {
+        <span class="ck">return this</span>.wt - that.wt;
+    }
+}
 
-                    <span class="ck">if</span> (inMST[u]) <span class="ck">continue</span>;
-
-                    inMST[u] = <span class="ck">true</span>;
-                    res += wt;
-
-                    <span class="ck">for</span> (<span class="ck">auto</span> edge : adj[u]) {
-                    <span class="ck">int</span> v = edge.first;
-                    <span class="ck">int</span> weight = edge.second;
-                    <span class="ck">if</span> (!inMST[v]) {
-                    pq.<span class="ct">push</span>({weight, v});
-                    }
-                    }
-                    }
-                    }
-                </div>
-
-                <div id="code-py" class="code-block" style="display:none"><span class="cm"># Python Prim's using
-                        heapq</span>
-                    <span class="ck">import</span> heapq
-
-                    <span class="ck">def</span> <span class="ct">prim_mst</span>(V, adj):
-                    in_mst = [<span class="cn">False</span>] * V
-                    pq = [(<span class="cn">0</span>, <span class="cn">0</span>)] <span class="cm"># (weight,
-                        vertex)</span>
-                    res = <span class="cn">0</span>
-
-                    <span class="ck">while</span> pq:
-                    wt, u = heapq.heappop(pq)
-
-                    <span class="ck">if</span> in_mst[u]:
-                    <span class="ck">continue</span>
-
-                    in_mst[u] = <span class="cn">True</span>
-                    res += wt
-
-                    <span class="ck">for</span> v, weight <span class="ck">in</span> adj[u]:
-                    <span class="ck">if</span> <span class="ck">not</span> in_mst[v]:
-                    heapq.heappush(pq, (weight, v))
-
-                    <span class="ck">return</span> res
-                </div>
-
-                <div id="code-java" class="code-block" style="display:none"><span class="cm">// Java Prim's using
-                        PriorityQueue</span>
-                    <span class="ck">class</span> Pair <span class="ck">implements</span> Comparable&lt;Pair&gt; {
-                    <span class="ck">int</span> v, wt;
-                    Pair(<span class="ck">int</span> v, <span class="ck">int</span> wt) { <span class="ck">this</span>.v
-                    = v; <span class="ck">this</span>.wt = wt; }
-                    <span class="ck">public</span> <span class="ck">int</span> <span class="ct">compareTo</span>(Pair
-                    that) { <span class="ck">return</span> <span class="ck">this</span>.wt - that.wt; }
-                    }
-
-                    <span class="ck">public</span> <span class="ck">static</span> <span class="ck">int</span> <span
-                        class="ct">primMST</span>(<span class="ck">int</span> V, ArrayList&lt;ArrayList&lt;Pair&gt;&gt;
-                    adj) {
-                    <span class="ck">boolean</span>[] inMST = <span class="ck">new</span> <span
-                        class="ck">boolean</span>[V];
-                    PriorityQueue&lt;Pair&gt; pq = <span class="ck">new</span> PriorityQueue&lt;&gt;();
-                    <span class="ck">int</span> res = <span class="cn">0</span>;
-
-                    pq.add(<span class="ck">new</span> Pair(<span class="cn">0</span>, <span class="cn">0</span>));
-
-                    <span class="ck">while</span> (!pq.isEmpty()) {
-                    Pair p = pq.poll();
-                    <span class="ck">int</span> u = p.v;
-
-                    <span class="ck">if</span> (inMST[u]) <span class="ck">continue</span>;
-
-                    inMST[u] = <span class="ck">true</span>;
-                    res += p.wt;
-
-                    <span class="ck">for</span> (Pair edge : adj.get(u)) {
-                    <span class="ck">if</span> (!inMST[edge.v]) {
-                    pq.add(<span class="ck">new</span> Pair(edge.v, edge.wt));
-                    }
-                    }
-                    }
-                    <span class="ck">return</span> res;
-                    }
-                </div>
+<span class="ck">public int</span> <span class="ct">spanningTree</span>(<span class="ck">int</span> V, ArrayList&lt;ArrayList&lt;ArrayList&lt;Integer&gt;&gt;&gt; adj) {
+    PriorityQueue&lt;Pair&gt; pq = <span class="ck">new</span> PriorityQueue&lt;Pair&gt;();
+    <span class="ck">boolean</span>[] vis = <span class="ck">new boolean</span>[V];
+    
+    pq.add(<span class="ck">new</span> Pair(<span class="cn">0</span>, <span class="cn">0</span>));
+    <span class="ck">int</span> sum = <span class="cn">0</span>;
+    
+    <span class="ck">while</span>(pq.size() > <span class="cn">0</span>) {
+        Pair it = pq.remove();
+        <span class="ck">int</span> wt = it.wt;
+        <span class="ck">int</span> node = it.node;
+        
+        <span class="ck">if</span> (vis[node]) <span class="ck">continue</span>;
+        
+        vis[node] = <span class="cn">true</span>;
+        sum += wt;
+        
+        <span class="ck">for</span>(ArrayList&lt;Integer&gt; edge : adj.get(node)) {
+            <span class="ck">int</span> adjNode = edge.get(<span class="cn">0</span>);
+            <span class="ck">int</span> edgW = edge.get(<span class="cn">1</span>);
+            <span class="ck">if</span> (!vis[adjNode]) {
+                pq.add(<span class="ck">new</span> Pair(edgW, adjNode));
+            }
+        }
+    }
+    <span class="ck">return</span> sum;
+}</div>
             </div>
         </div>
+
+        <div class="learning-section">
+            <h2 class="learning-header"><i class="ph-fill ph-student" style="color:var(--cyan)"></i> DAA Exam & Theory Hub</h2>
+            
+            <div class="lrn-tabs">
+                <button class="lrn-tab active" onclick="switchLrnTab('theory')"><i class="ph-bold ph-book-open"></i> Full Theory</button>
+                <button class="lrn-tab" onclick="switchLrnTab('exam')"><i class="ph-bold ph-pencil-line"></i> Subjective Exam Mode</button>
+                <button class="lrn-tab" onclick="switchLrnTab('intuition')"><i class="ph-bold ph-lightbulb"></i> Intuition</button>
+                <button class="lrn-tab" onclick="switchLrnTab('variations')"><i class="ph-bold ph-git-branch"></i> Variations (Kruskal)</button>
+                <button class="lrn-tab" onclick="switchLrnTab('revision')"><i class="ph-bold ph-push-pin"></i> Quick Notes</button>
+            </div>
+
+            <div class="card panel-card">
+                
+                <div id="lrn-theory" class="lrn-pane active">
+                    <h3>Definition</h3>
+                    <p><strong>Prim's Algorithm</strong> is a greedy algorithm that finds a Minimum Spanning Tree (MST) for a weighted undirected graph. This means it finds a subset of the edges that forms a tree that includes every vertex, where the total weight of all the edges in the tree is minimized.</p>
+
+                    <h3>Working of the Algorithm</h3>
+                    <p>The algorithm operates by building this tree one vertex at a time, starting from an arbitrary initial vertex:</p>
+                    <ol>
+                        <li><strong>Initialize:</strong> Create a set <code>visited</code> to keep track of vertices already included in the MST. Choose an arbitrary starting node and add it to <code>visited</code>.</li>
+                        <li><strong>Frontier Edges:</strong> Keep track of all edges that connect a node in the <code>visited</code> set to a node <em>outside</em> the <code>visited</code> set. (Typically done using a Min-Priority Queue).</li>
+                        <li><strong>Greedy Choice:</strong> Extract the edge with the absolute minimum weight from the priority queue.</li>
+                        <li><strong>Validation:</strong> Check if the destination node of this edge is already in the <code>visited</code> set.
+                            <ul>
+                                <li>If YES: Discard the edge (adding it would create a cycle).</li>
+                                <li>If NO: Add the edge to your MST, add the new node to <code>visited</code>, and push all edges originating from this new node into the priority queue.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Repeat:</strong> Continue steps 3 and 4 until the <code>visited</code> set contains all $V$ vertices.</li>
+                    </ol>
+
+                    <h3>Complexity Analysis</h3>
+                    <ul>
+                        <li><strong>Time Complexity: <span class="highlight-p">O(E log V)</span></strong> - Where $E$ is the number of edges and $V$ is the number of vertices. Each edge is added to the Min-Heap once. Extracting the minimum element from a heap of size $E$ takes $O(\log E)$ which is equivalent to $O(\log V)$.</li>
+                        <li><strong>Space Complexity: <span class="highlight-p">O(V + E)</span></strong> - $O(V)$ for the visited array and MST storage, and $O(E)$ for the priority queue in the worst-case dense graph.</li>
+                    </ul>
+                </div>
+
+                <div id="lrn-exam" class="lrn-pane">
+                    <div class="exam-toggle">
+                        <button class="exam-btn active" onclick="switchExamAns('5mark')">5 Marks Answer</button>
+                        <button class="exam-btn" onclick="switchExamAns('10mark')">10 Marks Answer</button>
+                    </div>
+
+                    <div id="ans-5mark" class="exam-answer active">
+                        <h4 style="color: #fff; margin-bottom: 12px; font-family:'Space Grotesk'">Q: Explain Prim's Algorithm for finding a Minimum Spanning Tree. (5 Marks)</h4>
+                        <p class="ans-heading">1. Definition:</p>
+                        <p>Prim's algorithm is a greedy approach to find the Minimum Spanning Tree (MST) of a connected, undirected, and weighted graph. An MST connects all vertices without any cycles and with the minimum possible total edge weight.</p>
+                        
+                        <p class="ans-heading">2. Algorithm Steps:</p>
+                        <ul>
+                            <li>Start with an empty spanning tree and a set of unvisited vertices.</li>
+                            <li>Select an arbitrary vertex and mark it as visited.</li>
+                            <li>Find the edge with the minimum weight that connects a visited vertex to an unvisited vertex.</li>
+                            <li>Add this edge and the new vertex to the MST. Mark the vertex as visited.</li>
+                            <li>Repeat the process until all vertices are visited.</li>
+                        </ul>
+
+                        <p class="ans-heading">3. Complexity:</p>
+                        <p>Using a binary min-heap and adjacency list, the time complexity is <strong>O(E log V)</strong>.</p>
+                    </div>
+
+                    <div id="ans-10mark" class="exam-answer">
+                        <h4 style="color: #fff; margin-bottom: 12px; font-family:'Space Grotesk'">Q: Write Prim's algorithm. Trace it on a sample graph and analyze its time complexity. (10 Marks)</h4>
+                        <p class="ans-heading">1. Introduction:</p>
+                        <p>Prim's is a greedy algorithm based on the Cut Property. It maintains two sets of vertices: those included in the MST and those not yet included. At every step, it considers the "cut" separating the two sets and picks the minimum weight crossing edge.</p>
+
+                        <p class="ans-heading">2. Algorithm (Pseudocode):</p>
+                        <div class="math-box">
+PRIM(G, w, r)  // G=Graph, w=weights, r=root node
+1.  For each u ∈ G.V:
+2.      u.key = ∞
+3.      u.π = NIL
+4.  r.key = 0
+5.  Q = G.V  // Min-Priority Queue
+6.  While Q ≠ Ø:
+7.      u = EXTRACT-MIN(Q)
+8.      For each v ∈ G.Adj[u]:
+9.          If v ∈ Q and w(u,v) < v.key:
+10.             v.π = u
+11.             v.key = w(u,v)
+                        </div>
+
+                        <p class="ans-heading">3. Complexity Analysis:</p>
+                        <p>The time complexity depends heavily on the data structure used for the Priority Queue <code>Q</code>.</p>
+                        <ul>
+                            <li><strong>Initialization:</strong> Takes $O(V)$.</li>
+                            <li><strong>Building the Priority Queue:</strong> Takes $O(V)$.</li>
+                            <li><strong>EXTRACT-MIN loop:</strong> Executes $V$ times. Using a binary heap, this takes $O(V \log V)$.</li>
+                            <li><strong>Edge relaxation loop:</strong> Executes $E$ times overall (once for each edge). Updating keys in a binary heap takes $O(\log V)$. Total time is $O(E \log V)$.</li>
+                        </ul>
+                        <p><strong>Total Time Complexity:</strong> $O(V \log V + E \log V) \implies \mathbf{O(E \log V)}$.</p>
+                    </div>
+                </div>
+
+                <div id="lrn-intuition" class="lrn-pane">
+                    <h3>The Cut Property</h3>
+                    <p>Prim's algorithm is mathematically backed by the <strong>Cut Property</strong> of graphs. Imagine slicing a graph into two disjoint sets of vertices (a "cut").</p>
+                    <p>The cut property states that for any cut, the edge with the <strong>minimum weight</strong> that crosses the cut (connects a node in Set A to a node in Set B) <strong>must belong to the Minimum Spanning Tree</strong>.</p>
+                    
+                    <h4 style="color:var(--yellow); margin-top:20px;">How Prim's uses this:</h4>
+                    <p>In Prim's algorithm, Set A is the <code>visited</code> nodes (the growing MST), and Set B is the unvisited nodes. The priority queue stores all the edges "crossing the cut". By constantly extracting the minimum edge from the queue, we are repeatedly applying the Cut Property to guarantee an optimal MST.</p>
+                </div>
+
+                <div id="lrn-variations" class="lrn-pane">
+                    <p style="margin-bottom: 20px;">The biggest variation to MST generation is choosing between Prim's and Kruskal's algorithm depending on the graph's structure.</p>
+                    
+                    <div class="var-grid">
+                        <div class="var-card">
+                            <h4>Prim's Algorithm</h4>
+                            <p style="font-size: 13px; color: #94a3b8;"><strong>Growth:</strong> Vertex-based. Grows a single tree outwards.<br><br><strong>Best For:</strong> Dense graphs (where $E$ is close to $V^2$). If implemented with an Adjacency Matrix, it runs in $O(V^2)$, which is faster than Kruskal's $O(E \log E)$ for very dense graphs.</p>
+                        </div>
+                        <div class="var-card">
+                            <h4>Kruskal's Algorithm</h4>
+                            <p style="font-size: 13px; color: #94a3b8;"><strong>Growth:</strong> Edge-based. Sorts all edges globally and merges a forest of trees using Disjoint Set Union (DSU).<br><br><strong>Best For:</strong> Sparse graphs. Running time is bounded by the edge sorting: $O(E \log E)$.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lrn-revision" class="lrn-pane">
+                    <h3><i class="ph-bold ph-lightning" style="color:var(--yellow)"></i> Quick Revision Flashcards</h3>
+                    <ul>
+                        <li><span class="highlight">Concept:</span> Find MST by growing a single tree from a starting vertex.</li>
+                        <li><span class="highlight">Strategy:</span> Greedy. Always pick the lowest-weight edge connecting the tree to a new node.</li>
+                        <li><span class="highlight">Data Structures:</span> Adjacency List, Visited Array (Boolean), Min-Priority Queue.</li>
+                        <li><span class="highlight">Cycle Prevention:</span> Ignore an edge if its destination node is already marked `visited = true`.</li>
+                        <li><span class="highlight">Time Complexity:</span> $O(E \log V)$ with adjacency list and binary heap.</li>
+                        <li><span class="highlight">Space Complexity:</span> $O(V)$ auxiliary space.</li>
+                        <li><span class="highlight">Comparison:</span> Prim's is better for Dense graphs; Kruskal's is better for Sparse graphs.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
+    <style>
+        .algo-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(5, 5, 10, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 24px; z-index: 1000;
+        }
+        .nav-btn {
+            display: flex; align-items: center; gap: 8px; color: #94a3b8;
+            text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s;
+            padding: 8px 16px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-btn:hover { color: #e2e8f0; background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
+        .nav-center {
+            display: flex; align-items: center; gap: 6px; color: var(--green);
+            text-decoration: none; font-size: 14px; font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
+        }
+        .nav-center:hover { filter: brightness(1.2); text-shadow: 0 0 10px rgba(52, 211, 153, 0.4); }
+        body { padding-bottom: 70px !important; }
+        @media (max-width: 600px) {
+            .algo-nav { padding: 10px 12px; }
+            .nav-btn { padding: 6px 10px; font-size: 11px; }
+            .nav-center { font-size: 12px; }
+            .nav-btn span.lbl-txt { display: none; }
+        }
+    </style>
+
+    <nav class="algo-nav">
+        <a href="dsa-kruskal.html" class="nav-btn"><i class="ph-bold ph-arrow-left"></i> <span class="lbl-txt">Kruskal's Algorithm</span></a>
+        <a href="visual-dsa.html" class="nav-center">⚡ <span class="lbl-txt">All Algorithms</span></a>
+        <a href="dsa-dijkstra.html" class="nav-btn"><span class="lbl-txt">Dijkstra's SSSP</span> <i class="ph-bold ph-arrow-right"></i></a>
+    </nav>
+
     <script>
-        /* ── Graph Data ── */
-        const graph = {
-            nodes: [
-                { id: 0, label: 'A', cx: 150, cy: 225 },
-                { id: 1, label: 'B', cx: 350, cy: 100 },
-                { id: 2, label: 'C', cx: 350, cy: 350 },
-                { id: 3, label: 'D', cx: 550, cy: 100 },
-                { id: 4, label: 'E', cx: 550, cy: 350 },
-                { id: 5, label: 'F', cx: 700, cy: 225 }
-            ],
-            edges: [
-                { id: 'e0', source: 0, target: 1, weight: 4 },
-                { id: 'e1', source: 0, target: 2, weight: 2 },
-                { id: 'e2', source: 1, target: 2, weight: 1 },
-                { id: 'e3', source: 1, target: 3, weight: 5 },
-                { id: 'e4', source: 2, target: 3, weight: 8 },
-                { id: 'e5', source: 2, target: 4, weight: 10 },
-                { id: 'e6', source: 3, target: 4, weight: 2 },
-                { id: 'e7', source: 3, target: 5, weight: 6 },
-                { id: 'e8', source: 4, target: 5, weight: 3 }
-            ]
-        };
+        // Graph Data Representation
+        const nodesData = [
+            { id: 'A', x: 20, y: 50 },
+            { id: 'B', x: 45, y: 20 },
+            { id: 'C', x: 45, y: 80 },
+            { id: 'D', x: 75, y: 20 },
+            { id: 'E', x: 75, y: 80 },
+            { id: 'F', x: 90, y: 50 }
+        ];
 
-        /* ── State Management ── */
-        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 1200;
+        const edgesData = [
+            { u: 'A', v: 'B', w: 4 },
+            { u: 'A', v: 'C', w: 4 },
+            { u: 'B', v: 'C', w: 2 },
+            { u: 'B', v: 'D', w: 5 },
+            { u: 'C', v: 'D', w: 5 },
+            { u: 'C', v: 'E', w: 2 },
+            { u: 'D', v: 'F', w: 6 },
+            { u: 'E', v: 'F', w: 3 },
+            { u: 'C', v: 'F', w: 4 }
+        ];
 
-        const PHASE = {
-            init: 1,
-            eval_candidates: 7,
-            pick_min: 10,
-            add_mst: 12,
-            done: 15
-        };
+        let steps = [], curStep = -1, isPlaying = false, timer = null, speedMs = 800;
+        let interactiveMode = false;
 
-        /* ── Algorithm Engine ── */
+        const PHASE = { init: 6, pick: 11, skip: 15, add: 18, expand: 22, done: 25 };
+
+        // Utility to generate a deterministic edge ID
+        function edgeId(u, v) { return u < v ? `${u}-${v}` : `${v}-${u}`; }
+
+        function drawGraph() {
+            const svg = document.getElementById('g-svg');
+            const nodeCont = document.getElementById('g-nodes');
+            const lblCont = document.getElementById('g-labels');
+            svg.innerHTML = ''; nodeCont.innerHTML = ''; lblCont.innerHTML = '';
+
+            edgesData.forEach(e => {
+                const u = nodesData.find(n => n.id === e.u);
+                const v = nodesData.find(n => n.id === e.v);
+                
+                // Draw Line
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", `${u.x}%`);
+                line.setAttribute("y1", `${u.y}%`);
+                line.setAttribute("x2", `${v.x}%`);
+                line.setAttribute("y2", `${v.y}%`);
+                line.setAttribute("class", "g-edge");
+                line.setAttribute("id", `line-${edgeId(e.u, e.v)}`);
+                svg.appendChild(line);
+
+                // Draw Label
+                const lbl = document.createElement('div');
+                lbl.className = 'weight-label';
+                lbl.id = `lbl-${edgeId(e.u, e.v)}`;
+                lbl.style.left = `${(u.x + v.x) / 2}%`;
+                lbl.style.top = `${(u.y + v.y) / 2}%`;
+                lbl.textContent = e.w;
+                lblCont.appendChild(lbl);
+            });
+
+            nodesData.forEach(n => {
+                const nd = document.createElement('div');
+                nd.className = 'g-node';
+                nd.id = `node-${n.id}`;
+                nd.style.left = `${n.x}%`;
+                nd.style.top = `${n.y}%`;
+                nd.textContent = n.id;
+                nodeCont.appendChild(nd);
+            });
+        }
+
+        // Prim's Step Generator
         function makeSteps() {
             let snaps = [];
-            let visited = new Set([0]); // Start at A
-            let mstEdges = new Set();
-            let currentWeight = 0;
+            let visited = new Set();
+            let pq = []; // stores {u, v, w}
+            let mst = [];
+            let mstWeight = 0;
 
-            function pushSnap(phase, vis, mst, cands, evalEdge, msg) {
+            // Start from A
+            let start = 'A';
+            visited.add(start);
+            
+            // Initial Frontier
+            edgesData.filter(e => e.u === start || e.v === start).forEach(e => {
+                pq.push({u: start, v: e.u === start ? e.v : e.u, w: e.w});
+            });
+            
+            snaps.push({
+                phase: 'init', vis: new Set(visited), mst: [...mst], pq: [...pq], activeE: null, msg: `Initialization: Start at node A. Added frontier edges to Priority Queue.`, wt: mstWeight
+            });
+
+            while (pq.length > 0 && visited.size < nodesData.length) {
+                // Sort PQ (simulating Min-Heap)
+                pq.sort((a, b) => a.w - b.w);
+                
+                // Generate interactive options before picking
+                let candidates = pq.slice(0, 3).map(e => edgeId(e.u, e.v));
+
+                let curr = pq.shift(); // extract min
+                let eId = edgeId(curr.u, curr.v);
+
                 snaps.push({
-                    phase, msg,
-                    visited: new Set(vis),
-                    mstEdges: new Set(mst),
-                    candidates: new Set(cands),
-                    evalEdge,
-                    totW: currentWeight
+                    phase: 'pick', vis: new Set(visited), mst: [...mst], pq: [...pq], activeE: eId, opts: candidates, expChoice: eId,
+                    msg: `Extracting min edge (${curr.u}-${curr.v}) with weight ${curr.w} from PQ.`, wt: mstWeight
                 });
-            }
 
-            pushSnap('init', visited, mstEdges, [], null, `<span class="status-badge">Initialization</span> Starting from Node A. Weight is 0.`);
+                if (visited.has(curr.v)) {
+                    snaps.push({
+                        phase: 'skip', vis: new Set(visited), mst: [...mst], pq: [...pq], activeE: eId, status: 'rej',
+                        msg: `<span style="color:var(--orange)">Cycle Detected!</span> Node ${curr.v} is already visited. Discarding edge.`, wt: mstWeight
+                    });
+                    continue;
+                }
 
-            while (visited.size < graph.nodes.length) {
-                // 1. Find candidates (crossing edges)
-                let candidates = [];
-                graph.edges.forEach(e => {
-                    let sIn = visited.has(e.source);
-                    let tIn = visited.has(e.target);
-                    if ((sIn && !tIn) || (!sIn && tIn)) {
-                        candidates.push(e);
+                // Add to MST
+                visited.add(curr.v);
+                mst.push(eId);
+                mstWeight += curr.w;
+
+                snaps.push({
+                    phase: 'add', vis: new Set(visited), mst: [...mst], pq: [...pq], activeE: eId, status: 'acc',
+                    msg: `<span style="color:var(--green)">Valid Edge.</span> Added (${curr.u}-${curr.v}) to MST. Visited node ${curr.v}.`, wt: mstWeight
+                });
+
+                // Expand frontier
+                let addedAny = false;
+                edgesData.filter(e => e.u === curr.v || e.v === curr.v).forEach(e => {
+                    let next = e.u === curr.v ? e.v : e.u;
+                    if (!visited.has(next)) {
+                        pq.push({u: curr.v, v: next, w: e.w});
+                        addedAny = true;
                     }
                 });
 
-                let cIds = candidates.map(e => e.id);
-                pushSnap('eval_candidates', visited, mstEdges, cIds, null, `Found crossing edges connecting visited nodes to unvisited nodes.`);
-
-                // 2. Pick minimum
-                let minEdge = null;
-                let minW = Infinity;
-                candidates.forEach(e => {
-                    if (e.weight < minW) { minW = e.weight; minEdge = e; }
-                });
-
-                let nextNode = visited.has(minEdge.source) ? minEdge.target : minEdge.source;
-                let nextLabel = graph.nodes.find(n => n.id === nextNode).label;
-
-                pushSnap('pick_min', visited, mstEdges, cIds, minEdge.id, `<span class="status-badge" style="color:var(--yellow); border-color:var(--yellow); background:rgba(250,204,21,0.15)">Greedy Choice</span> Minimum edge is to Node ${nextLabel} (Weight: ${minEdge.weight}).`);
-
-                // 3. Add to MST
-                visited.add(nextNode);
-                mstEdges.add(minEdge.id);
-                currentWeight += minEdge.weight;
-
-                pushSnap('add_mst', visited, mstEdges, [], null, `Added Node ${nextLabel} to MST. Total weight updated.`);
+                if(addedAny) {
+                    snaps.push({
+                        phase: 'expand', vis: new Set(visited), mst: [...mst], pq: [...pq], activeE: null,
+                        msg: `Expanded frontier from node ${curr.v}. Added new edges to PQ.`, wt: mstWeight
+                    });
+                }
             }
 
-            pushSnap('done', visited, mstEdges, [], null, `✅ <strong>MST Complete!</strong> All nodes are connected with minimum total weight.`);
+            snaps.push({
+                phase: 'done', vis: new Set(visited), mst: [...mst], pq: [], activeE: null,
+                msg: `✅ Prim's Algorithm Complete. All nodes connected!`, wt: mstWeight
+            });
+
             return snaps;
         }
 
-        /* ── D3 DOM Generation ── */
-        function initDOM() {
-            const svg = d3.select("#d3-container svg");
-            svg.selectAll("*").remove();
-
-            // Edges Layer
-            const edgesGroup = svg.append("g").attr("class", "edges");
-
-            const edgeData = edgesGroup.selectAll(".edge-group")
-                .data(graph.edges).enter().append("g")
-                .attr("class", "edge-group")
-                .attr("id", d => `eg-${d.id}`);
-
-            // Draw Lines
-            edgeData.append("line")
-                .attr("class", "edge-line")
-                .attr("id", d => `line-${d.id}`)
-                .attr("x1", d => graph.nodes.find(n => n.id === d.source).cx)
-                .attr("y1", d => graph.nodes.find(n => n.id === d.source).cy)
-                .attr("x2", d => graph.nodes.find(n => n.id === d.target).cx)
-                .attr("y2", d => graph.nodes.find(n => n.id === d.target).cy);
-
-            // Draw Weights (Background + Text)
-            edgeData.append("rect")
-                .attr("class", "edge-weight-bg")
-                .attr("width", 20).attr("height", 20)
-                .attr("x", d => {
-                    let s = graph.nodes.find(n => n.id === d.source);
-                    let t = graph.nodes.find(n => n.id === d.target);
-                    return (s.cx + t.cx) / 2 - 10;
-                })
-                .attr("y", d => {
-                    let s = graph.nodes.find(n => n.id === d.source);
-                    let t = graph.nodes.find(n => n.id === d.target);
-                    return (s.cy + t.cy) / 2 - 10;
-                });
-
-            edgeData.append("text")
-                .attr("class", "edge-weight-text")
-                .attr("x", d => {
-                    let s = graph.nodes.find(n => n.id === d.source);
-                    let t = graph.nodes.find(n => n.id === d.target);
-                    return (s.cx + t.cx) / 2;
-                })
-                .attr("y", d => {
-                    let s = graph.nodes.find(n => n.id === d.source);
-                    let t = graph.nodes.find(n => n.id === d.target);
-                    return (s.cy + t.cy) / 2;
-                })
-                .text(d => d.weight);
-
-            // Nodes Layer
-            const nodesGroup = svg.append("g").attr("class", "nodes");
-
-            const nodeData = nodesGroup.selectAll(".node")
-                .data(graph.nodes).enter().append("g")
-                .attr("class", "node")
-                .attr("id", d => `node-${d.id}`)
-                .attr("transform", d => `translate(${d.cx}, ${d.cy})`);
-
-            nodeData.append("circle").attr("r", 22);
-            nodeData.append("text").text(d => d.label);
-        }
-
-        /* ── Step Application ── */
         function applyStep(si) {
             if (si < 0 || si >= steps.length) return;
             const s = steps[si];
 
-            // Update Nodes
-            graph.nodes.forEach(n => {
-                let node = document.getElementById(`node-${n.id}`);
-                node.setAttribute('class', 'node');
+            // Reset UI
+            document.querySelectorAll('.g-node').forEach(n => n.className = 'g-node');
+            document.querySelectorAll('.g-edge').forEach(e => e.className.baseVal = 'g-edge');
+            document.querySelectorAll('.weight-label').forEach(l => l.className = 'weight-label');
 
-                if (s.visited.has(n.id)) node.classList.add('visited');
+            // Apply Visited Nodes
+            s.vis.forEach(v => document.getElementById(`node-${v}`).classList.add('visited'));
 
-                // Highlight the specific node being evaluated/added
-                if (s.evalEdge) {
-                    let e = graph.edges.find(edge => edge.id === s.evalEdge);
-                    if (!s.visited.has(n.id) && (e.source === n.id || e.target === n.id)) {
-                        node.classList.add('evaluating');
-                    }
+            // Apply PQ Candidates
+            s.pq.forEach(e => {
+                let eId = edgeId(e.u, e.v);
+                if (!s.mst.includes(eId)) {
+                    document.getElementById(`line-${eId}`).classList.add('candidate');
                 }
             });
 
-            // Update Edges
-            graph.edges.forEach(e => {
-                let eGroup = document.getElementById(`eg-${e.id}`);
-                let eLine = document.getElementById(`line-${e.id}`);
-
-                eGroup.setAttribute('class', 'edge-group');
-                eLine.setAttribute('class', 'edge-line');
-
-                if (s.mstEdges.has(e.id)) {
-                    eGroup.classList.add('mst');
-                    eLine.classList.add('mst');
-                } else if (s.evalEdge === e.id) {
-                    eGroup.classList.add('evaluating');
-                    eLine.classList.add('evaluating');
-                } else if (s.candidates.has(e.id)) {
-                    eGroup.classList.add('candidate');
-                    eLine.classList.add('candidate');
-                } else if (s.phase === 'done' || (s.visited.has(e.source) && s.visited.has(e.target))) {
-                    // Dim unused edges between visited nodes or at the end
-                    eGroup.classList.add('rejected');
-                    eLine.classList.add('rejected');
-                }
+            // Apply MST Edges
+            s.mst.forEach(eId => {
+                document.getElementById(`line-${eId}`).classList.add('mst');
+                document.getElementById(`lbl-${eId}`).classList.add('mst');
             });
 
-            document.getElementById('tot-weight').textContent = s.totW;
+            // Apply Active Eval Edge
+            if (s.activeE) {
+                let line = document.getElementById(`line-${s.activeE}`);
+                let lbl = document.getElementById(`lbl-${s.activeE}`);
+                
+                if (s.status === 'rej') {
+                    line.classList.add('rejected');
+                } else {
+                    line.classList.add('eval');
+                    lbl.classList.add('eval');
+                }
+            }
+
+            // Update Stats & Messages
+            document.getElementById('mst-weight-track').textContent = s.wt;
+            document.getElementById('nodes-visited').textContent = s.vis.size;
             document.getElementById('status-text').innerHTML = s.msg;
+            
+            if (s.phase === 'done') {
+                document.getElementById('mst-result-strip').style.display = 'flex';
+                document.getElementById('final-weight').textContent = s.wt;
+            } else {
+                document.getElementById('mst-result-strip').style.display = 'none';
+            }
+
             highlightPseudo(s.phase);
             document.getElementById('cur-step').textContent = si + 1;
             document.getElementById('tot-steps').textContent = steps.length;
+
+            // Interactive Mode Logic
+            let guessPanel = document.getElementById('interactive-guess-panel');
+            if (interactiveMode && s.phase === 'pick' && isPlaying) {
+                pauseAnim();
+                guessPanel.style.display = 'block';
+                let btnHtml = s.opts.map(opt => `<button class="btn btn-primary" onclick="makeGuess('${opt}')">Edge ${opt}</button>`).join('');
+                document.getElementById('guess-buttons').innerHTML = btnHtml;
+            } else {
+                guessPanel.style.display = 'none';
+            }
+        }
+
+        function toggleInteractive() {
+            interactiveMode = document.getElementById('interactive-toggle').checked;
+            document.getElementById('interactive-guess-panel').style.display = 'none';
+        }
+
+        function makeGuess(choice) {
+            let s = steps[curStep];
+            if (s.expChoice === choice) {
+                document.getElementById('interactive-guess-panel').style.display = 'none';
+                document.getElementById('status-text').innerHTML = `<span style="color:var(--green)"><i class="ph-fill ph-check-circle"></i> Correct! Extracting minimum weight edge...</span>`;
+                setTimeout(() => { stepFwd(); togglePlay(); }, 600);
+            } else {
+                document.getElementById('status-text').innerHTML = `<span style="color:var(--orange)"><i class="ph-fill ph-warning-circle"></i> Incorrect. Prim's ALWAYS picks the edge with the absolute lowest weight in the PQ. Try again!</span>`;
+                let panel = document.getElementById('interactive-guess-panel');
+                panel.style.animation = 'none'; void panel.offsetWidth; panel.style.animation = 'popIn 0.3s ease';
+            }
         }
 
         function highlightPseudo(phase) {
@@ -1136,7 +949,7 @@
         /* ── Controls ── */
         function generate() {
             stopAnim();
-            initDOM();
+            drawGraph();
             steps = makeSteps();
             applyStep(0); curStep = 0;
             enableBtns(true);
@@ -1145,11 +958,13 @@
         function togglePlay() {
             if (isPlaying) { pauseAnim(); return; }
             if (curStep >= steps.length - 1) { curStep = 0; applyStep(0); }
+            document.getElementById('interactive-guess-panel').style.display = 'none';
             isPlaying = true; updatePlayBtn();
             (function tick() {
+                if(!isPlaying) return;
                 if (curStep < steps.length - 1) {
                     curStep++; applyStep(curStep);
-                    timer = setTimeout(tick, speedMs);
+                    if(isPlaying) timer = setTimeout(tick, speedMs);
                 } else { isPlaying = false; updatePlayBtn(); }
             })();
         }
@@ -1161,7 +976,7 @@
         function stepBack() { pauseAnim(); if (curStep > 0) { curStep--; applyStep(curStep); } }
 
         function updateSpeed(v) {
-            speedMs = [1800, 1300, 900, 500, 200][parseInt(v) - 1];
+            speedMs = [1400, 1000, 700, 400, 150][parseInt(v) - 1];
             document.getElementById('speed-label').textContent = ['0.5×', '0.75×', '1.0×', '2.0×', '4.0×'][parseInt(v) - 1];
         }
 
@@ -1178,9 +993,23 @@
             });
         }
 
-        // Auto-initialize silently to setup SVG
-        initDOM();
+        function switchLrnTab(tabId) {
+            let tabs = ['theory', 'exam', 'intuition', 'variations', 'revision'];
+            tabs.forEach(t => document.getElementById('lrn-' + t).classList.toggle('active', t === tabId));
+            let btns = document.querySelectorAll('.lrn-tab');
+            btns.forEach((btn, idx) => btn.classList.toggle('active', tabs[idx] === tabId));
+        }
+
+        function switchExamAns(type) {
+            document.getElementById('ans-5mark').classList.toggle('active', type === '5mark');
+            document.getElementById('ans-10mark').classList.toggle('active', type === '10mark');
+            let btns = document.querySelectorAll('.exam-btn');
+            btns[0].classList.toggle('active', type === '5mark');
+            btns[1].classList.toggle('active', type === '10mark');
+        }
+
+        // Initialize empty graph on load
+        drawGraph();
     </script>
 </body>
-
 </html>
