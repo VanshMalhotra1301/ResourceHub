@@ -1028,6 +1028,32 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.09);
             }
         }
+
+        @media (max-width: 767px) {
+            #drive-modal-header {
+                gap: 8px;
+                padding: 12px 14px;
+            }
+
+            #drive-modal-open-link span,
+            #drive-modal-download span,
+            .drive-modal-tag {
+                display: none;
+            }
+
+            #drive-modal-open-link,
+            #drive-modal-download {
+                padding: 8px;
+            }
+
+            #drive-modal-title {
+                font-size: 13px;
+            }
+
+            .ph-file-pdf {
+                font-size: 20px !important;
+            }
+        }
     </style>
 </head>
 
@@ -1041,11 +1067,11 @@
                 <i class="ph-fill ph-file-pdf" style="color:#6366f1;font-size:18px;flex-shrink:0"></i>
                 <span id="drive-modal-title">Document</span>
                 <span class="drive-modal-tag">Preview</span>
-                <a id="drive-modal-open-link" href="#" target="_blank" rel="noopener">
-                    <i class="ph-bold ph-arrow-square-out"></i> Open in Drive
+                <a id="drive-modal-open-link" href="#" target="_blank" rel="noopener" title="Open in Drive">
+                    <i class="ph-bold ph-arrow-square-out"></i> <span>Open in Drive</span>
                 </a>
                 <a id="drive-modal-download" href="#" target="_blank" rel="noopener" title="Download file" download>
-                    <i class="ph-bold ph-download-simple"></i> Download
+                    <i class="ph-bold ph-download-simple"></i> <span>Download</span>
                 </a>
                 <button id="drive-modal-close" onclick="closeDriveModal()" title="Close preview">
                     <i class="ph-bold ph-x"></i>
@@ -3767,9 +3793,11 @@
             const title = document.getElementById('drive-modal-title');
             const openLink = document.getElementById('drive-modal-open-link');
 
-            // Hide spinner once iframe has loaded
+            // Hide spinner once iframe has loaded the real Drive URL
             iframe.addEventListener('load', () => {
-                spinner.classList.add('hidden');
+                if (iframe.src && !iframe.src.startsWith('about:blank') && iframe.src !== window.location.href) {
+                    spinner.classList.add('hidden');
+                }
             });
 
             window.openDriveModal = function (fileId, label) {
@@ -3777,13 +3805,19 @@
                 openLink.href = 'https://drive.google.com/file/d/' + fileId + '/view';
                 document.getElementById('drive-modal-download').href =
                     'https://drive.google.com/uc?export=download&id=' + fileId;
-                iframe.src = '';
+
+                // Show spinner and reset iframe without hiding spinner
                 spinner.classList.remove('hidden');
+                iframe.src = 'about:blank';
+
                 modal.classList.add('open');
                 document.body.style.overflow = 'hidden';
-                requestAnimationFrame(() => {
+
+                // Set src asynchronously to ensure spinner renders first
+                setTimeout(() => {
                     iframe.src = 'https://drive.google.com/file/d/' + fileId + '/preview';
-                });
+                }, 50);
+
                 trackFeatureUsage && trackFeatureUsage('Drive Preview', 'Opened: ' + label);
             };
 
@@ -3791,7 +3825,7 @@
                 modal.classList.remove('open');
                 document.body.style.overflow = '';
                 // Delay src clear until animation done to avoid flash
-                setTimeout(() => { iframe.src = ''; }, 350);
+                setTimeout(() => { iframe.src = 'about:blank'; }, 350);
             };
 
             // Intercept all Drive file link clicks
