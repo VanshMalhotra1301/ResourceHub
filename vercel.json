@@ -1,63 +1,35 @@
 {
-  "version": 2,
-  "builds": [
+  "redirects": [
     {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "logo.jpg",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "skills.png",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "pages/**/*",
-      "use": "@vercel/static"
+      "source": "/",
+      "destination": "/login",
+      "permanent": false
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/logo.jpg",
-      "dest": "/logo.jpg"
+      "source": "/login",
+      "destination": "/pages/auth/auth.html"
     },
     {
-      "src": "/skills.png",
-      "dest": "/skills.png"
+      "source": "/signup",
+      "destination": "/pages/auth/signup.html"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "source": "/home",
+      "destination": "/index.html"
     },
     {
-      "src": "/",
-      "dest": "/api/index.js"
+      "source": "/test",
+      "destination": "/pages/auth/test_auth.html"
     },
     {
-      "src": "/login",
-      "dest": "/api/index.js"
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
     {
-      "src": "/signup",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/home",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/test",
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ]
 }
