@@ -4,9 +4,29 @@
     {
       "src": "api/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "logo.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "skills.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "pages/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/logo.jpg",
+      "dest": "/logo.jpg"
+    },
+    {
+      "src": "/skills.png",
+      "dest": "/skills.png"
+    },
     {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
