@@ -123,13 +123,13 @@ app.post('/api/track', async (req, res) => {
 
 // ── PAGE ROUTES ────────────────────────────────────
 app.get('/', (req, res) => res.redirect('/login'));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'auth', 'auth.html')));
-app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'auth', 'signup.html')));
-app.get('/home', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/test', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'auth', 'test_auth.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'auth.html')));
+app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'signup.html')));
+app.get('/home', (req, res) => res.sendFile(path.join(__dirname, '..', 'index.html')));
+app.get('/test', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'test_auth.html')));
 
 // ── Static assets (images, fonts, etc.) ───────────
-app.use(express.static(path.join(__dirname), { index: false }));
+app.use(express.static(path.join(__dirname, '..'), { index: false }));
 
 // ── Fallback ───────────────────────────────────────
 app.use((req, res) => res.redirect('/login'));
