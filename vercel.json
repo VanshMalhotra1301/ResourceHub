@@ -2,44 +2,42 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "handle": "filesystem"
-    },
-    {
       "src": "/api/(.*)",
-      "dest": "/server.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/",
-      "status": 302,
-      "headers": {
-        "Location": "/login"
-      }
+      "dest": "/api/index.js"
     },
     {
       "src": "/login",
-      "dest": "/pages/auth/auth.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/signup",
-      "dest": "/pages/auth/signup.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/home",
-      "dest": "/index.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/test",
-      "dest": "/pages/auth/test_auth.html"
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/api/index.js"
     }
   ]
 }
