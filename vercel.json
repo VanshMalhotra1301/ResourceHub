@@ -1,4 +1,26 @@
 {
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "skills.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "logo.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "pages/**",
+      "use": "@vercel/static"
+    }
+  ],
   "redirects": [
     {
       "source": "/",
