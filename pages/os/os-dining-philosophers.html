@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dining Philosophers ⚡ | Visual OS Lab</title>
+    <meta name="description" content="Interactive Dining Philosophers visualizer — Semaphore-based synchronization with animated state transitions and deadlock detection." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root{--cyan:#22d3ee;--purple:#a855f7;--indigo:#6366f1;--green:#34d399;--pink:#f472b6;--orange:#fb923c;--red:#f87171;--bg:#050508;--card:rgba(15,15,25,0.7);--border:rgba(255,255,255,0.08)}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--bg);color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 25% 25%,rgba(244,114,182,0.06),transparent 40%),radial-gradient(circle at 75% 75%,rgba(168,85,247,0.05),transparent 40%);animation:aurora 25s linear infinite;z-index:-1;pointer-events:none}
+        @keyframes aurora{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:#050508}::-webkit-scrollbar-thumb{background:#2a2a40;border-radius:8px}
+        #topbar{position:sticky;top:0;z-index:100;background:rgba(10,5,15,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 28px;height:60px}
+        .back-btn{display:flex;align-items:center;gap:6px;color:#6b7280;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}.back-btn:hover{color:#e2e8f0}
+        .sep{width:1px;height:24px;background:rgba(255,255,255,0.08)}
+        .topbar-algo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:#fff}
+        .badge-beta{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(244,114,182,0.1);color:var(--pink);border:1px solid rgba(244,114,182,0.25)}
+        .topbar-meta{margin-left:auto;font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+        #page{max-width:1200px;margin:0 auto;padding:36px 28px 80px;position:relative;z-index:1}
+        .algo-hero{margin-bottom:32px}.algo-hero h1{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+        .algo-hero h1 .icon-wrap{width:44px;height:44px;border-radius:12px;background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 0 25px rgba(244,114,182,0.15);color:var(--pink)}
+        .algo-desc{color:#94a3b8;font-size:14px;line-height:1.65;max-width:720px;margin-top:12px}
+        .card{background:var(--card);backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#e2e8f0;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+        .btn:hover:not(:disabled){background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.2);transform:translateY(-1px)}.btn:disabled{opacity:0.35;cursor:not-allowed}
+        .btn-primary{background:rgba(244,114,182,0.12);border-color:rgba(244,114,182,0.35);color:var(--pink)}.btn-primary:hover:not(:disabled){background:rgba(244,114,182,0.22);box-shadow:0 0 20px rgba(244,114,182,0.2)}
+        .btn-danger{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171}
+        .btn-warning{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.35);color:var(--orange)}
+        .controls-bar{padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:20px}
+
+        #viz-frame{border-radius:16px;background:rgba(8,8,15,0.85);border:1px solid rgba(244,114,182,0.2);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 0 80px rgba(244,114,182,0.03);margin-bottom:20px;padding:30px}
+        .viz-section-title{font-family:'Space Grotesk',sans-serif;font-size:14px;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
+
+        /* Table scene */
+        .table-scene{position:relative;width:420px;height:420px;margin:0 auto}
+        .dining-table{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.03);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:12px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+        /* Philosopher */
+        .philosopher{position:absolute;width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;transition:all 0.5s cubic-bezier(0.4,0,0.2,1);border:3px solid var(--border);background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);transform:translate(-50%,-50%);z-index:5}
+        .philosopher .p-icon{font-size:20px;margin-bottom:2px}
+        .philosopher .p-label{font-size:9px;margin-top:1px;letter-spacing:0.5px}
+        .philosopher.thinking{border-color:rgba(34,211,238,0.6);background:rgba(34,211,238,0.1);color:var(--cyan);box-shadow:0 0 20px rgba(34,211,238,0.2)}
+        .philosopher.hungry{border-color:rgba(251,146,60,0.6);background:rgba(251,146,60,0.1);color:var(--orange);box-shadow:0 0 20px rgba(251,146,60,0.2);animation:hungry-pulse 1s infinite}
+        .philosopher.eating{border-color:rgba(52,211,153,0.6);background:rgba(52,211,153,0.15);color:var(--green);box-shadow:0 0 30px rgba(52,211,153,0.3);transform:translate(-50%,-50%) scale(1.1)}
+        .philosopher.deadlocked{border-color:rgba(248,113,113,0.8);background:rgba(248,113,113,0.15);color:var(--red);box-shadow:0 0 30px rgba(248,113,113,0.4);animation:deadlock-shake 0.3s infinite}
+
+        @keyframes hungry-pulse{0%,100%{box-shadow:0 0 20px rgba(251,146,60,0.2)}50%{box-shadow:0 0 35px rgba(251,146,60,0.4)}}
+        @keyframes deadlock-shake{0%,100%{transform:translate(-50%,-50%) rotate(0deg)}25%{transform:translate(-50%,-50%) rotate(-3deg)}75%{transform:translate(-50%,-50%) rotate(3deg)}}
+
+        /* Chopstick */
+        .chopstick{position:absolute;width:4px;height:40px;background:rgba(255,255,255,0.3);border-radius:2px;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);transform-origin:center;z-index:3}
+        .chopstick.taken{background:var(--green);box-shadow:0 0 10px rgba(52,211,153,0.5)}
+        .chopstick.contested{background:var(--red);box-shadow:0 0 10px rgba(248,113,113,0.5)}
+
+        /* Status panel */
+        .status-panel{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:24px}
+        .status-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;transition:all 0.4s}
+        .status-card .sc-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#fff;margin-bottom:6px}
+        .status-card .sc-state{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:3px 8px;border-radius:6px;display:inline-block}
+        .sc-state.thinking{background:rgba(34,211,238,0.1);color:var(--cyan)}
+        .sc-state.hungry{background:rgba(251,146,60,0.1);color:var(--orange)}
+        .sc-state.eating{background:rgba(52,211,153,0.1);color:var(--green)}
+        .sc-state.deadlocked{background:rgba(248,113,113,0.1);color:var(--red)}
+
+        /* Deadlock banner */
+        .deadlock-banner{text-align:center;padding:16px;border-radius:14px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-top:16px;background:rgba(248,113,113,0.1);border:2px solid rgba(248,113,113,0.3);color:var(--red);display:none;animation:danger-pulse 1s infinite}
+        .deadlock-banner.show{display:block}
+        @keyframes danger-pulse{0%,100%{box-shadow:0 0 0 rgba(248,113,113,0)}50%{box-shadow:0 0 30px rgba(248,113,113,0.3)}}
+
+        /* Log */
+        .event-log{margin-top:20px;max-height:200px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(0,0,0,0.4);border-radius:12px;padding:16px;border:1px solid var(--border)}
+        .log-entry{padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8}
+
+        .speed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
+        .speed-wrap input[type=range]{-webkit-appearance:none;width:100px;height:4px;border-radius:4px;background:rgba(255,255,255,0.1);outline:none;cursor:pointer}
+        .speed-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink);cursor:pointer}
+        .speed-label{font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+
+        /* Legend */
+        .legend{display:flex;gap:16px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+        .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#94a3b8}
+        .legend-dot{width:12px;height:12px;border-radius:50%}
+
+        @media(max-width:768px){.table-scene{width:320px;height:320px}.philosopher{width:52px;height:52px;font-size:9px}.philosopher .p-icon{font-size:16px}.status-panel{grid-template-columns:repeat(3,1fr)}.controls-bar{flex-direction:column;align-items:stretch}}
+    </style>
+</head>
+
+<body>
+    <header id="topbar">
+        <a href="os-visual.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i> OS Lab</a>
+        <div class="sep"></div>
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="topbar-algo-name">Dining Philosophers</span>
+            <span class="badge-beta">Interactive</span>
+        </div>
+        <span class="topbar-meta"><i class="ph-fill ph-users-three" style="color:var(--pink)"></i> Synchronization</span>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1>
+                <span class="icon-wrap"><i class="ph-fill ph-users-three"></i></span>
+                Dining Philosophers Problem
+            </h1>
+            <p class="algo-desc">
+                Watch 5 philosophers around a circular table as they think, get hungry, pick up chopsticks,
+                eat, and put them down. Observe how resource contention can lead to deadlock or starvation.
+            </p>
+        </div>
+
+        <div class="card controls-bar">
+            <button class="btn btn-primary" onclick="startSimulation()" id="btnStart">
+                <i class="ph-bold ph-play"></i> Start
+            </button>
+            <button class="btn" onclick="pauseSimulation()" id="btnPause" disabled>
+                <i class="ph-bold ph-pause"></i> Pause
+            </button>
+            <button class="btn" onclick="stepOnce()" id="btnStep">
+                <i class="ph-bold ph-skip-forward"></i> Step
+            </button>
+            <button class="btn btn-warning" onclick="forceDeadlock()">
+                <i class="ph-bold ph-warning"></i> Force Deadlock
+            </button>
+            <button class="btn btn-danger" onclick="resetSimulation()">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset
+            </button>
+            <div class="speed-wrap">
+                <span class="speed-label">Speed</span>
+                <input type="range" id="speedSlider" min="200" max="2000" value="1000" />
+            </div>
+        </div>
+
+        <div id="viz-frame">
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div> Thinking</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> Hungry</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Eating</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Deadlocked</div>
+            </div>
+
+            <!-- Table scene -->
+            <div class="table-scene" id="tableScene">
+                <div class="dining-table">Table</div>
+            </div>
+
+            <!-- Deadlock banner -->
+            <div class="deadlock-banner" id="deadlockBanner">
+                <i class="ph-fill ph-warning" style="margin-right:8px"></i>
+                DEADLOCK DETECTED — All philosophers are waiting!
+            </div>
+
+            <!-- Status panel -->
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-list-bullets"></i> Philosopher Status</div>
+                <div class="status-panel" id="statusPanel"></div>
+            </div>
+
+            <!-- Event log -->
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-terminal"></i> Event Log</div>
+                <div class="event-log" id="eventLog"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="border-top:1px solid rgba(255,255,255,0.05);padding:32px;text-align:center;color:#6b7280;font-size:13px;background:rgba(0,0,0,0.2)">
+        Built for Skills Seekers Operating Systems Curriculum
+    </footer>
+
+    <script>
+        const N = 5;
+        const names = ['Plato', 'Aristotle', 'Socrates', 'Descartes', 'Kant'];
+        const stateIcons = { thinking: '🤔', hungry: '😤', eating: '🍜', deadlocked: '💀' };
+
+        let philosophers = [];
+        let chopsticks = [];
+        let isRunning = false;
+        let isPaused = false;
+        let intervalId = null;
+        let stepCount = 0;
+
+        // Positions around the circle
+        function getPositions(radius) {
+            const cx = 210, cy = 210;
+            const positions = [];
+            for (let i = 0; i < N; i++) {
+                const angle = (i * 2 * Math.PI / N) - Math.PI / 2;
+                positions.push({
+                    x: cx + radius * Math.cos(angle),
+                    y: cy + radius * Math.sin(angle)
+                });
+            }
+            return positions;
+        }
+
+        function getChopstickPositions() {
+            const cx = 210, cy = 210;
+            const radius = 100;
+            const positions = [];
+            for (let i = 0; i < N; i++) {
+                const angle = ((i + 0.5) * 2 * Math.PI / N) - Math.PI / 2;
+                positions.push({
+                    x: cx + radius * Math.cos(angle),
+                    y: cy + radius * Math.sin(angle),
+                    angle: (angle * 180 / Math.PI) + 90
+                });
+            }
+            return positions;
+        }
+
+        function init() {
+            philosophers = Array.from({length: N}, (_, i) => ({
+                id: i, name: names[i], state: 'thinking',
+                leftChopstick: false, rightChopstick: false
+            }));
+            chopsticks = Array.from({length: N}, () => ({ taken: false, owner: -1 }));
+            stepCount = 0;
+            renderScene();
+            renderStatus();
+        }
+
+        function renderScene() {
+            const scene = document.getElementById('tableScene');
+            // Remove old philosophers and chopsticks
+            scene.querySelectorAll('.philosopher, .chopstick').forEach(el => el.remove());
+
+            const pPos = getPositions(170);
+            const cPos = getChopstickPositions();
+
+            // Render chopsticks
+            cPos.forEach((pos, i) => {
+                const el = document.createElement('div');
+                el.className = 'chopstick' + (chopsticks[i].taken ? ' taken' : '');
+                el.style.left = pos.x + 'px';
+                el.style.top = pos.y + 'px';
+                el.style.transform = `translate(-50%, -50%) rotate(${pos.angle}deg)`;
+                el.id = `chopstick-${i}`;
+                scene.appendChild(el);
+            });
+
+            // Render philosophers
+            pPos.forEach((pos, i) => {
+                const p = philosophers[i];
+                const el = document.createElement('div');
+                el.className = `philosopher ${p.state}`;
+                el.style.left = pos.x + 'px';
+                el.style.top = pos.y + 'px';
+                el.id = `phil-${i}`;
+                el.innerHTML = `<span class="p-icon">${stateIcons[p.state]}</span><span class="p-label">P${i}</span>`;
+                scene.appendChild(el);
+            });
+        }
+
+        function renderStatus() {
+            const panel = document.getElementById('statusPanel');
+            panel.innerHTML = philosophers.map(p => `
+                <div class="status-card">
+                    <div class="sc-name">${p.name}</div>
+                    <div class="sc-state ${p.state}">${p.state}</div>
+                    <div style="margin-top:6px;font-size:10px;color:#6b7280;font-family:'JetBrains Mono',monospace">
+                        L: ${p.leftChopstick ? '✓' : '—'} R: ${p.rightChopstick ? '✓' : '—'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addLog(msg) {
+            const log = document.getElementById('eventLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const time = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span style="color:#6b7280">[${time}]</span> ${msg}`;
+            log.insertBefore(entry, log.firstChild);
+            if (log.children.length > 50) log.removeChild(log.lastChild);
+        }
+
+        function simulateStep() {
+            stepCount++;
+            let deadlockCheck = true;
+
+            // Shuffle order for fairness
+            const order = Array.from({length: N}, (_, i) => i).sort(() => Math.random() - 0.5);
+
+            for (const i of order) {
+                const p = philosophers[i];
+                if (p.state === 'deadlocked') continue;
+
+                const left = i;
+                const right = (i + 1) % N;
+
+                switch (p.state) {
+                    case 'thinking':
+                        if (Math.random() < 0.4) {
+                            p.state = 'hungry';
+                            addLog(`<span style="color:var(--orange)">P${i} (${p.name}) is now HUNGRY</span>`);
+                        }
+                        break;
+
+                    case 'hungry':
+                        // Try to pick up left chopstick
+                        if (!p.leftChopstick && !chopsticks[left].taken) {
+                            chopsticks[left].taken = true;
+                            chopsticks[left].owner = i;
+                            p.leftChopstick = true;
+                            addLog(`<span style="color:var(--purple)">P${i} picks up LEFT chopstick (C${left})</span>`);
+                        }
+
+                        // Try to pick up right chopstick
+                        if (p.leftChopstick && !p.rightChopstick && !chopsticks[right].taken) {
+                            chopsticks[right].taken = true;
+                            chopsticks[right].owner = i;
+                            p.rightChopstick = true;
+                            addLog(`<span style="color:var(--purple)">P${i} picks up RIGHT chopstick (C${right})</span>`);
+                        }
+
+                        // If both chopsticks, eat
+                        if (p.leftChopstick && p.rightChopstick) {
+                            p.state = 'eating';
+                            addLog(`<span style="color:var(--green)">P${i} (${p.name}) starts EATING 🍜</span>`);
+                            deadlockCheck = false;
+                        }
+                        break;
+
+                    case 'eating':
+                        deadlockCheck = false;
+                        if (Math.random() < 0.35) {
+                            // Put down chopsticks
+                            chopsticks[left].taken = false;
+                            chopsticks[left].owner = -1;
+                            p.leftChopstick = false;
+                            chopsticks[right].taken = false;
+                            chopsticks[right].owner = -1;
+                            p.rightChopstick = false;
+                            p.state = 'thinking';
+                            addLog(`<span style="color:var(--cyan)">P${i} (${p.name}) puts down chopsticks, starts THINKING</span>`);
+                        }
+                        break;
+                }
+            }
+
+            // Check for deadlock: all hungry with left chopstick, can't get right
+            const allHungryOrDeadlocked = philosophers.every(p =>
+                p.state === 'hungry' || p.state === 'deadlocked'
+            );
+            const allHaveLeft = philosophers.every(p =>
+                (p.state === 'hungry' && p.leftChopstick) || p.state === 'deadlocked'
+            );
+
+            if (allHungryOrDeadlocked && allHaveLeft) {
+                philosophers.forEach(p => {
+                    if (p.state === 'hungry') p.state = 'deadlocked';
+                });
+                document.getElementById('deadlockBanner').classList.add('show');
+                addLog(`<span style="color:var(--red);font-weight:700">💀 DEADLOCK! All philosophers are waiting for chopsticks!</span>`);
+                pauseSimulation();
+            }
+
+            renderScene();
+            renderStatus();
+        }
+
+        function forceDeadlock() {
+            resetSimulation();
+            // Make all pick up left chopstick
+            for (let i = 0; i < N; i++) {
+                philosophers[i].state = 'hungry';
+                philosophers[i].leftChopstick = true;
+                chopsticks[i].taken = true;
+                chopsticks[i].owner = i;
+            }
+            addLog(`<span style="color:var(--orange)">⚡ Forced: All philosophers pick up LEFT chopstick simultaneously</span>`);
+
+            setTimeout(() => {
+                philosophers.forEach(p => p.state = 'deadlocked');
+                document.getElementById('deadlockBanner').classList.add('show');
+                addLog(`<span style="color:var(--red);font-weight:700">💀 DEADLOCK! Circular wait detected — each philosopher holds left, waits for right!</span>`);
+                renderScene();
+                renderStatus();
+            }, 500);
+
+            renderScene();
+            renderStatus();
+        }
+
+        function startSimulation() {
+            if (isRunning && !isPaused) return;
+            if (!isRunning) init();
+            isRunning = true;
+            isPaused = false;
+            document.getElementById('btnStart').disabled = true;
+            document.getElementById('btnPause').disabled = false;
+
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            intervalId = setInterval(simulateStep, speed);
+            addLog(`<span style="color:var(--pink)">▶ Simulation started</span>`);
+        }
+
+        function pauseSimulation() {
+            if (!isRunning) return;
+            isPaused = true;
+            clearInterval(intervalId);
+            document.getElementById('btnStart').disabled = false;
+            document.getElementById('btnPause').disabled = true;
+            addLog(`<span style="color:#6b7280">⏸ Simulation paused</span>`);
+        }
+
+        function stepOnce() {
+            if (!isRunning) { init(); isRunning = true; }
+            if (intervalId) clearInterval(intervalId);
+            isPaused = true;
+            document.getElementById('btnStart').disabled = false;
+            document.getElementById('btnPause').disabled = true;
+            simulateStep();
+        }
+
+        function resetSimulation() {
+            clearInterval(intervalId);
+            isRunning = false;
+            isPaused = false;
+            document.getElementById('btnStart').disabled = false;
+            document.getElementById('btnPause').disabled = true;
+            document.getElementById('deadlockBanner').classList.remove('show');
+            document.getElementById('eventLog').innerHTML = '';
+            init();
+            addLog(`<span style="color:#6b7280">🔄 Simulation reset</span>`);
+        }
+
+        // Init
+        init();
+    </script>
+</body>
+</html>

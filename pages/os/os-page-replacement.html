@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Replacement ⚡ | Visual OS Lab</title>
+    <meta name="description" content="Interactive Page Replacement Algorithm visualizer — FIFO, LRU, and Optimal with animated frame simulation." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { --cyan:#22d3ee; --purple:#a855f7; --indigo:#6366f1; --green:#34d399; --pink:#f472b6; --orange:#fb923c; --red:#f87171; --bg:#050508; --card:rgba(15,15,25,0.7); --border:rgba(255,255,255,0.08); }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background:var(--bg); color:#e2e8f0; font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+        body::before { content:''; position:fixed; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle at 30% 20%,rgba(251,146,60,0.05),transparent 40%), radial-gradient(circle at 70% 60%,rgba(168,85,247,0.05),transparent 40%), radial-gradient(circle at 40% 80%,rgba(34,211,238,0.04),transparent 40%); animation:aurora 25s linear infinite; z-index:-1; pointer-events:none; }
+        @keyframes aurora { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        ::-webkit-scrollbar{width:6px;height:6px} ::-webkit-scrollbar-track{background:#050508} ::-webkit-scrollbar-thumb{background:#2a2a40;border-radius:8px} ::-webkit-scrollbar-thumb:hover{background:#3f3f60}
+        #topbar { position:sticky; top:0; z-index:100; background:rgba(10,5,15,0.85); backdrop-filter:blur(24px); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; padding:0 28px; height:60px; }
+        .back-btn{display:flex;align-items:center;gap:6px;color:#6b7280;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s} .back-btn:hover{color:#e2e8f0}
+        .sep{width:1px;height:24px;background:rgba(255,255,255,0.08)}
+        .topbar-algo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:#fff}
+        .badge-beta{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(251,146,60,0.1);color:var(--orange);border:1px solid rgba(251,146,60,0.25)}
+        .topbar-meta{margin-left:auto;font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+        #page{max-width:1200px;margin:0 auto;padding:36px 28px 80px;position:relative;z-index:1}
+        .algo-hero{margin-bottom:32px} .algo-hero h1{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+        .algo-hero h1 .icon-wrap{width:44px;height:44px;border-radius:12px;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 0 25px rgba(251,146,60,0.15);color:var(--orange)}
+        .algo-desc{color:#94a3b8;font-size:14px;line-height:1.65;max-width:720px;margin-top:12px}
+        .card{background:var(--card);backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#e2e8f0;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+        .btn:hover:not(:disabled){background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.2);transform:translateY(-1px)} .btn:disabled{opacity:0.35;cursor:not-allowed}
+        .btn-primary{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.35);color:var(--orange)} .btn-primary:hover:not(:disabled){background:rgba(251,146,60,0.22);box-shadow:0 0 20px rgba(251,146,60,0.2)}
+        .btn-danger{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171}
+        .controls-bar{padding:16px 20px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-bottom:20px}
+        .input-field{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 14px;color:#e2e8f0;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:all 0.3s}
+        .input-field:focus{border-color:var(--orange);box-shadow:0 0 15px rgba(251,146,60,0.15)} .input-field::placeholder{color:#6b7280}
+        label.field-label{font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;display:block}
+        .input-group{display:flex;flex-direction:column;gap:4px}
+
+        /* Algorithm Tabs */
+        .algo-tabs{display:flex;gap:4px;margin-bottom:20px;background:rgba(0,0,0,0.3);border-radius:12px;padding:4px;border:1px solid var(--border)}
+        .algo-tab{flex:1;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:700;color:#6b7280;background:transparent;border:none;cursor:pointer;transition:all 0.3s;font-family:'Space Grotesk',sans-serif;text-align:center}
+        .algo-tab:hover{color:#e2e8f0}
+        .algo-tab.active{background:rgba(251,146,60,0.15);color:var(--orange);box-shadow:0 0 15px rgba(251,146,60,0.1)}
+
+        #viz-frame{border-radius:16px;background:rgba(8,8,15,0.85);border:1px solid rgba(251,146,60,0.2);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 0 80px rgba(251,146,60,0.03);margin-bottom:20px;padding:30px}
+        .viz-section-title{font-family:'Space Grotesk',sans-serif;font-size:14px;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
+
+        /* Reference string display */
+        .ref-string{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:24px;align-items:center}
+        .ref-page{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;border:2px solid var(--border);background:rgba(0,0,0,0.3);color:#94a3b8;transition:all 0.4s}
+        .ref-page.current{border-color:var(--orange);color:var(--orange);background:rgba(251,146,60,0.15);box-shadow:0 0 15px rgba(251,146,60,0.3);transform:scale(1.15)}
+        .ref-page.processed{border-color:rgba(255,255,255,0.15);color:#6b7280;opacity:0.5}
+        .ref-page.hit-page{border-color:var(--green);color:var(--green);background:rgba(52,211,153,0.1)}
+        .ref-page.fault-page{border-color:var(--red);color:var(--red);background:rgba(248,113,113,0.1)}
+
+        /* Frames */
+        .frames-container{display:flex;gap:12px;justify-content:center;margin:24px 0;flex-wrap:wrap}
+        .frame-slot{width:80px;min-height:80px;border-radius:14px;border:2px dashed rgba(255,255,255,0.15);background:rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:all 0.4s;position:relative;overflow:hidden}
+        .frame-slot .frame-label{font-size:10px;color:#6b7280;font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:0.5px}
+        .frame-slot .frame-content{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:900;color:#fff;transition:all 0.3s}
+        .frame-slot.occupied{border-style:solid;border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.08)}
+        .frame-slot.replacing{border-color:var(--red);background:rgba(248,113,113,0.1);animation:shake 0.4s}
+        .frame-slot.new-entry{border-color:var(--green);background:rgba(52,211,153,0.1);animation:glow-in 0.5s}
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+        @keyframes glow-in { 0%{box-shadow:0 0 0 rgba(52,211,153,0)} 50%{box-shadow:0 0 30px rgba(52,211,153,0.4)} 100%{box-shadow:0 0 0 rgba(52,211,153,0)} }
+
+        /* Stats */
+        .stats-bar{display:flex;gap:20px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+        .stat-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+        .stat-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:900;transition:all 0.3s}
+        .stat-label{font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+        .stat-value.faults{color:var(--red)} .stat-value.hits{color:var(--green)} .stat-value.ratio{color:var(--cyan)}
+
+        /* Hit/Miss indicator */
+        .result-indicator{text-align:center;margin:16px 0;min-height:40px}
+        .result-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;animation:pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+        .result-badge.hit{background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.4);color:var(--green)}
+        .result-badge.miss{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.4);color:var(--red)}
+        @keyframes pop-in{0%{opacity:0;transform:scale(0.8)}100%{opacity:1;transform:scale(1)}}
+
+        /* History table */
+        .history-table{width:100%;border-collapse:collapse;margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:12px}
+        .history-table th{padding:8px 12px;background:rgba(251,146,60,0.1);color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-size:10px;border:1px solid var(--border)}
+        .history-table td{padding:8px 12px;text-align:center;border:1px solid var(--border);color:#94a3b8;transition:background 0.3s}
+        .history-table tr:nth-child(even) td{background:rgba(0,0,0,0.2)}
+        .history-table .fault-cell{color:var(--red);font-weight:700} .history-table .hit-cell{color:var(--green);font-weight:700}
+
+        .speed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
+        .speed-wrap input[type=range]{-webkit-appearance:none;width:100px;height:4px;border-radius:4px;background:rgba(255,255,255,0.1);outline:none;cursor:pointer}
+        .speed-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px var(--orange);cursor:pointer}
+        .speed-label{font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+
+        @media(max-width:768px){.controls-bar{flex-direction:column;align-items:stretch}.input-field{width:100%}.frames-container{gap:8px}.frame-slot{width:60px;min-height:60px}.frame-slot .frame-content{font-size:18px}.ref-page{width:34px;height:34px;font-size:12px}}
+    </style>
+</head>
+
+<body>
+    <header id="topbar">
+        <a href="os-visual.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i> OS Lab</a>
+        <div class="sep"></div>
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="topbar-algo-name">Page Replacement</span>
+            <span class="badge-beta">Interactive</span>
+        </div>
+        <span class="topbar-meta"><i class="ph-fill ph-file-arrow-down" style="color:var(--orange)"></i> Memory Management</span>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1>
+                <span class="icon-wrap"><i class="ph-fill ph-file-arrow-down"></i></span>
+                Page Replacement Algorithms
+            </h1>
+            <p class="algo-desc">
+                Visualize FIFO, LRU, and Optimal page replacement algorithms step by step.
+                Enter a reference string and number of frames, then watch how each algorithm decides which page to evict on a page fault.
+            </p>
+        </div>
+
+        <!-- Algorithm tabs -->
+        <div class="algo-tabs" id="algoTabs">
+            <button class="algo-tab active" onclick="switchAlgo('fifo',this)">FIFO</button>
+            <button class="algo-tab" onclick="switchAlgo('lru',this)">LRU</button>
+            <button class="algo-tab" onclick="switchAlgo('optimal',this)">Optimal</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="card controls-bar">
+            <div class="input-group">
+                <label class="field-label">Reference String</label>
+                <input type="text" id="refString" class="input-field" style="width:280px" placeholder="e.g. 7,0,1,2,0,3,0,4,2,3" value="7,0,1,2,0,3,0,4,2,3,0,3,2" />
+            </div>
+            <div class="input-group">
+                <label class="field-label">Frames</label>
+                <input type="number" id="numFrames" class="input-field" style="width:80px" value="3" min="1" max="10" />
+            </div>
+            <button class="btn btn-primary" onclick="runSimulation()" id="btnRun">
+                <i class="ph-bold ph-play"></i> Run
+            </button>
+            <button class="btn" onclick="stepSim()" id="btnStep">
+                <i class="ph-bold ph-skip-forward"></i> Step
+            </button>
+            <button class="btn btn-danger" onclick="resetAll()">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset
+            </button>
+            <div class="speed-wrap">
+                <span class="speed-label">Speed</span>
+                <input type="range" id="speedSlider" min="100" max="1500" value="600" />
+            </div>
+        </div>
+
+        <!-- Viz -->
+        <div id="viz-frame">
+            <!-- Reference string -->
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-list-numbers"></i> Reference String</div>
+                <div class="ref-string" id="refDisplay"></div>
+            </div>
+
+            <!-- Result indicator -->
+            <div class="result-indicator" id="resultIndicator"></div>
+
+            <!-- Frames -->
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-frame-corners"></i> Memory Frames</div>
+                <div class="frames-container" id="framesDisplay"></div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-value faults" id="faultCount">0</span>
+                    <span class="stat-label">Page Faults</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value hits" id="hitCount">0</span>
+                    <span class="stat-label">Hits</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ratio" id="faultRatio">0%</span>
+                    <span class="stat-label">Fault Rate</span>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div style="overflow-x:auto">
+                <div class="viz-section-title"><i class="ph-bold ph-clock-counter-clockwise"></i> Step History</div>
+                <table class="history-table" id="historyTable">
+                    <thead><tr><th>Step</th><th>Page</th><th>Frames</th><th>Result</th></tr></thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer style="border-top:1px solid rgba(255,255,255,0.05);padding:32px;text-align:center;color:#6b7280;font-size:13px;background:rgba(0,0,0,0.2)">
+        Built for Skills Seekers Operating Systems Curriculum
+    </footer>
+
+    <script>
+        let currentAlgo = 'fifo';
+        let refPages = [];
+        let numFrames = 3;
+        let frames = [];
+        let stepIndex = 0;
+        let faults = 0;
+        let hits = 0;
+        let isRunning = false;
+        let history = [];
+        // For FIFO
+        let fifoQueue = [];
+        // For LRU
+        let lruOrder = [];
+
+        function switchAlgo(algo, btn) {
+            currentAlgo = algo;
+            document.querySelectorAll('.algo-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            resetAll();
+        }
+
+        function parseRefString() {
+            const raw = document.getElementById('refString').value.trim();
+            return raw.split(/[,\s]+/).map(Number).filter(n => !isNaN(n));
+        }
+
+        function initDisplay() {
+            refPages = parseRefString();
+            numFrames = parseInt(document.getElementById('numFrames').value) || 3;
+            frames = new Array(numFrames).fill(null);
+            fifoQueue = [];
+            lruOrder = [];
+            stepIndex = 0; faults = 0; hits = 0; history = [];
+
+            // Render reference string
+            const refContainer = document.getElementById('refDisplay');
+            refContainer.innerHTML = refPages.map((p, i) => `<div class="ref-page" id="ref-${i}">${p}</div>`).join('');
+
+            // Render frames
+            renderFrames();
+            updateStats();
+            document.getElementById('resultIndicator').innerHTML = '';
+            document.getElementById('historyBody').innerHTML = '';
+        }
+
+        function renderFrames(replacingIdx, newIdx) {
+            const container = document.getElementById('framesDisplay');
+            container.innerHTML = frames.map((f, i) => {
+                let cls = 'frame-slot';
+                if (f !== null) cls += ' occupied';
+                if (i === replacingIdx) cls += ' replacing';
+                if (i === newIdx) cls += ' new-entry';
+                return `<div class="${cls}">
+                    <span class="frame-label">F${i}</span>
+                    <span class="frame-content">${f !== null ? f : '—'}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('faultCount').textContent = faults;
+            document.getElementById('hitCount').textContent = hits;
+            const total = faults + hits;
+            document.getElementById('faultRatio').textContent = total ? Math.round(faults / total * 100) + '%' : '0%';
+        }
+
+        function showResult(isHit) {
+            const container = document.getElementById('resultIndicator');
+            container.innerHTML = isHit
+                ? '<span class="result-badge hit"><i class="ph-fill ph-check-circle"></i> HIT</span>'
+                : '<span class="result-badge miss"><i class="ph-fill ph-x-circle"></i> PAGE FAULT</span>';
+        }
+
+        function addHistory(step, page, frameState, isHit) {
+            const tbody = document.getElementById('historyBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${step}</td><td style="font-weight:700;color:#fff">${page}</td>
+                <td>[${frameState.map(f => f !== null ? f : '—').join(', ')}]</td>
+                <td class="${isHit ? 'hit-cell' : 'fault-cell'}">${isHit ? 'Hit ✓' : 'Fault ✗'}</td>`;
+            tbody.appendChild(row);
+        }
+
+        function executeStep() {
+            if (stepIndex >= refPages.length) return false;
+
+            const page = refPages[stepIndex];
+
+            // Update reference display
+            document.querySelectorAll('.ref-page').forEach((el, i) => {
+                el.classList.remove('current', 'hit-page', 'fault-page');
+                if (i < stepIndex) el.classList.add('processed');
+                if (i === stepIndex) el.classList.add('current');
+            });
+
+            let isHit = frames.includes(page);
+            let replacingIdx = -1, newIdx = -1;
+
+            if (isHit) {
+                hits++;
+                if (currentAlgo === 'lru') {
+                    lruOrder = lruOrder.filter(p => p !== page);
+                    lruOrder.push(page);
+                }
+                document.getElementById(`ref-${stepIndex}`).classList.add('hit-page');
+            } else {
+                faults++;
+                const emptyIdx = frames.indexOf(null);
+
+                if (emptyIdx !== -1) {
+                    frames[emptyIdx] = page;
+                    newIdx = emptyIdx;
+                    if (currentAlgo === 'fifo') fifoQueue.push(emptyIdx);
+                    if (currentAlgo === 'lru') lruOrder.push(page);
+                } else {
+                    let victimIdx;
+                    if (currentAlgo === 'fifo') {
+                        victimIdx = fifoQueue.shift();
+                        fifoQueue.push(victimIdx);
+                    } else if (currentAlgo === 'lru') {
+                        const lruPage = lruOrder.shift();
+                        victimIdx = frames.indexOf(lruPage);
+                        lruOrder.push(page);
+                    } else { // optimal
+                        let farthest = -1;
+                        victimIdx = 0;
+                        for (let i = 0; i < frames.length; i++) {
+                            let nextUse = refPages.indexOf(frames[i], stepIndex + 1);
+                            if (nextUse === -1) { victimIdx = i; break; }
+                            if (nextUse > farthest) { farthest = nextUse; victimIdx = i; }
+                        }
+                    }
+                    replacingIdx = victimIdx;
+                    frames[victimIdx] = page;
+                    newIdx = victimIdx;
+                }
+                document.getElementById(`ref-${stepIndex}`).classList.add('fault-page');
+            }
+
+            renderFrames(replacingIdx, newIdx);
+            showResult(isHit);
+            updateStats();
+            addHistory(stepIndex + 1, page, [...frames], isHit);
+
+            stepIndex++;
+            return stepIndex < refPages.length;
+        }
+
+        function stepSim() {
+            if (stepIndex === 0 && frames.every(f => f === null) && history.length === 0) initDisplay();
+            executeStep();
+        }
+
+        async function runSimulation() {
+            if (isRunning) return;
+            isRunning = true;
+            initDisplay();
+            const speed = 1600 - parseInt(document.getElementById('speedSlider').value);
+
+            while (stepIndex < refPages.length && isRunning) {
+                executeStep();
+                await new Promise(r => setTimeout(r, speed));
+            }
+            // Mark final state
+            document.querySelectorAll('.ref-page').forEach(el => {
+                el.classList.remove('current');
+            });
+            isRunning = false;
+        }
+
+        function resetAll() {
+            isRunning = false;
+            stepIndex = 0; faults = 0; hits = 0;
+            frames = []; fifoQueue = []; lruOrder = []; history = [];
+            document.getElementById('refDisplay').innerHTML = '';
+            document.getElementById('framesDisplay').innerHTML = '';
+            document.getElementById('resultIndicator').innerHTML = '';
+            document.getElementById('historyBody').innerHTML = '';
+            updateStats();
+        }
+
+        // Init empty display
+        initDisplay();
+    </script>
+</body>
+</html>

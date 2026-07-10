@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paging Translation ⚡ | Visual OS Lab</title>
+    <meta name="description"
+        content="Interactive Paging Address Translation visualizer with TLB simulation. Learn logical to physical address mapping visually." />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --purple: #a855f7;
+            --indigo: #6366f1;
+            --green: #34d399;
+            --pink: #f472b6;
+            --orange: #fb923c;
+            --red: #f87171;
+            --bg: #050508;
+            --card: rgba(15, 15, 25, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.05), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.05), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.04), transparent 40%);
+            animation: aurora 25s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes aurora { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050508; }
+        ::-webkit-scrollbar-thumb { background: #2a2a40; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f60; }
+
+        #topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 5, 15, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px;
+            padding: 0 28px; height: 60px;
+        }
+
+        .back-btn { display: flex; align-items: center; gap: 6px; color: #6b7280; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+        .back-btn:hover { color: #e2e8f0; }
+        .sep { width: 1px; height: 24px; background: rgba(255,255,255,0.08); }
+        .topbar-title { display: flex; align-items: center; gap: 10px; }
+        .topbar-algo-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #fff; }
+        .badge-beta { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; background: rgba(168,85,247,0.1); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+        .topbar-meta { margin-left: auto; font-size: 11px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+
+        #page { max-width: 1200px; margin: 0 auto; padding: 36px 28px 80px; position: relative; z-index: 1; }
+
+        .algo-hero { margin-bottom: 32px; }
+        .algo-hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+        .algo-hero h1 .icon-wrap { width: 44px; height: 44px; border-radius: 12px; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 0 25px rgba(168,85,247,0.15); color: var(--purple); }
+        .algo-desc { color: #94a3b8; font-size: 14px; line-height: 1.65; max-width: 720px; margin-top: 12px; }
+
+        .card { background: var(--card); backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: #e2e8f0; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .btn:hover:not(:disabled) { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-primary { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.35); color: var(--purple); }
+        .btn-primary:hover:not(:disabled) { background: rgba(168,85,247,0.22); box-shadow: 0 0 20px rgba(168,85,247,0.2); }
+        .btn-danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #f87171; }
+
+        .controls-bar { padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
+
+        .input-field { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 14px; color: #e2e8f0; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s; width: 140px; }
+        .input-field:focus { border-color: var(--purple); box-shadow: 0 0 15px rgba(168,85,247,0.15); }
+        .input-field::placeholder { color: #6b7280; }
+
+        label.field-label { font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: block; }
+
+        .input-group { display: flex; flex-direction: column; gap: 4px; }
+
+        #viz-frame {
+            border-radius: 16px;
+            background: rgba(8,8,15,0.85);
+            border: 1px solid rgba(168,85,247,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 80px rgba(168,85,247,0.03);
+            margin-bottom: 20px;
+            display: flex; flex-direction: column;
+            padding: 30px; gap: 30px;
+        }
+
+        .viz-section-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #94a3b8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Address breakdown */
+        .address-breakdown {
+            display: flex; align-items: center; gap: 0; margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700;
+            justify-content: center;
+        }
+        .addr-part {
+            padding: 16px 24px; text-align: center; position: relative;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            opacity: 0; transform: translateY(20px);
+        }
+        .addr-part.show { opacity: 1; transform: translateY(0); }
+        .addr-part.page-num { background: rgba(168,85,247,0.15); border: 2px solid rgba(168,85,247,0.5); border-radius: 12px 0 0 12px; color: var(--purple); }
+        .addr-part.offset { background: rgba(34,211,238,0.15); border: 2px solid rgba(34,211,238,0.5); border-radius: 0 12px 12px 0; color: var(--cyan); border-left: none; }
+        .addr-label { font-size: 10px; font-weight: 600; display: block; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.8; }
+
+        /* Arrow connector */
+        .flow-arrow {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: var(--purple); margin: 16px 0;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        .flow-arrow.show { opacity: 1; }
+
+        /* Page Table */
+        .page-table { width: 100%; max-width: 500px; margin: 0 auto; }
+        .pt-row {
+            display: flex; align-items: center; padding: 10px 16px;
+            border: 1px solid var(--border); border-bottom: none;
+            background: rgba(0,0,0,0.3); font-family: 'JetBrains Mono', monospace; font-size: 13px;
+            transition: all 0.4s;
+        }
+        .pt-row:first-child { border-radius: 12px 12px 0 0; }
+        .pt-row:last-child { border-radius: 0 0 12px 12px; border-bottom: 1px solid var(--border); }
+        .pt-row.header { background: rgba(168,85,247,0.1); font-weight: 700; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .pt-row.highlight { background: rgba(168,85,247,0.2); border-color: rgba(168,85,247,0.5); box-shadow: 0 0 20px rgba(168,85,247,0.2); transform: scale(1.02); z-index: 2; position: relative; }
+        .pt-col { flex: 1; text-align: center; }
+
+        /* TLB */
+        .tlb-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+            border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700;
+            transition: all 0.5s; opacity: 0; transform: scale(0.9);
+        }
+        .tlb-badge.show { opacity: 1; transform: scale(1); }
+        .tlb-badge.hit { background: rgba(52,211,153,0.15); border: 2px solid rgba(52,211,153,0.5); color: var(--green); box-shadow: 0 0 30px rgba(52,211,153,0.2); }
+        .tlb-badge.miss { background: rgba(248,113,113,0.15); border: 2px solid rgba(248,113,113,0.5); color: var(--red); box-shadow: 0 0 30px rgba(248,113,113,0.2); }
+
+        /* Physical address result */
+        .result-box {
+            display: flex; align-items: center; justify-content: center; gap: 0;
+            margin: 20px auto; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700;
+            opacity: 0; transform: scale(0.9); transition: all 0.6s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .result-box.show { opacity: 1; transform: scale(1); }
+        .result-frame { padding: 16px 24px; background: rgba(52,211,153,0.15); border: 2px solid rgba(52,211,153,0.5); border-radius: 12px 0 0 12px; color: var(--green); }
+        .result-offset { padding: 16px 24px; background: rgba(34,211,238,0.15); border: 2px solid rgba(34,211,238,0.5); border-radius: 0 12px 12px 0; color: var(--cyan); border-left: none; }
+        .result-label { font-size: 10px; font-weight: 600; display: block; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.8; }
+
+        /* Memory Map */
+        .memory-map { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+        .mem-column { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .mem-column-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 8px; }
+        .mem-cell {
+            width: 120px; padding: 8px 12px; text-align: center;
+            border: 1px solid var(--border); background: rgba(0,0,0,0.3);
+            font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8;
+            transition: all 0.4s;
+        }
+        .mem-cell:first-of-type { border-radius: 8px 8px 0 0; }
+        .mem-cell:last-of-type { border-radius: 0 0 8px 8px; }
+        .mem-cell.active-logical { background: rgba(168,85,247,0.2); border-color: rgba(168,85,247,0.5); color: var(--purple); }
+        .mem-cell.active-physical { background: rgba(52,211,153,0.2); border-color: rgba(52,211,153,0.5); color: var(--green); }
+
+        .mapping-arrow {
+            display: flex; align-items: center; font-size: 32px; color: var(--orange);
+            animation: pulse-arrow 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-arrow { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* Step indicator */
+        .step-indicator {
+            display: flex; gap: 8px; justify-content: center; margin-bottom: 20px;
+        }
+        .step-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.4s;
+        }
+        .step-dot.active { background: var(--purple); border-color: var(--purple); box-shadow: 0 0 12px rgba(168,85,247,0.5); transform: scale(1.3); }
+        .step-dot.done { background: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(52,211,153,0.3); }
+
+        .step-text { text-align: center; font-size: 14px; color: #94a3b8; min-height: 24px; margin-bottom: 16px; transition: all 0.3s; }
+        .step-text strong { color: #fff; }
+
+        @keyframes glow-pulse {
+            0%,100% { box-shadow: 0 0 20px rgba(168,85,247,0.15); }
+            50% { box-shadow: 0 0 40px rgba(168,85,247,0.35); }
+        }
+
+        @media (max-width: 768px) {
+            .memory-map { gap: 20px; }
+            .mem-cell { width: 90px; font-size: 10px; }
+            .address-breakdown { font-size: 14px; }
+            .addr-part { padding: 12px 16px; }
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .input-field { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="topbar">
+        <a href="os-visual.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i> OS Lab</a>
+        <div class="sep"></div>
+        <div class="topbar-title">
+            <span class="topbar-algo-name">Paging Translation</span>
+            <span class="badge-beta">Interactive</span>
+        </div>
+        <span class="topbar-meta"><i class="ph-fill ph-squares-four" style="color:var(--purple)"></i> Memory Management</span>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1>
+                <span class="icon-wrap"><i class="ph-fill ph-squares-four"></i></span>
+                Paging Address Translation
+            </h1>
+            <p class="algo-desc">
+                Visualize how logical addresses are translated to physical addresses using a page table.
+                Enter a logical address and page size to see the step-by-step breakdown: extract the page number,
+                look it up in the page table, and compute the physical address.
+            </p>
+        </div>
+
+        <!-- Controls -->
+        <div class="card controls-bar">
+            <div class="input-group">
+                <label class="field-label">Logical Address</label>
+                <input type="number" id="logicalAddr" class="input-field" placeholder="e.g. 3456" value="3456" min="0" />
+            </div>
+            <div class="input-group">
+                <label class="field-label">Page Size</label>
+                <input type="number" id="pageSize" class="input-field" placeholder="e.g. 1024" value="1024" min="1" />
+            </div>
+            <div class="input-group">
+                <label class="field-label">Total Pages</label>
+                <input type="number" id="totalPages" class="input-field" placeholder="e.g. 8" value="8" min="1" max="16" />
+            </div>
+            <button class="btn btn-primary" onclick="startTranslation()" id="btnStart">
+                <i class="ph-bold ph-play"></i> Translate
+            </button>
+            <button class="btn" onclick="stepThrough()" id="btnStep" disabled>
+                <i class="ph-bold ph-skip-forward"></i> Step
+            </button>
+            <button class="btn btn-danger" onclick="resetViz()" id="btnReset">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset
+            </button>
+        </div>
+
+        <!-- Visualization -->
+        <div id="viz-frame">
+            <!-- Step indicator -->
+            <div>
+                <div class="step-indicator" id="stepIndicator"></div>
+                <div class="step-text" id="stepText">Press <strong>Translate</strong> or <strong>Step</strong> to begin the address translation.</div>
+            </div>
+
+            <!-- Step 1: Address Breakdown -->
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-binary"></i> Logical Address Breakdown</div>
+                <div class="address-breakdown" id="addrBreakdown">
+                    <div class="addr-part page-num" id="partPage">
+                        <span class="addr-label">Page Number</span>
+                        <span id="pageNumVal">—</span>
+                    </div>
+                    <div class="addr-part offset" id="partOffset">
+                        <span class="addr-label">Offset</span>
+                        <span id="offsetVal">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: TLB Check -->
+            <div style="text-align:center">
+                <div class="viz-section-title" style="justify-content:center"><i class="ph-bold ph-lightning"></i> TLB Lookup</div>
+                <div id="tlbResult"></div>
+            </div>
+
+            <div class="flow-arrow" id="arrow1"><i class="ph-bold ph-arrow-down"></i></div>
+
+            <!-- Step 3: Page Table -->
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-table"></i> Page Table</div>
+                <div class="page-table" id="pageTable"></div>
+            </div>
+
+            <div class="flow-arrow" id="arrow2"><i class="ph-bold ph-arrow-down"></i></div>
+
+            <!-- Step 4: Physical Address -->
+            <div style="text-align:center">
+                <div class="viz-section-title" style="justify-content:center"><i class="ph-bold ph-map-pin"></i> Physical Address</div>
+                <div class="result-box" id="resultBox">
+                    <div class="result-frame">
+                        <span class="result-label">Frame Number</span>
+                        <span id="frameNumVal">—</span>
+                    </div>
+                    <div class="result-offset">
+                        <span class="result-label">Offset</span>
+                        <span id="resultOffsetVal">—</span>
+                    </div>
+                </div>
+                <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--green); opacity:0; transition:opacity 0.5s" id="physAddrFinal">
+                    Physical Address = <span id="physAddrNum">—</span>
+                </div>
+            </div>
+
+            <div class="flow-arrow" id="arrow3"><i class="ph-bold ph-arrow-down"></i></div>
+
+            <!-- Step 5: Memory Map -->
+            <div>
+                <div class="viz-section-title" style="justify-content:center"><i class="ph-bold ph-map-trifold"></i> Memory Mapping</div>
+                <div class="memory-map" id="memoryMap"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="border-top:1px solid rgba(255,255,255,0.05); padding:32px; text-align:center; color:#6b7280; font-size:13px; background:rgba(0,0,0,0.2)">
+        Built for Skills Seekers Operating Systems Curriculum
+    </footer>
+
+    <script>
+        let pageTable = [];
+        let tlbCache = {};
+        let currentStep = 0;
+        let totalSteps = 5;
+        let translationData = {};
+
+        function generatePageTable(numPages) {
+            pageTable = [];
+            tlbCache = {};
+            const usedFrames = new Set();
+            for (let i = 0; i < numPages; i++) {
+                let frame;
+                do { frame = Math.floor(Math.random() * (numPages * 2)); } while (usedFrames.has(frame));
+                usedFrames.add(frame);
+                const valid = Math.random() > 0.15 ? 1 : 0;
+                pageTable.push({ page: i, frame: frame, valid: valid });
+            }
+            // Ensure the needed page is valid
+            const la = parseInt(document.getElementById('logicalAddr').value) || 0;
+            const ps = parseInt(document.getElementById('pageSize').value) || 1024;
+            const pn = Math.floor(la / ps);
+            if (pn < pageTable.length) pageTable[pn].valid = 1;
+
+            // Put a couple entries in TLB
+            const tlbEntries = [0, 2, pn].filter(p => p < numPages);
+            tlbEntries.forEach(p => { tlbCache[p] = pageTable[p].frame; });
+        }
+
+        function renderPageTable(highlightPage) {
+            const container = document.getElementById('pageTable');
+            let html = '<div class="pt-row header"><span class="pt-col">Page #</span><span class="pt-col">Frame #</span><span class="pt-col">Valid</span></div>';
+            pageTable.forEach((entry, i) => {
+                const hl = highlightPage === i ? ' highlight' : '';
+                html += `<div class="pt-row${hl}" style="animation-delay:${i * 0.05}s">
+                    <span class="pt-col">${entry.page}</span>
+                    <span class="pt-col" style="color:${hl ? 'var(--green)' : '#e2e8f0'}">${entry.frame}</span>
+                    <span class="pt-col" style="color:${entry.valid ? 'var(--green)' : 'var(--red)'}">${entry.valid ? '✓' : '✗'}</span>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderMemoryMap(logicalPage, physicalFrame, pageSize, numPages) {
+            const container = document.getElementById('memoryMap');
+            let logicalCells = '', physicalCells = '';
+            const totalFrames = numPages * 2;
+
+            for (let i = 0; i < numPages; i++) {
+                const isActive = i === logicalPage;
+                logicalCells += `<div class="mem-cell${isActive ? ' active-logical' : ''}">Page ${i}</div>`;
+            }
+
+            for (let i = 0; i < Math.min(totalFrames, 12); i++) {
+                const isActive = i === physicalFrame;
+                physicalCells += `<div class="mem-cell${isActive ? ' active-physical' : ''}">Frame ${i}</div>`;
+            }
+
+            container.innerHTML = `
+                <div class="mem-column">
+                    <div class="mem-column-title" style="color:var(--purple)">Logical Memory</div>
+                    ${logicalCells}
+                </div>
+                <div class="mapping-arrow"><i class="ph-bold ph-arrow-right"></i></div>
+                <div class="mem-column">
+                    <div class="mem-column-title" style="color:var(--green)">Physical Memory</div>
+                    ${physicalCells}
+                </div>
+            `;
+        }
+
+        function renderStepIndicator(step) {
+            const container = document.getElementById('stepIndicator');
+            let html = '';
+            for (let i = 0; i < totalSteps; i++) {
+                let cls = 'step-dot';
+                if (i < step) cls += ' done';
+                else if (i === step) cls += ' active';
+                html += `<div class="${cls}"></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        const stepMessages = [
+            'Step 1: <strong>Decompose</strong> the logical address into <strong>Page Number</strong> and <strong>Offset</strong>.',
+            'Step 2: Check the <strong>TLB</strong> for a cached frame mapping.',
+            'Step 3: Look up the <strong>Page Table</strong> to find the frame number.',
+            'Step 4: Construct the <strong>Physical Address</strong> = Frame × Page Size + Offset.',
+            'Step 5: Visualize the <strong>Memory Mapping</strong> from logical to physical space.'
+        ];
+
+        function startTranslation() {
+            const la = parseInt(document.getElementById('logicalAddr').value) || 0;
+            const ps = parseInt(document.getElementById('pageSize').value) || 1024;
+            const np = parseInt(document.getElementById('totalPages').value) || 8;
+
+            if (ps <= 0 || np <= 0) return;
+
+            const pageNum = Math.floor(la / ps);
+            const offset = la % ps;
+
+            if (pageNum >= np) {
+                document.getElementById('stepText').innerHTML = `<span style="color:var(--red)">❌ Page number ${pageNum} exceeds total pages (${np}). Increase total pages or use a smaller address.</span>`;
+                return;
+            }
+
+            generatePageTable(np);
+            const frameNum = pageTable[pageNum].frame;
+            const physAddr = frameNum * ps + offset;
+
+            translationData = { la, ps, np, pageNum, offset, frameNum, physAddr };
+            currentStep = 0;
+
+            // Reset all visuals
+            document.querySelectorAll('.addr-part').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.flow-arrow').forEach(el => el.classList.remove('show'));
+            document.getElementById('tlbResult').innerHTML = '';
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('physAddrFinal').style.opacity = '0';
+            document.getElementById('memoryMap').innerHTML = '';
+            renderPageTable(-1);
+            renderStepIndicator(-1);
+
+            document.getElementById('btnStep').disabled = false;
+
+            // Auto-play all steps
+            for (let i = 0; i < totalSteps; i++) {
+                setTimeout(() => executeStep(i), i * 800);
+            }
+        }
+
+        function stepThrough() {
+            if (currentStep === 0) {
+                const la = parseInt(document.getElementById('logicalAddr').value) || 0;
+                const ps = parseInt(document.getElementById('pageSize').value) || 1024;
+                const np = parseInt(document.getElementById('totalPages').value) || 8;
+                const pageNum = Math.floor(la / ps);
+                const offset = la % ps;
+
+                if (pageNum >= np) {
+                    document.getElementById('stepText').innerHTML = `<span style="color:var(--red)">❌ Page number ${pageNum} exceeds total pages (${np}).</span>`;
+                    return;
+                }
+
+                generatePageTable(np);
+                const frameNum = pageTable[pageNum].frame;
+                const physAddr = frameNum * ps + offset;
+                translationData = { la, ps, np, pageNum, offset, frameNum, physAddr };
+
+                document.querySelectorAll('.addr-part').forEach(el => el.classList.remove('show'));
+                document.querySelectorAll('.flow-arrow').forEach(el => el.classList.remove('show'));
+                document.getElementById('tlbResult').innerHTML = '';
+                document.getElementById('resultBox').classList.remove('show');
+                document.getElementById('physAddrFinal').style.opacity = '0';
+                document.getElementById('memoryMap').innerHTML = '';
+                renderPageTable(-1);
+            }
+
+            if (currentStep < totalSteps) {
+                executeStep(currentStep);
+                currentStep++;
+            }
+            if (currentStep >= totalSteps) {
+                document.getElementById('btnStep').disabled = true;
+            }
+        }
+
+        function executeStep(step) {
+            const { la, ps, np, pageNum, offset, frameNum, physAddr } = translationData;
+            renderStepIndicator(step);
+            document.getElementById('stepText').innerHTML = stepMessages[step];
+
+            switch (step) {
+                case 0: // Decompose
+                    document.getElementById('pageNumVal').textContent = pageNum;
+                    document.getElementById('offsetVal').textContent = offset;
+                    setTimeout(() => {
+                        document.getElementById('partPage').classList.add('show');
+                        setTimeout(() => document.getElementById('partOffset').classList.add('show'), 200);
+                    }, 100);
+                    break;
+
+                case 1: // TLB
+                    const tlbContainer = document.getElementById('tlbResult');
+                    const inTlb = tlbCache.hasOwnProperty(pageNum);
+                    const badge = document.createElement('div');
+                    badge.className = `tlb-badge ${inTlb ? 'hit' : 'miss'}`;
+                    badge.innerHTML = inTlb
+                        ? `<i class="ph-fill ph-lightning" style="font-size:20px"></i> TLB HIT — Frame ${tlbCache[pageNum]} found instantly!`
+                        : `<i class="ph-fill ph-x-circle" style="font-size:20px"></i> TLB MISS — Must consult page table`;
+                    tlbContainer.appendChild(badge);
+                    setTimeout(() => badge.classList.add('show'), 100);
+                    document.getElementById('arrow1').classList.add('show');
+                    break;
+
+                case 2: // Page table
+                    renderPageTable(pageNum);
+                    document.getElementById('arrow2').classList.add('show');
+                    break;
+
+                case 3: // Physical address
+                    document.getElementById('frameNumVal').textContent = frameNum;
+                    document.getElementById('resultOffsetVal').textContent = offset;
+                    document.getElementById('physAddrNum').textContent = physAddr;
+                    setTimeout(() => {
+                        document.getElementById('resultBox').classList.add('show');
+                        setTimeout(() => document.getElementById('physAddrFinal').style.opacity = '1', 400);
+                    }, 100);
+                    document.getElementById('arrow3').classList.add('show');
+                    break;
+
+                case 4: // Memory map
+                    renderMemoryMap(pageNum, frameNum, ps, np);
+                    break;
+            }
+        }
+
+        function resetViz() {
+            currentStep = 0;
+            translationData = {};
+            document.querySelectorAll('.addr-part').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.flow-arrow').forEach(el => el.classList.remove('show'));
+            document.getElementById('tlbResult').innerHTML = '';
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('physAddrFinal').style.opacity = '0';
+            document.getElementById('memoryMap').innerHTML = '';
+            document.getElementById('pageTable').innerHTML = '';
+            document.getElementById('stepText').innerHTML = 'Press <strong>Translate</strong> or <strong>Step</strong> to begin the address translation.';
+            renderStepIndicator(-1);
+            document.getElementById('btnStep').disabled = false;
+            document.getElementById('pageNumVal').textContent = '—';
+            document.getElementById('offsetVal').textContent = '—';
+            document.getElementById('frameNumVal').textContent = '—';
+            document.getElementById('resultOffsetVal').textContent = '—';
+            document.getElementById('physAddrNum').textContent = '—';
+        }
+
+        // Init
+        renderStepIndicator(-1);
+    </script>
+</body>
+</html>

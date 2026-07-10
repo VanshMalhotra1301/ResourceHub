@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banker's Algorithm ⚡ | Visual OS Lab</title>
+    <meta name="description" content="Interactive Banker's Algorithm visualizer — Deadlock avoidance with safe sequence animation." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root{--cyan:#22d3ee;--purple:#a855f7;--indigo:#6366f1;--green:#34d399;--pink:#f472b6;--orange:#fb923c;--red:#f87171;--bg:#050508;--card:rgba(15,15,25,0.7);--border:rgba(255,255,255,0.08)}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--bg);color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(251,146,60,0.05),transparent 40%),radial-gradient(circle at 70% 70%,rgba(248,113,113,0.04),transparent 40%);animation:aurora 25s linear infinite;z-index:-1;pointer-events:none}
+        @keyframes aurora{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:#050508}::-webkit-scrollbar-thumb{background:#2a2a40;border-radius:8px}
+        #topbar{position:sticky;top:0;z-index:100;background:rgba(10,5,15,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 28px;height:60px}
+        .back-btn{display:flex;align-items:center;gap:6px;color:#6b7280;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}.back-btn:hover{color:#e2e8f0}
+        .sep{width:1px;height:24px;background:rgba(255,255,255,0.08)}
+        .topbar-algo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:#fff}
+        .badge-beta{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(251,146,60,0.1);color:var(--orange);border:1px solid rgba(251,146,60,0.25)}
+        .topbar-meta{margin-left:auto;font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+        #page{max-width:1200px;margin:0 auto;padding:36px 28px 80px;position:relative;z-index:1}
+        .algo-hero{margin-bottom:32px}.algo-hero h1{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+        .algo-hero h1 .icon-wrap{width:44px;height:44px;border-radius:12px;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 0 25px rgba(251,146,60,0.15);color:var(--orange)}
+        .algo-desc{color:#94a3b8;font-size:14px;line-height:1.65;max-width:720px;margin-top:12px}
+        .card{background:var(--card);backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#e2e8f0;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+        .btn:hover:not(:disabled){background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.2);transform:translateY(-1px)}.btn:disabled{opacity:0.35;cursor:not-allowed}
+        .btn-primary{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.35);color:var(--orange)}.btn-primary:hover:not(:disabled){background:rgba(251,146,60,0.22);box-shadow:0 0 20px rgba(251,146,60,0.2)}
+        .btn-danger{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171}
+        .controls-bar{padding:16px 20px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-bottom:20px}
+        .input-field{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 14px;color:#e2e8f0;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:all 0.3s}
+        .input-field:focus{border-color:var(--orange);box-shadow:0 0 15px rgba(251,146,60,0.15)}.input-field::placeholder{color:#6b7280}
+        label.field-label{font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;display:block}
+        .input-group{display:flex;flex-direction:column;gap:4px}
+
+        #viz-frame{border-radius:16px;background:rgba(8,8,15,0.85);border:1px solid rgba(251,146,60,0.2);box-shadow:0 20px 50px rgba(0,0,0,0.5),inset 0 0 80px rgba(251,146,60,0.03);margin-bottom:20px;padding:30px}
+        .viz-section-title{font-family:'Space Grotesk',sans-serif;font-size:14px;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:1px}
+
+        /* Matrix tables */
+        .matrix-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:20px 0}
+        .matrix-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:14px;padding:16px;overflow:auto}
+        .matrix-card h4{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .matrix-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px}
+        .matrix-table th{padding:8px 10px;background:rgba(255,255,255,0.05);color:#94a3b8;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border:1px solid var(--border)}
+        .matrix-table td{padding:8px 10px;text-align:center;border:1px solid var(--border);color:#e2e8f0;transition:all 0.4s}
+        .matrix-table td.highlight{background:rgba(251,146,60,0.15);border-color:rgba(251,146,60,0.4);color:var(--orange);font-weight:700}
+        .matrix-table td.safe{background:rgba(52,211,153,0.15);border-color:rgba(52,211,153,0.4);color:var(--green);font-weight:700}
+        .matrix-table td.unsafe{background:rgba(248,113,113,0.15);border-color:rgba(248,113,113,0.4);color:var(--red);font-weight:700}
+        .matrix-table .process-label{font-weight:700;color:var(--purple)}
+        .matrix-table tr.finished td{opacity:0.4;text-decoration:line-through}
+
+        /* Available vector */
+        .avail-vector{display:flex;gap:8px;align-items:center;justify-content:center;margin:16px 0}
+        .avail-item{padding:10px 18px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.3);color:var(--cyan);transition:all 0.4s}
+        .avail-item.changed{animation:pulse-glow 0.6s;background:rgba(52,211,153,0.15);border-color:rgba(52,211,153,0.5);color:var(--green)}
+        @keyframes pulse-glow{0%{box-shadow:0 0 0 rgba(52,211,153,0)}50%{box-shadow:0 0 25px rgba(52,211,153,0.4)}100%{box-shadow:0 0 0 rgba(52,211,153,0)}}
+
+        /* Safe sequence */
+        .safe-sequence{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin:20px 0}
+        .seq-process{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:900;transition:all 0.5s;opacity:0;transform:scale(0.5)}
+        .seq-process.show{opacity:1;transform:scale(1)}
+        .seq-process.safe-p{background:rgba(52,211,153,0.15);border:2px solid rgba(52,211,153,0.5);color:var(--green);box-shadow:0 0 15px rgba(52,211,153,0.2)}
+        .seq-arrow{color:var(--orange);font-size:18px;opacity:0;transition:opacity 0.3s}.seq-arrow.show{opacity:1}
+
+        /* Result banner */
+        .result-banner{text-align:center;padding:20px;border-radius:14px;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-top:20px;transition:all 0.5s;opacity:0;transform:translateY(10px)}
+        .result-banner.show{opacity:1;transform:translateY(0)}
+        .result-banner.safe-result{background:rgba(52,211,153,0.1);border:2px solid rgba(52,211,153,0.3);color:var(--green)}
+        .result-banner.unsafe-result{background:rgba(248,113,113,0.1);border:2px solid rgba(248,113,113,0.3);color:var(--red);animation:danger-pulse 1s infinite}
+        @keyframes danger-pulse{0%,100%{box-shadow:0 0 0 rgba(248,113,113,0)}50%{box-shadow:0 0 30px rgba(248,113,113,0.3)}}
+
+        /* Step log */
+        .step-log{margin-top:20px;max-height:250px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,0.4);border-radius:12px;padding:16px;border:1px solid var(--border)}
+        .log-entry{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8}
+        .log-entry:last-child{border-bottom:none}
+        .log-entry .log-check{color:var(--orange)}.log-entry .log-ok{color:var(--green)}.log-entry .log-fail{color:var(--red)}
+
+        .speed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
+        .speed-wrap input[type=range]{-webkit-appearance:none;width:100px;height:4px;border-radius:4px;background:rgba(255,255,255,0.1);outline:none;cursor:pointer}
+        .speed-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px var(--orange);cursor:pointer}
+        .speed-label{font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+
+        /* Presets */
+        .preset-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+        .preset-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);background:rgba(0,0,0,0.3);color:#94a3b8;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif}
+        .preset-btn:hover{border-color:var(--orange);color:var(--orange);background:rgba(251,146,60,0.1)}
+
+        @media(max-width:768px){.controls-bar{flex-direction:column;align-items:stretch}.matrix-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+
+<body>
+    <header id="topbar">
+        <a href="os-visual.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i> OS Lab</a>
+        <div class="sep"></div>
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="topbar-algo-name">Banker's Algorithm</span>
+            <span class="badge-beta">Interactive</span>
+        </div>
+        <span class="topbar-meta"><i class="ph-fill ph-warning-circle" style="color:var(--orange)"></i> Deadlock Avoidance</span>
+    </header>
+
+    <div id="page">
+        <div class="algo-hero">
+            <h1>
+                <span class="icon-wrap"><i class="ph-fill ph-warning-circle"></i></span>
+                Banker's Algorithm
+            </h1>
+            <p class="algo-desc">
+                Visualize the Banker's Algorithm for deadlock avoidance. Watch the safety algorithm check
+                each process step-by-step, compute the Need matrix, and determine whether a safe sequence exists.
+            </p>
+        </div>
+
+        <div class="preset-bar">
+            <span style="font-size:12px;color:#6b7280;font-weight:600;display:flex;align-items:center;gap:4px"><i class="ph-bold ph-bookmark-simple"></i> Presets:</span>
+            <button class="preset-btn" onclick="loadPreset('safe')">Safe State (Textbook)</button>
+            <button class="preset-btn" onclick="loadPreset('unsafe')">Unsafe State</button>
+            <button class="preset-btn" onclick="loadPreset('large')">5 Processes, 4 Resources</button>
+        </div>
+
+        <div class="card controls-bar">
+            <div class="input-group">
+                <label class="field-label">Processes</label>
+                <input type="number" id="numProc" class="input-field" style="width:80px" value="5" min="1" max="10" />
+            </div>
+            <div class="input-group">
+                <label class="field-label">Resources</label>
+                <input type="number" id="numRes" class="input-field" style="width:80px" value="3" min="1" max="6" />
+            </div>
+            <button class="btn" onclick="generateInputs()"><i class="ph-bold ph-table"></i> Generate Inputs</button>
+            <button class="btn btn-primary" onclick="runBanker()"><i class="ph-bold ph-play"></i> Run Safety Check</button>
+            <button class="btn btn-danger" onclick="resetBanker()"><i class="ph-bold ph-arrow-counter-clockwise"></i> Reset</button>
+            <div class="speed-wrap">
+                <span class="speed-label">Speed</span>
+                <input type="range" id="speedSlider" min="200" max="2000" value="800" />
+            </div>
+        </div>
+
+        <!-- Input matrices -->
+        <div class="matrix-grid" id="inputMatrices"></div>
+
+        <!-- Visualization -->
+        <div id="viz-frame" style="display:none">
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-grid-four"></i> Need Matrix (Max - Allocation)</div>
+                <div id="needMatrix"></div>
+            </div>
+
+            <div style="text-align:center">
+                <div class="viz-section-title" style="justify-content:center"><i class="ph-bold ph-stack"></i> Available Resources (Work Vector)</div>
+                <div class="avail-vector" id="availVector"></div>
+            </div>
+
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-shield-check"></i> Safe Sequence</div>
+                <div class="safe-sequence" id="safeSequence"></div>
+            </div>
+
+            <div class="result-banner" id="resultBanner"></div>
+
+            <div>
+                <div class="viz-section-title"><i class="ph-bold ph-terminal"></i> Step-by-Step Log</div>
+                <div class="step-log" id="stepLog"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="border-top:1px solid rgba(255,255,255,0.05);padding:32px;text-align:center;color:#6b7280;font-size:13px;background:rgba(0,0,0,0.2)">
+        Built for Skills Seekers Operating Systems Curriculum
+    </footer>
+
+    <script>
+        const presets = {
+            safe: {
+                n: 5, m: 3,
+                alloc: [[0,1,0],[2,0,0],[3,0,2],[2,1,1],[0,0,2]],
+                max: [[7,5,3],[3,2,2],[9,0,2],[2,2,2],[4,3,3]],
+                avail: [3,3,2]
+            },
+            unsafe: {
+                n: 4, m: 3,
+                alloc: [[0,1,0],[2,0,0],[3,0,2],[2,1,1]],
+                max: [[7,5,3],[3,2,2],[9,0,2],[2,2,2]],
+                avail: [0,0,0]
+            },
+            large: {
+                n: 5, m: 4,
+                alloc: [[0,0,1,2],[1,0,0,0],[1,3,5,4],[0,6,3,2],[0,0,1,4]],
+                max: [[0,0,1,2],[1,7,5,0],[2,3,5,6],[0,6,5,2],[0,6,5,6]],
+                avail: [1,5,2,0]
+            }
+        };
+
+        function loadPreset(key) {
+            const p = presets[key];
+            document.getElementById('numProc').value = p.n;
+            document.getElementById('numRes').value = p.m;
+            generateInputs();
+
+            // Fill allocation
+            for (let i = 0; i < p.n; i++)
+                for (let j = 0; j < p.m; j++)
+                    document.getElementById(`alloc-${i}-${j}`).value = p.alloc[i][j];
+
+            // Fill max
+            for (let i = 0; i < p.n; i++)
+                for (let j = 0; j < p.m; j++)
+                    document.getElementById(`max-${i}-${j}`).value = p.max[i][j];
+
+            // Fill available
+            for (let j = 0; j < p.m; j++)
+                document.getElementById(`avail-${j}`).value = p.avail[j];
+        }
+
+        function generateInputs() {
+            const n = parseInt(document.getElementById('numProc').value) || 5;
+            const m = parseInt(document.getElementById('numRes').value) || 3;
+            const container = document.getElementById('inputMatrices');
+
+            const resLabels = Array.from({length: m}, (_, i) => String.fromCharCode(65 + i));
+
+            let allocHTML = `<div class="matrix-card"><h4><i class="ph-fill ph-stack" style="color:var(--purple)"></i> Allocation Matrix</h4>
+                <table class="matrix-table"><thead><tr><th></th>${resLabels.map(r => `<th>${r}</th>`).join('')}</tr></thead><tbody>`;
+            for (let i = 0; i < n; i++) {
+                allocHTML += `<tr><td class="process-label">P${i}</td>`;
+                for (let j = 0; j < m; j++)
+                    allocHTML += `<td><input type="number" id="alloc-${i}-${j}" value="0" min="0" style="width:50px;background:transparent;border:none;color:#e2e8f0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;outline:none"></td>`;
+                allocHTML += '</tr>';
+            }
+            allocHTML += '</tbody></table></div>';
+
+            let maxHTML = `<div class="matrix-card"><h4><i class="ph-fill ph-chart-bar" style="color:var(--orange)"></i> Max Matrix</h4>
+                <table class="matrix-table"><thead><tr><th></th>${resLabels.map(r => `<th>${r}</th>`).join('')}</tr></thead><tbody>`;
+            for (let i = 0; i < n; i++) {
+                maxHTML += `<tr><td class="process-label">P${i}</td>`;
+                for (let j = 0; j < m; j++)
+                    maxHTML += `<td><input type="number" id="max-${i}-${j}" value="0" min="0" style="width:50px;background:transparent;border:none;color:#e2e8f0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;outline:none"></td>`;
+                maxHTML += '</tr>';
+            }
+            maxHTML += '</tbody></table></div>';
+
+            let availHTML = `<div class="matrix-card"><h4><i class="ph-fill ph-package" style="color:var(--cyan)"></i> Available Vector</h4>
+                <table class="matrix-table"><thead><tr>${resLabels.map(r => `<th>${r}</th>`).join('')}</tr></thead><tbody><tr>`;
+            for (let j = 0; j < m; j++)
+                availHTML += `<td><input type="number" id="avail-${j}" value="0" min="0" style="width:50px;background:transparent;border:none;color:#e2e8f0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;outline:none"></td>`;
+            availHTML += '</tr></tbody></table></div>';
+
+            container.innerHTML = allocHTML + maxHTML + availHTML;
+            document.getElementById('viz-frame').style.display = 'none';
+        }
+
+        function readInputs() {
+            const n = parseInt(document.getElementById('numProc').value);
+            const m = parseInt(document.getElementById('numRes').value);
+
+            const alloc = [], max = [], avail = [];
+            for (let i = 0; i < n; i++) {
+                alloc[i] = [];
+                max[i] = [];
+                for (let j = 0; j < m; j++) {
+                    alloc[i][j] = parseInt(document.getElementById(`alloc-${i}-${j}`).value) || 0;
+                    max[i][j] = parseInt(document.getElementById(`max-${i}-${j}`).value) || 0;
+                }
+            }
+            for (let j = 0; j < m; j++)
+                avail[j] = parseInt(document.getElementById(`avail-${j}`).value) || 0;
+
+            return { n, m, alloc, max, avail };
+        }
+
+        function renderNeedMatrix(need, n, m, highlightRow, finished) {
+            const resLabels = Array.from({length: m}, (_, i) => String.fromCharCode(65 + i));
+            let html = `<table class="matrix-table"><thead><tr><th></th>${resLabels.map(r => `<th>${r}</th>`).join('')}</tr></thead><tbody>`;
+            for (let i = 0; i < n; i++) {
+                const finCls = finished.has(i) ? ' finished' : '';
+                html += `<tr class="${finCls}"><td class="process-label">P${i}</td>`;
+                for (let j = 0; j < m; j++) {
+                    let cls = '';
+                    if (i === highlightRow) cls = 'highlight';
+                    if (finished.has(i)) cls = 'safe';
+                    html += `<td class="${cls}">${need[i][j]}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            document.getElementById('needMatrix').innerHTML = html;
+        }
+
+        function renderAvailVector(work, m, changed) {
+            const container = document.getElementById('availVector');
+            const resLabels = Array.from({length: m}, (_, i) => String.fromCharCode(65 + i));
+            container.innerHTML = work.map((w, j) =>
+                `<div class="avail-item${changed ? ' changed' : ''}" style="display:flex;flex-direction:column;align-items:center;gap:2px">
+                    <span style="font-size:9px;opacity:0.6">${resLabels[j]}</span>
+                    <span>${w}</span>
+                </div>`
+            ).join('');
+        }
+
+        function addLog(msg) {
+            const log = document.getElementById('stepLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = msg;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function runBanker() {
+            const { n, m, alloc, max, avail } = readInputs();
+            const speed = parseInt(document.getElementById('speedSlider').value);
+
+            // Compute Need
+            const need = [];
+            for (let i = 0; i < n; i++) {
+                need[i] = [];
+                for (let j = 0; j < m; j++)
+                    need[i][j] = max[i][j] - alloc[i][j];
+            }
+
+            // Show viz
+            document.getElementById('viz-frame').style.display = 'flex';
+            document.getElementById('stepLog').innerHTML = '';
+            document.getElementById('resultBanner').className = 'result-banner';
+            document.getElementById('resultBanner').innerHTML = '';
+
+            // Prepare safe sequence display
+            const seqContainer = document.getElementById('safeSequence');
+            seqContainer.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                if (i > 0) seqContainer.innerHTML += `<span class="seq-arrow" id="arrow-${i}">→</span>`;
+                seqContainer.innerHTML += `<div class="seq-process" id="seq-${i}">?</div>`;
+            }
+
+            const finished = new Set();
+            const work = [...avail];
+            const safeSeq = [];
+
+            renderNeedMatrix(need, n, m, -1, finished);
+            renderAvailVector(work, m, false);
+            addLog(`<span class="log-check">▶ Starting safety algorithm...</span>`);
+            addLog(`Work = [${work.join(', ')}], Finish = [${Array(n).fill('false').join(', ')}]`);
+
+            await new Promise(r => setTimeout(r, speed));
+
+            let found = true;
+            while (found && safeSeq.length < n) {
+                found = false;
+
+                for (let i = 0; i < n; i++) {
+                    if (finished.has(i)) continue;
+
+                    renderNeedMatrix(need, n, m, i, finished);
+                    addLog(`<span class="log-check">Checking P${i}: Need[${i}] = [${need[i].join(', ')}] ≤ Work = [${work.join(', ')}]?</span>`);
+                    await new Promise(r => setTimeout(r, speed * 0.6));
+
+                    let canFinish = true;
+                    for (let j = 0; j < m; j++) {
+                        if (need[i][j] > work[j]) { canFinish = false; break; }
+                    }
+
+                    if (canFinish) {
+                        addLog(`<span class="log-ok">  ✓ P${i} CAN finish. Work = [${work.join(', ')}] + Alloc[${i}] = [${alloc[i].join(', ')}]</span>`);
+                        for (let j = 0; j < m; j++) work[j] += alloc[i][j];
+                        addLog(`<span class="log-ok">  → New Work = [${work.join(', ')}]</span>`);
+
+                        finished.add(i);
+                        safeSeq.push(i);
+
+                        // Update safe sequence display
+                        const idx = safeSeq.length - 1;
+                        const seqEl = document.getElementById(`seq-${idx}`);
+                        seqEl.textContent = `P${i}`;
+                        seqEl.classList.add('show', 'safe-p');
+                        if (idx > 0) document.getElementById(`arrow-${idx}`).classList.add('show');
+
+                        renderNeedMatrix(need, n, m, -1, finished);
+                        renderAvailVector(work, m, true);
+                        await new Promise(r => setTimeout(r, speed * 0.3));
+                        renderAvailVector(work, m, false);
+
+                        found = true;
+                        break;
+                    } else {
+                        addLog(`<span class="log-fail">  ✗ P${i} cannot finish. Skipping...</span>`);
+                        await new Promise(r => setTimeout(r, speed * 0.3));
+                    }
+                }
+            }
+
+            const banner = document.getElementById('resultBanner');
+            if (safeSeq.length === n) {
+                banner.className = 'result-banner safe-result show';
+                banner.innerHTML = `<i class="ph-fill ph-shield-check" style="margin-right:8px"></i> SAFE STATE — Sequence: &lt;${safeSeq.map(p => 'P' + p).join(', ')}&gt;`;
+                addLog(`<span class="log-ok">✅ System is in a SAFE state! Safe sequence: &lt;${safeSeq.map(p => 'P' + p).join(', ')}&gt;</span>`);
+            } else {
+                banner.className = 'result-banner unsafe-result show';
+                banner.innerHTML = `<i class="ph-fill ph-warning" style="margin-right:8px"></i> UNSAFE STATE — No safe sequence exists! Deadlock possible.`;
+                addLog(`<span class="log-fail">❌ System is in an UNSAFE state! No safe sequence exists.</span>`);
+            }
+        }
+
+        function resetBanker() {
+            document.getElementById('viz-frame').style.display = 'none';
+        }
+
+        // Init
+        generateInputs();
+        loadPreset('safe');
+    </script>
+</body>
+</html>
