@@ -3815,10 +3815,46 @@
             const promoCount = {};
             const MAX_PER_SUBJECT = 2;
 
+            // Subject → direct course URL mapping
+            const courseMap = {
+                'Engineering Calculus': 'https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4',
+                'Electronics': 'https://www.skillsseekers.com/courses/ECE-END-SEM-TUTORIAL-SHEETS--PYQ-SOLVED-2025-6904f0913315445bda01a275',
+                'Mechanics & Electromagnetism': 'https://www.skillsseekers.com/courses/Mechanics-End-Term-Express-Crash-Course-67c81c40eadd7267af53e1ad',
+                'Computational Thinking': 'https://www.skillsseekers.com/courses/Python-Mid-Sem-Hunt--Theory--Tutorial-Sheets-Solved---By--Pratham-Kocher-Copy-67373fde108e6312f95e2fe0',
+                'Linear Algebra & ODE': 'https://www.skillsseekers.com/courses/Linear-Algebra-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2025-69c506916b8037fc81a925f6',
+                'OOP (Java)': 'https://www.skillsseekers.com/s/store',
+                'Discrete Mathematics': 'https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad',
+                'Digital Design': 'https://www.skillsseekers.com/courses/Digital-Design--Lectures--Notes--Question-Banks--PYP--65f3c32854bc821a1192472f',
+                'IMS': 'https://www.skillsseekers.com/courses/IMS-End-Sem-Course--Theory--Questions-Practice-67499a62a0101406538b095b',
+                'Data Structures (C++)': 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97',
+                'SML (Machine Learning)': 'https://www.skillsseekers.com/courses/Statistical-Machine-Learning-End-Sem-Prep-68ca34cabec1a14e2a706d2b',
+                'Data Analysis using Python': 'https://www.skillsseekers.com/courses/Data-Analysis-Using-Python-End--Term-Express-Crash-Course-691213351826d90967997a6d',
+                'Probability & Statistics': 'https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135',
+                'Microprocessors & Computer Architecture': 'https://www.skillsseekers.com/courses/Microprocessors-and-Computer-Architecture-Mid-Term-Express-Crash-Course-69628f196254b83697fd78e7',
+                'Design & Analysis of Algorithms': 'https://www.skillsseekers.com/s/store',
+                'Computer Networks': 'https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19',
+                'Operating Systems': 'https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602',
+                'Artificial Intelligence & ML': 'https://www.skillsseekers.com/courses/AI-and-ML-End-Sem-Sprint-69386305006ffc1a762fa256',
+                'Environment': 'https://www.skillsseekers.com/s/store'
+            };
+
+            const FALLBACK_URL = 'https://www.skillsseekers.com/s/store';
+
+            function getCourseUrl(subjectName) {
+                const key = subjectName.trim();
+                if (courseMap[key]) return courseMap[key];
+                for (const [mapKey, url] of Object.entries(courseMap)) {
+                    if (key.toLowerCase().includes(mapKey.toLowerCase()) || mapKey.toLowerCase().includes(key.toLowerCase())) {
+                        return url;
+                    }
+                }
+                return FALLBACK_URL;
+            }
+
             // Promo messages — randomized per show
             const messages = [
-                (subj) => `Ace ${subj}! Get the full crash course on Skills Seekers.`,
-                (subj) => `PYQs are great — pair them with the ${subj} video course for guaranteed results.`,
+                (subj) => `Ace ${subj}! Get the full crash course.`,
+                (subj) => `PYQs + the ${subj} video course = guaranteed results.`,
                 (subj) => `Want solved explanations for ${subj}? Check out the course.`
             ];
 
@@ -3835,7 +3871,8 @@
 
                 // Pick random message
                 const msgFn = messages[Math.floor(Math.random() * messages.length)];
-                const shortName = key.length > 30 ? key.substring(0, 28) + '…' : key;
+                const shortName = key.length > 30 ? key.substring(0, 28) + '\u2026' : key;
+                const courseUrl = getCourseUrl(key);
 
                 // Create tooltip
                 const tip = document.createElement('div');
@@ -3844,7 +3881,7 @@
                     <div class="promo-icon"><i class="ph-fill ph-play-circle"></i></div>
                     <div class="promo-body">
                         <p class="promo-text">${msgFn(shortName)}</p>
-                        <a class="promo-link" href="https://www.skillsseekers.com" target="_blank" rel="noopener">
+                        <a class="promo-link" href="${courseUrl}" target="_blank" rel="noopener">
                             View Course <i class="ph-bold ph-arrow-right"></i>
                         </a>
                     </div>
@@ -3857,39 +3894,27 @@
                 let posX = x + 16;
                 let posY = y - tipH - 12;
 
-                // Keep right edge in view
-                if (posX + tipW > window.innerWidth - 12) {
-                    posX = x - tipW - 16;
-                }
-                // Keep top in view
-                if (posY < 12) {
-                    posY = y + 20;
-                }
+                if (posX + tipW > window.innerWidth - 12) { posX = x - tipW - 16; }
+                if (posY < 12) { posY = y + 20; }
 
                 tip.style.left = posX + 'px';
                 tip.style.top = posY + 'px';
 
-                // Auto dismiss after 3s
                 setTimeout(() => {
                     tip.classList.add('fade-out');
                     setTimeout(() => tip.remove(), 300);
                 }, 3000);
             }
 
-            // Listen for clicks on PYQ drive links inside subject cards
             document.addEventListener('click', function (e) {
                 const link = e.target.closest('.subject-card a[href*="drive.google.com"]');
                 if (!link) return;
-
                 const card = link.closest('.subject-card');
                 if (!card) return;
-
                 const nameEl = card.querySelector('.subject-name');
                 if (!nameEl) return;
-
                 const subjectName = nameEl.textContent.trim();
 
-                // Small delay so it doesn't feel jarring
                 setTimeout(() => {
                     showPromo(e.clientX, e.clientY, subjectName);
                 }, 400);
