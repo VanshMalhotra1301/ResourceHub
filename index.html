@@ -1063,6 +1063,83 @@
             }
         }
     </style>
+
+    <!-- Course Promo Tooltip Styles -->
+    <style>
+        .course-promo-tip {
+            position: fixed;
+            z-index: 9500;
+            pointer-events: auto;
+            background: rgba(15, 15, 25, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 10px 16px;
+            max-width: 280px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.08) inset;
+            opacity: 0;
+            transform: translateY(6px) scale(0.96);
+            animation: promoIn 0.25s ease-out forwards;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .course-promo-tip.fade-out {
+            animation: promoOut 0.3s ease-in forwards;
+        }
+
+        @keyframes promoIn {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes promoOut {
+            to { opacity: 0; transform: translateY(-4px) scale(0.96); }
+        }
+
+        .course-promo-tip .promo-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #a5b4fc;
+        }
+
+        .course-promo-tip .promo-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .course-promo-tip .promo-text {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .course-promo-tip .promo-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #818cf8;
+            text-decoration: none;
+            margin-top: 3px;
+            transition: color 0.15s;
+        }
+
+        .course-promo-tip .promo-link:hover {
+            color: #a5b4fc;
+        }
+    </style>
 </head>
 
 <body class="text-slate-300 antialiased selection:bg-brand-primary selection:text-white">
@@ -3729,6 +3806,95 @@
                 trackFeatureUsage('Search', 'Focused Search Bar');
             }
         });
+
+        /* =====================================================
+           COURSE PROMO TOOLTIP ON PYQ CLICK
+        ===================================================== */
+        (function initCoursePromo() {
+            // Session-based counter: { 'SubjectName': count }
+            const promoCount = {};
+            const MAX_PER_SUBJECT = 2;
+
+            // Promo messages — randomized per show
+            const messages = [
+                (subj) => `Ace ${subj}! Get the full crash course on Skills Seekers.`,
+                (subj) => `PYQs are great — pair them with the ${subj} video course for guaranteed results.`,
+                (subj) => `Want solved explanations for ${subj}? Check out the course.`
+            ];
+
+            function showPromo(x, y, subjectName) {
+                // Check session limit
+                const key = subjectName.trim();
+                if (!promoCount[key]) promoCount[key] = 0;
+                if (promoCount[key] >= MAX_PER_SUBJECT) return;
+                promoCount[key]++;
+
+                // Remove any existing promo
+                const old = document.querySelector('.course-promo-tip');
+                if (old) old.remove();
+
+                // Pick random message
+                const msgFn = messages[Math.floor(Math.random() * messages.length)];
+                const shortName = key.length > 30 ? key.substring(0, 28) + '…' : key;
+
+                // Create tooltip
+                const tip = document.createElement('div');
+                tip.className = 'course-promo-tip';
+                tip.innerHTML = `
+                    <div class="promo-icon"><i class="ph-fill ph-play-circle"></i></div>
+                    <div class="promo-body">
+                        <p class="promo-text">${msgFn(shortName)}</p>
+                        <a class="promo-link" href="https://www.skillsseekers.com" target="_blank" rel="noopener">
+                            View Course <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+                    </div>
+                `;
+
+                document.body.appendChild(tip);
+
+                // Position near cursor but keep within viewport
+                const tipW = 280, tipH = 70;
+                let posX = x + 16;
+                let posY = y - tipH - 12;
+
+                // Keep right edge in view
+                if (posX + tipW > window.innerWidth - 12) {
+                    posX = x - tipW - 16;
+                }
+                // Keep top in view
+                if (posY < 12) {
+                    posY = y + 20;
+                }
+
+                tip.style.left = posX + 'px';
+                tip.style.top = posY + 'px';
+
+                // Auto dismiss after 3s
+                setTimeout(() => {
+                    tip.classList.add('fade-out');
+                    setTimeout(() => tip.remove(), 300);
+                }, 3000);
+            }
+
+            // Listen for clicks on PYQ drive links inside subject cards
+            document.addEventListener('click', function (e) {
+                const link = e.target.closest('.subject-card a[href*="drive.google.com"]');
+                if (!link) return;
+
+                const card = link.closest('.subject-card');
+                if (!card) return;
+
+                const nameEl = card.querySelector('.subject-name');
+                if (!nameEl) return;
+
+                const subjectName = nameEl.textContent.trim();
+
+                // Small delay so it doesn't feel jarring
+                setTimeout(() => {
+                    showPromo(e.clientX, e.clientY, subjectName);
+                }, 400);
+            }, true);
+        })();
 
         /* =====================================================
            DRIVE IN-SITE PREVIEW
