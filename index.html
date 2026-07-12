@@ -1139,6 +1139,31 @@
         .course-promo-tip .promo-link:hover {
             color: #a5b4fc;
         }
+
+        .course-promo-tip .promo-close {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.06);
+            color: #52525b;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .course-promo-tip .promo-close:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
     </style>
 </head>
 
@@ -3878,6 +3903,7 @@
                 const tip = document.createElement('div');
                 tip.className = 'course-promo-tip';
                 tip.innerHTML = `
+                    <button class="promo-close" title="Dismiss">✕</button>
                     <div class="promo-icon"><i class="ph-fill ph-play-circle"></i></div>
                     <div class="promo-body">
                         <p class="promo-text">${msgFn(shortName)}</p>
@@ -3886,6 +3912,12 @@
                         </a>
                     </div>
                 `;
+
+                // Close button handler
+                tip.querySelector('.promo-close').addEventListener('click', () => {
+                    tip.classList.add('fade-out');
+                    setTimeout(() => tip.remove(), 300);
+                });
 
                 document.body.appendChild(tip);
 
@@ -3899,11 +3931,6 @@
 
                 tip.style.left = posX + 'px';
                 tip.style.top = posY + 'px';
-
-                setTimeout(() => {
-                    tip.classList.add('fade-out');
-                    setTimeout(() => tip.remove(), 300);
-                }, 3000);
             }
 
             document.addEventListener('click', function (e) {
