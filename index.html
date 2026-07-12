@@ -1320,10 +1320,8 @@
                 ✨ Updated for 2026 Sessions
             </div>
 
-            <h1 class="text-5xl md:text-8xl font-display font-bold text-white tracking-tight mb-8 leading-[1.1]">
-                Elevate Your <br>
-                Academic <span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Performance.</span>
+            <h1 class="text-5xl md:text-8xl font-display font-bold text-white tracking-tight mb-8 leading-[1.1]" id="hero-typewriter-h1">
+                <span id="hero-tw-text"></span><span class="typed-cursor"></span>
             </h1>
 
             <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
@@ -3061,6 +3059,80 @@
             stagger: 0.1,
             ease: "power4.out"
         });
+
+        // ===========================================
+        // HERO TYPEWRITER
+        // ===========================================
+        (function heroTypewriter() {
+            const sentences = [
+                'Elevate Your\nAcademic <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Performance.</span>',
+                'Crack Every\nExam With <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Confidence.</span>',
+                'Your Academic\nSuccess Starts <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Here.</span>'
+            ];
+            // Plain text versions for character-by-character typing
+            const plain = [
+                'Elevate Your\nAcademic Performance.',
+                'Crack Every\nExam With Confidence.',
+                'Your Academic\nSuccess Starts Here.'
+            ];
+            const el = document.getElementById('hero-tw-text');
+            if (!el) return;
+
+            let sIdx = 0, cIdx = 0, deleting = false;
+
+            function render(text, len) {
+                // Build displayed string up to len chars (ignoring \n in count visually)
+                let result = '';
+                let count = 0;
+                for (let i = 0; i < text.length && count < len; i++) {
+                    if (text[i] === '\\' && text[i+1] === 'n') {
+                        result += '<br>';
+                        i++; // skip n
+                    } else if (text[i] === '\n') {
+                        result += '<br>';
+                    } else {
+                        result += text[i];
+                        count++;
+                    }
+                }
+                return result;
+            }
+
+            function getPlainLen(text) {
+                return text.replace(/\\n/g, '').replace(/\n/g, '').length;
+            }
+
+            function tick() {
+                const p = plain[sIdx];
+                const totalLen = getPlainLen(p);
+
+                if (!deleting) {
+                    cIdx++;
+                    // While typing, use plain text render
+                    el.innerHTML = render(p, cIdx);
+                    if (cIdx >= totalLen) {
+                        // Fully typed — show the rich HTML version
+                        el.innerHTML = sentences[sIdx].replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
+                        setTimeout(() => { deleting = true; tick(); }, 2500);
+                        return;
+                    }
+                    setTimeout(tick, 55 + Math.random() * 35);
+                } else {
+                    cIdx--;
+                    el.innerHTML = render(p, cIdx);
+                    if (cIdx <= 0) {
+                        deleting = false;
+                        sIdx = (sIdx + 1) % sentences.length;
+                        setTimeout(tick, 500);
+                        return;
+                    }
+                    setTimeout(tick, 25 + Math.random() * 15);
+                }
+            }
+
+            // Start after hero fade-in animation
+            setTimeout(tick, 1600);
+        })();
 
         // Fade In Sections
         const fadeElements = document.querySelectorAll('.fade-in-section');
