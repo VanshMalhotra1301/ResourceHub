@@ -3837,20 +3837,33 @@
         }
 
 
+        // ── Feature Tracking (debounced, validated, fire-and-forget) ──
+        const _trackSent = new Map();
+        const _TRACK_COOLDOWN = 5000; // 5s per unique event
+
         async function trackFeatureUsage(featureName, action) {
-            // Feature tracking via API
-            if (!currentUser) return;
+            if (!currentUser || !currentUser.id) return;
+            // Validate UUID format before sending to API
+            if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(currentUser.id)) return;
+
+            const key = currentUser.id + ':' + featureName + ':' + action;
+            const now = Date.now();
+            if (_trackSent.has(key) && now - _trackSent.get(key) < _TRACK_COOLDOWN) return;
+            _trackSent.set(key, now);
+
+            // Fire-and-forget with keepalive — won't create unhandled rejections
             try {
-                await fetch('/api/track', {
+                fetch('/api/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: currentUser.id,
                         feature_name: featureName,
                         action: action
-                    })
-                });
-            } catch (err) { /* non-critical, ignore */ }
+                    }),
+                    keepalive: true
+                }).catch(() => {});
+            } catch (err) { /* non-critical */ }
         }
 
         // Global Feature Tracking via Event Delegation
