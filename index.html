@@ -680,6 +680,22 @@
             border-radius: 2px;
         }
 
+        .typed-cursor-sub {
+            display: inline-block;
+            width: 2px;
+            background: #6366f1;
+            animation: blink 0.7s infinite;
+            vertical-align: text-bottom;
+            height: 1em;
+            border-radius: 1px;
+            opacity: 0.8;
+            transition: opacity 0.6s ease;
+        }
+
+        .typed-cursor-sub.done {
+            opacity: 0;
+        }
+
         @keyframes blink {
 
             0%,
@@ -1426,10 +1442,8 @@
                 <span id="hero-tw-text"></span><span class="typed-cursor"></span>
             </h1>
 
-            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-                The ultimate archive of verified PYQs, comprehensive and strategic crash courses for Bennett University
-                students. <br>
-                <span class="text-indigo-400 font-medium">Engineered by Skills Seekers.</span>
+            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed" id="hero-sub-p">
+                <span id="hero-sub-tw"></span><span class="typed-cursor-sub" id="hero-sub-cursor"></span>
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mb-20">
@@ -3234,6 +3248,47 @@
 
             // Start after hero fade-in animation
             setTimeout(tick, 1600);
+        })();
+
+        // ===========================================
+        // SUBTITLE TYPEWRITER (types once, premium)
+        // ===========================================
+        (function subTypewriter() {
+            const fullText = 'The ultimate archive of verified PYQs, comprehensive and strategic crash courses for Bennett University students.';
+            const suffix = ' Engineered by Skills Seekers.';
+            const el = document.getElementById('hero-sub-tw');
+            const cursor = document.getElementById('hero-sub-cursor');
+            if (!el) return;
+
+            let i = 0;
+            let phase = 'main'; // 'main' then 'suffix'
+
+            function typeNext() {
+                if (phase === 'main') {
+                    if (i < fullText.length) {
+                        el.textContent = fullText.substring(0, i + 1);
+                        i++;
+                        setTimeout(typeNext, 22 + Math.random() * 18);
+                    } else {
+                        // Switch to suffix with styled span
+                        phase = 'suffix';
+                        i = 0;
+                        setTimeout(typeNext, 300);
+                    }
+                } else {
+                    if (i < suffix.length) {
+                        el.innerHTML = fullText + '<br><span class="text-indigo-400 font-medium">' + suffix.substring(0, i + 1) + '</span>';
+                        i++;
+                        setTimeout(typeNext, 28 + Math.random() * 22);
+                    } else {
+                        // Done — fade out cursor
+                        if (cursor) cursor.classList.add('done');
+                    }
+                }
+            }
+
+            // Start after heading starts typing + small offset
+            setTimeout(typeNext, 3200);
         })();
 
         // Fade In Sections
