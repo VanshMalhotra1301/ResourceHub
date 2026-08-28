@@ -133,13 +133,30 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ success: false, error: 'Authentication failed. Please try again.' });
         }
 
-        console.log(`[Login OK] ${email}`);
+        let userName = data.user.user_metadata?.full_name || data.user.user_metadata?.name;
+        if (!userName) {
+            try {
+                const { data: profile } = await supabase
+                    .from('users_realtime')
+                    .select('full_name')
+                    .eq('id', data.user.id)
+                    .maybeSingle();
+                if (profile?.full_name) {
+                    userName = profile.full_name;
+                }
+            } catch (e) { /* non-fatal */ }
+        }
+        if (!userName) {
+            userName = data.user.email.split('@')[0];
+        }
+
+        console.log(`[Login OK] ${email} (${userName})`);
         return res.json({
             success: true,
             user: {
                 id: data.user.id,
                 email: data.user.email,
-                name: data.user.user_metadata?.full_name || data.user.email.split('@')[0]
+                name: userName
             },
             session: {
                 access_token: data.session.access_token,

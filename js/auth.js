@@ -22,21 +22,38 @@
     window.currentUser = currentUser;
 
     // 2. Populate User Profile in Navbar
-    document.addEventListener('DOMContentLoaded', () => {
+    function updateUserNavbar() {
         if (!currentUser) return;
         const loginBtn = document.getElementById('login-btn');
         const userProfile = document.getElementById('user-profile');
         const userName = document.getElementById('user-name');
+        const userAvatar = document.getElementById('user-avatar');
 
         if (loginBtn) loginBtn.classList.add('hidden');
         if (userProfile) {
             userProfile.classList.remove('hidden');
             userProfile.classList.add('flex');
         }
+
+        const displayName = (currentUser.name || currentUser.full_name || currentUser.email?.split('@')[0] || 'User').trim();
+
         if (userName) {
-            userName.innerText = currentUser.name || currentUser.email?.split('@')[0] || 'Student';
+            userName.innerText = displayName;
         }
-    });
+
+        if (userAvatar) {
+            // Generates initials like "VM" for "Vansh Malhotra", "SD" for "Samman Dev", etc.
+            userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6366f1&color=fff&bold=true&size=128`;
+            userAvatar.alt = displayName;
+            userAvatar.title = displayName;
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateUserNavbar);
+    } else {
+        updateUserNavbar();
+    }
 
     // 3. Sign Out Function
     window.signOut = async function () {
