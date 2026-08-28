@@ -4,16 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BU Resource Hub | Academic Platform for Bennett University</title>
-    <meta name="description" content="The premier academic resource hub for Bennett University students. Access verified PYQs, video courses, interactive labs, and study tools across all semesters.">
+    <title>Bennett University Resource Hub | Skills Seekers 3D</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -21,30 +22,1088 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         display: ['Space Grotesk', 'sans-serif'],
+                        cyber: ['Orbitron', 'sans-serif'],
                     },
                     colors: {
                         brand: {
                             primary: '#6366f1',
                             secondary: '#a855f7',
                             accent: '#fbbf24',
-                            dark: '#050505',
-                            surface: '#0f0f13',
+                            glow: '#22d3ee',
+                            matrix: '#10b981',
+                            void: '#ec4899',
                         }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                     }
                 }
             }
         }
     </script>
 
-    <!-- Icons & GSAP -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        /* =========================
+   BASE & PERSPECTIVE
+========================= */
+        :root {
+            --theme-primary: #6366f1;
+            --theme-glow: #22d3ee;
+            --theme-secondary: #a855f7;
+            --theme-accent: #fbbf24;
+        }
 
-    <!-- Modular Stylesheets -->
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/tools.css">
+        body {
+            background-color: #030307;
+            overflow-x: hidden;
+            color: #e5e7eb;
+            perspective: 1200px;
+        }
+
+        /* =========================
+   3D WEBGL CANVAS BACKGROUND
+========================= */
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* =========================
+   NAVBAR
+========================= */
+        .glass-nav {
+            background: rgba(6, 7, 15, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* =========================
+   PREMIUM 3D CARD (TILT & DEPTH)
+========================= */
+        .perspective-container {
+            perspective: 1200px;
+        }
+
+        .premium-card {
+            background: rgba(14, 15, 26, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.25rem;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px);
+            transition: border-color 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        background-color 0.3s ease,
+                        transform 0.15s ease-out;
+            will-change: transform;
+        }
+
+        .premium-card:hover {
+            border-color: rgba(99, 102, 241, 0.65);
+            box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.8),
+                        0 0 35px rgba(99, 102, 241, 0.25),
+                        0 0 0 1px rgba(99, 102, 241, 0.2) inset;
+        }
+
+        /* 3D Depth Pop-out layers */
+        .card-depth-badge {
+            transform: translateZ(35px);
+            transition: transform 0.2s ease-out;
+        }
+        .card-depth-icon {
+            transform: translateZ(45px);
+            transition: transform 0.2s ease-out;
+        }
+        .card-depth-title {
+            transform: translateZ(28px);
+            transition: transform 0.2s ease-out;
+        }
+        .card-depth-desc {
+            transform: translateZ(18px);
+            transition: transform 0.2s ease-out;
+        }
+        .card-depth-btn {
+            transform: translateZ(32px);
+            transition: transform 0.2s ease-out, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-depth-btn:hover {
+            transform: translateZ(42px) scale(1.02);
+        }
+
+        /* 3D Glare & Sheen */
+        .card-glare {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                        rgba(255, 255, 255, 0.14),
+                        transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            mix-blend-mode: overlay;
+            z-index: 20;
+        }
+
+        .premium-card:hover .card-glare {
+            opacity: 1;
+        }
+
+        /* =========================
+   SPOTLIGHT & INNER GLOW
+========================= */
+        .card-glow {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(99, 102, 241, 0.15),
+                    transparent 45%);
+            z-index: 10;
+        }
+
+        .premium-card:hover .card-glow {
+            opacity: 1;
+        }
+
+        /* =========================
+   CUSTOM 3D CYBER CURSOR
+========================= */
+        #cyber-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 38px;
+            height: 38px;
+            border: 1.5px solid rgba(99, 102, 241, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        border-color 0.2s ease,
+                        background-color 0.2s ease;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5), inset 0 0 10px rgba(99, 102, 241, 0.2);
+        }
+
+        #cyber-cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: #22d3ee;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100000;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #22d3ee, 0 0 20px #6366f1;
+        }
+
+        #cyber-cursor.hovering {
+            width: 64px;
+            height: 64px;
+            border-color: #22d3ee;
+            background: rgba(34, 211, 238, 0.08);
+            box-shadow: 0 0 25px rgba(34, 211, 238, 0.6), inset 0 0 15px rgba(34, 211, 238, 0.3);
+        }
+
+        #cyber-cursor.clicking {
+            transform: translate(-50%, -50%) scale(0.85);
+            border-color: #a855f7;
+        }
+
+        /* =========================
+   3D HUD & THEME SWITCHER
+========================= */
+        .hud-pill {
+            background: rgba(14, 15, 23, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(14px);
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .hud-pill:hover {
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .sound-wave {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            height: 12px;
+        }
+
+        .sound-bar {
+            width: 2px;
+            height: 100%;
+            background: #22d3ee;
+            border-radius: 1px;
+            animation: soundWaveAnim 0.8s ease-in-out infinite alternate;
+        }
+
+        .sound-bar:nth-child(2) { animation-delay: 0.2s; height: 70%; }
+        .sound-bar:nth-child(3) { animation-delay: 0.4s; height: 40%; }
+        .sound-wave.muted .sound-bar {
+            animation: none;
+            height: 2px;
+            background: #64748b;
+        }
+
+        @keyframes soundWaveAnim {
+            0% { transform: scaleY(0.2); }
+            100% { transform: scaleY(1); }
+        }
+
+        /* =========================
+   3D QUANTUM PORTAL TILES
+========================= */
+        .portal-card {
+            background: linear-gradient(145deg, rgba(20, 20, 35, 0.7) 0%, rgba(10, 10, 20, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            transform-style: preserve-3d;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .portal-card:hover {
+            border-color: rgba(99, 102, 241, 0.8);
+            transform: perspective(1000px) translateY(-6px) translateZ(20px);
+            box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.35);
+        }
+
+        /* =========================
+   TEXT & SCROLLBAR
+========================= */
+        .text-gradient {
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+
+        /* =========================
+   MODAL
+========================= */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            z-index: 100;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.97);
+            transition: transform 0.25s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* =========================
+   SCROLL PROGRESS BAR
+========================= */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #fbbf24);
+            z-index: 9999;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* =========================
+   STREAK BADGE
+========================= */
+        #streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 99px;
+            padding: 4px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fbbf24;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #streak-badge:hover {
+            background: rgba(251, 191, 36, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* =========================
+   BACK TO TOP
+========================= */
+        #back-to-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 200;
+            background: rgba(99, 102, 241, 0.9);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            font-size: 18px;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #back-to-top:hover {
+            background: rgba(99, 102, 241, 1);
+            transform: scale(1.1);
+        }
+
+        /* =========================
+   SEMESTER FILTER TABS
+========================= */
+        .sem-tab {
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .sem-tab:hover {
+            color: #fff;
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .sem-tab.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.6);
+            color: #a5b4fc;
+        }
+
+        /* =========================
+   FLOATING WIDGETS
+========================= */
+        .widget-fab {
+            position: fixed;
+            z-index: 190;
+            right: 80px;
+            bottom: 28px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .fab-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .fab-btn:hover {
+            transform: scale(1.12);
+        }
+
+        .fab-pomodoro {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .fab-notes {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .fab-bookmarks {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* =========================
+   PANEL (shared)
+========================= */
+        .side-panel {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            z-index: 195;
+            width: 340px;
+            background: rgba(14, 14, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px 20px 0 0;
+            backdrop-filter: blur(16px);
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            overflow: hidden;
+            max-height: 80vh;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .side-panel.open {
+            transform: translateY(0);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .panel-header h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+        }
+
+        .panel-body {
+            padding: 16px 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 60px);
+        }
+
+        .panel-close {
+            background: none;
+            border: none;
+            color: #71717a;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .panel-close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* =========================
+   POMODORO TIMER
+========================= */
+        #pomodoro-display {
+            font-size: 54px;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin: 16px 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .pomodoro-ring {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 12px;
+            position: relative;
+        }
+
+        .pomodoro-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .pomodoro-ring circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .pomodoro-ring .bg {
+            stroke: rgba(255, 255, 255, 0.06);
+        }
+
+        .pomodoro-ring .prog {
+            stroke: #ef4444;
+            stroke-dasharray: 376;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.5s linear;
+        }
+
+        .pomo-btn {
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .pomo-btn-start {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .pomo-btn-start:hover {
+            background: #dc2626;
+        }
+
+        .pomo-btn-reset {
+            background: rgba(255, 255, 255, 0.06);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .pomo-btn-reset:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .pomo-mode-btn {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #71717a;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pomo-mode-btn.active {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        /* =========================
+   STICKY NOTES
+========================= */
+        .sticky-note {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .sticky-note textarea {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fde68a;
+            font-size: 13px;
+            width: 100%;
+            resize: none;
+            min-height: 60px;
+            font-family: inherit;
+        }
+
+        .sticky-note-del {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #78716c;
+            cursor: pointer;
+            font-size: 12px;
+            transition: color 0.2s;
+        }
+
+        .sticky-note-del:hover {
+            color: #f87171;
+        }
+
+        .add-note-btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px dashed rgba(251, 191, 36, 0.3);
+            background: rgba(251, 191, 36, 0.04);
+            color: #fbbf24;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-note-btn:hover {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.5);
+        }
+
+        /* =========================
+   BOOKMARKS
+========================= */
+        .bookmark-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            background: rgba(99, 102, 241, 0.05);
+            margin-bottom: 8px;
+        }
+
+        .bookmark-item span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a5b4fc;
+            flex: 1;
+        }
+
+        .bookmark-item a {
+            font-size: 11px;
+            color: #6366f1;
+            text-decoration: none;
+            margin-right: 8px;
+        }
+
+        .bookmark-item a:hover {
+            color: #818cf8;
+            text-decoration: underline;
+        }
+
+        .bookmark-del {
+            background: none;
+            border: none;
+            color: #52525b;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .bookmark-del:hover {
+            color: #f87171;
+        }
+
+        .bookmark-sub {
+            font-size: 10px;
+            color: #4f4f5e;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* =========================
+   EXAM COUNTDOWN
+========================= */
+        .countdown-card {
+            background: rgba(99, 102, 241, 0.07);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .countdown-val {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 10px;
+            color: #6366f1;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+   TYPING CURSOR
+========================= */
+        .typed-cursor {
+            display: inline-block;
+            width: 3px;
+            background: #a855f7;
+            animation: blink 0.7s infinite;
+            vertical-align: text-bottom;
+            height: 1em;
+            border-radius: 2px;
+        }
+
+        .typed-cursor-sub {
+            display: inline-block;
+            width: 2px;
+            background: #6366f1;
+            animation: blink 0.7s infinite;
+            vertical-align: text-bottom;
+            height: 1em;
+            border-radius: 1px;
+            opacity: 0.8;
+            transition: opacity 0.6s ease;
+        }
+
+        .typed-cursor-sub.done {
+            opacity: 0;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* =========================
+   MOBILE HAMBURGER
+========================= */
+        #hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+        }
+
+        #hamburger span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #94a3b8;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        #mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(5, 5, 5, 0.97);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        #mobile-menu.open {
+            display: flex;
+        }
+
+        #mobile-menu a {
+            font-size: 24px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        #mobile-menu a:hover {
+            color: #fff;
+        }
+
+        #menu-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: #71717a;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        @media(max-width:1024px) {
+            #hamburger {
+                display: flex;
+            }
+        }
+
+        /* =========================
+   STUDY TIPS TICKER
+========================= */
+        #tips-ticker {
+            overflow: hidden;
+            white-space: nowrap;
+            background: rgba(168, 85, 247, 0.07);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+            padding: 8px 0;
+        }
+
+        #tips-ticker-inner {
+            display: inline-block;
+            animation: ticker 160s linear infinite;
+            padding-left: 100%;
+            font-size: 13px;
+            color: #c084fc;
+            font-weight: 500;
+        }
+
+        #tips-ticker-inner span {
+            margin-right: 60px;
+        }
+
+        @keyframes ticker {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* =========================
+   DRIVE PREVIEW MODAL
+========================= */
+        #drive-modal {
+            display: block;
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #drive-modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #drive-modal-inner {
+            position: absolute;
+            inset: 5vh 2vw 0 2vw;
+            width: auto;
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(12, 12, 18, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-bottom: none;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 -12px 60px rgba(0, 0, 0, 0.7);
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #drive-modal.open #drive-modal-inner {
+            transform: translateY(0);
+        }
+
+        #drive-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(20, 20, 28, 0.9);
+            flex-shrink: 0;
+        }
+
+        #drive-modal-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e2e8f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .drive-modal-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 99px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: #a5b4fc;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        #drive-modal-open-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #67e8f9;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            transition: all 0.2s;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        #drive-modal-open-link:hover {
+            background: rgba(34, 211, 238, 0.18);
+            border-color: rgba(34, 211, 238, 0.5);
+        }
+
+        #drive-modal-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #86efac;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            transition: all 0.2s;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        #drive-modal-download:hover {
+            background: rgba(34, 197, 94, 0.18);
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        #drive-modal-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #71717a;
+            font-size: 16px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        #drive-modal-close:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #f87171;
+        }
+
+        #drive-iframe-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #drive-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #1a1a22;
+        }
+
+        #drive-spinner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: rgba(12, 12, 18, 0.97);
+            z-index: 2;
+            transition: opacity 0.3s ease;
+        }
+
+        #drive-spinner.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner-ring {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(99, 102, 241, 0.15);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #drive-spinner p {
+            font-size: 12px;
+            color: #52525b;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body class="text-slate-300 antialiased selection:bg-brand-primary selection:text-white">
@@ -76,514 +1135,903 @@
         </div>
     </div>
 
+    <!-- Auth Gate: redirect to login if no session -->
+    <script>
+        (function () {
+            const raw = sessionStorage.getItem('ss_user');
+            if (!raw) {
+                window.location.replace('/login');
+                return;
+            }
+            try {
+                const u = JSON.parse(raw);
+                document.addEventListener('DOMContentLoaded', function () {
+                    const loginBtn = document.getElementById('login-btn');
+                    const userProfile = document.getElementById('user-profile');
+                    const userName = document.getElementById('user-name');
+                    const userAvatar = document.getElementById('user-avatar');
+                    if (loginBtn) loginBtn.style.display = 'none';
+                    if (userProfile) {
+                        userProfile.classList.remove('hidden');
+                        userProfile.style.display = 'flex';
+                    }
+                    if (userName && u.name) userName.textContent = u.name.split(' ')[0];
+                    if (userAvatar && u.name) {
+                        userAvatar.src = 'https://ui-avatars.com/api/?name=' +
+                            encodeURIComponent(u.name) + '&background=6366f1&color=fff&size=64';
+                    }
+                });
+            } catch (e) { /* ignore */ }
+        })();
+
+        function signOut() {
+            sessionStorage.removeItem('ss_user');
+            sessionStorage.removeItem('ss_token');
+            fetch('/api/logout', { method: 'POST' }).catch(() => { });
+            window.location.href = '/login';
+        }
+    </script>
+
     <!-- Scroll Progress -->
     <div id="scroll-progress"></div>
 
-    <!-- Background Ambient Canvas -->
-    <canvas id="canvas-container"></canvas>
+    <!-- Study Tips Ticker -->
+    <div id="tips-ticker">
+        <div id="tips-ticker-inner">
+            <span>🌟 Join 25,000+ students leveling up their core engineering skills—visit skillsseekers.com and start your academic excellence journey today!</span>
+            <span>⚡ Pro Tip: 80% of exam questions repeat! Practice with our rigorously verified Solved PYQs module for all semesters.</span>
+            <span>🎯 Elevate your B.Tech journey: Follow the Skills Seekers Prep Guide for guaranteed CGPA boosts and strategic last-minute revision.</span>
+            <span>💻 Operating Systems: Master CPU Scheduling, Deadlocks, and Memory Paging with our End Term Express Course!</span>
+            <span>🌐 Crack Computer Networks: From OSI layers to TCP/IP—get the complete Theory, Practice & PYQs combo course today.</span>
+            <span>⚙️ Microprocessors & Architecture (MCA) simplified: 8086, hardware interfacing, and cache memory made easy.</span>
+            <span>🚀 Ace your DS Exam: Dive into specialized Data Structures (C++) Express Crash Courses for trees, graphs, and DP!</span>
+        </div>
+    </div>
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu">
         <button id="menu-close" onclick="closeMobileMenu()">✕</button>
-        <a href="/home" onclick="closeMobileMenu()" style="color:#818cf8">Dashboard</a>
-        <a href="/sem1" onclick="closeMobileMenu()">Semester 1</a>
-        <a href="/sem2" onclick="closeMobileMenu()">Semester 2</a>
-        <a href="/sem3" onclick="closeMobileMenu()">Semester 3</a>
-        <a href="/sem4" onclick="closeMobileMenu()">Semester 4</a>
-        <a href="/library" onclick="closeMobileMenu()">PYQ Library</a>
-        <a href="/courses" onclick="closeMobileMenu()">Courses</a>
-        <a href="/tools" onclick="closeMobileMenu()">Study Tools</a>
-        <a href="/dsa" onclick="closeMobileMenu()">DSA Lab</a>
-        <a href="/os" onclick="closeMobileMenu()">OS Lab</a>
+        <a href="#sem1" onclick="closeMobileMenu()">Sem 1</a>
+        <a href="#sem2" onclick="closeMobileMenu()">Sem 2</a>
+        <a href="#sem3" onclick="closeMobileMenu()">Sem 3</a>
+        <a href="#sem4" onclick="closeMobileMenu()">Sem 4</a>
+        <a href="#prep" onclick="closeMobileMenu()" style="color:#fbbf24">Prep Guide</a>
+        <a href="/dsa" onclick="closeMobileMenu()" style="color:#67e8f9">DSA Lab</a>
+        <a href="/os" onclick="closeMobileMenu()" style="color:#fbcfe8">OS Lab</a>
         <a href="https://www.skillsseekers.com" target="_blank" style="color:#6ee7b7">Skills Seekers ↗</a>
     </div>
+
+    <!-- Custom 3D Glowing Cyber Cursor & Canvas -->
+    <div id="cyber-cursor"></div>
+    <div id="cyber-cursor-dot"></div>
+    <canvas id="canvas-container"></canvas>
 
     <!-- Navigation Bar -->
     <nav class="sticky top-0 w-full z-50 glass-nav transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <a href="/home" class="flex items-center gap-3.5 group">
-                    <div class="h-10 w-10 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all duration-500 overflow-hidden bg-white">
-                        <img src="/logo.jpg" alt="BU Logo" class="h-full w-full object-cover">
+                <div class="flex items-center gap-3.5 group cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <div class="h-11 w-11 rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_35px_rgba(34,211,238,0.7)] group-hover:scale-105 transition-all duration-500 overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-700 p-0.5">
+                        <img src="/logo.jpg" alt="BU Logo" class="h-full w-full object-cover rounded-[14px]">
                     </div>
                     <div>
-                        <h1 class="text-lg font-display font-bold text-white tracking-tight group-hover:text-indigo-300 transition-colors">BU Resource Hub</h1>
                         <div class="flex items-center gap-2">
-                            <span class="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                            <p class="text-[10px] text-indigo-400 uppercase tracking-widest font-bold">Academic Platform</p>
+                            <h1 class="text-lg font-display font-bold text-white tracking-tight group-hover:text-cyan-300 transition-colors">BU Resource Hub</h1>
+                            <span class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-[9px] font-cyber text-cyan-400 tracking-wider">3D CORE</span>
                         </div>
-                    </div>
-                </a>
-
-                <!-- Desktop Nav Links -->
-                <div class="hidden lg:flex items-center space-x-1">
-                    <a href="/home" class="nav-link active">Dashboard</a>
-
-                    <div class="nav-dropdown">
-                        <button class="nav-link flex items-center gap-1.5">
-                            Semesters <i class="ph-bold ph-caret-down text-xs"></i>
-                        </button>
-                        <div class="nav-dropdown-content">
-                            <a href="/sem1" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-one"></i> Semester 1</a>
-                            <a href="/sem2" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-two"></i> Semester 2</a>
-                            <a href="/sem3" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-three"></i> Semester 3</a>
-                            <a href="/sem4" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-four"></i> Semester 4</a>
-                        </div>
-                    </div>
-
-                    <a href="/library" class="nav-link">PYQ Library</a>
-                    <a href="/courses" class="nav-link">Courses</a>
-                    <a href="/tools" class="nav-link">Study Tools</a>
-                    <a href="/dsa" class="nav-link text-cyan-400 hover:text-cyan-300 flex items-center gap-1"><i class="ph-fill ph-circles-three-plus"></i> DSA Lab</a>
-                    <a href="/os" class="nav-link text-pink-400 hover:text-pink-300 flex items-center gap-1"><i class="ph-fill ph-cpu"></i> OS Lab</a>
-
-                    <div id="streak-badge" onclick="showStreakInfo()" title="Your daily study streak">
-                        🔥 <span id="streak-num">0</span> Day Streak
-                    </div>
-
-                    <div class="h-4 w-px bg-white/10 mx-2"></div>
-
-                    <!-- Auth UI -->
-                    <div id="auth-container" class="flex items-center gap-3">
-                        <button id="login-btn" onclick="window.location.href='/login'" class="px-5 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 transition-all flex items-center gap-2">
-                            <i class="ph-bold ph-sign-in"></i> <span>Login</span>
-                        </button>
-                        <div id="user-profile" class="hidden items-center gap-2">
-                            <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="h-8 w-8 rounded-full border border-indigo-500">
-                            <span id="user-name" class="text-sm font-bold text-white hidden md:block">Student</span>
-                            <button onclick="signOut()" class="text-xs text-slate-400 hover:text-white transition-colors" title="Sign Out">
-                                <i class="ph-bold ph-sign-out text-lg"></i>
-                            </button>
+                        <div class="flex items-center gap-2">
+                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <p class="text-[10px] text-indigo-400 uppercase tracking-widest font-bold font-mono">Skills Seekers Network</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Mobile Hamburger Button -->
+                <!-- 3D HUD Controls -->
+                <div class="hidden md:flex items-center gap-2">
+                    <button id="theme-btn" onclick="cycle3DTheme()" class="hud-pill px-3 py-1.5 rounded-full text-xs font-mono font-bold text-slate-300 flex items-center gap-1.5 hover:text-white" title="Switch 3D Scene Theme">
+                        <i class="ph-fill ph-planet text-cyan-400 text-sm"></i>
+                        <span id="theme-label">Nebula 3D</span>
+                    </button>
+
+                    <button id="sound-btn" onclick="toggleCyberSound()" class="hud-pill px-3 py-1.5 rounded-full text-xs font-mono font-bold text-slate-300 flex items-center gap-1.5 hover:text-white" title="Toggle 3D Audio FX">
+                        <div class="sound-wave" id="sound-wave-ui">
+                            <div class="sound-bar"></div>
+                            <div class="sound-bar"></div>
+                            <div class="sound-bar"></div>
+                        </div>
+                        <span id="sound-label">FX ON</span>
+                    </button>
+
+                    <div class="hud-pill px-2.5 py-1.5 rounded-full text-[11px] font-mono text-cyan-300 hidden lg:flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="fps-counter">60 FPS</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Hamburger -->
                 <button id="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
                     <span></span><span></span><span></span>
                 </button>
+
+                <div class="hidden lg:block">
+                    <div class="flex items-center space-x-1">
+                        <a href="#sem1" class="px-3.5 py-2 rounded-full text-sm font-medium hover:bg-white/5 hover:text-white transition-all text-slate-400">Sem 1</a>
+                        <a href="#sem2" class="px-3.5 py-2 rounded-full text-sm font-medium hover:bg-white/5 hover:text-white transition-all text-slate-400">Sem 2</a>
+                        <a href="#sem3" class="px-3.5 py-2 rounded-full text-sm font-medium hover:bg-white/5 hover:text-white transition-all text-slate-400">Sem 3</a>
+                        <a href="#sem4" class="px-3.5 py-2 rounded-full text-sm font-medium hover:bg-white/5 hover:text-white transition-all text-slate-400">Sem 4</a>
+                        <a href="#prep" class="px-3.5 py-2 rounded-full text-sm font-medium hover:bg-white/5 hover:text-white transition-all text-brand-accent font-semibold">Prep Guide</a>
+
+                        <a href="/dsa" class="px-3.5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 border border-cyan-500/30">
+                            <i class="ph-fill ph-circles-three-plus"></i> DSA Lab
+                        </a>
+
+                        <a href="/os" class="px-3.5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-1.5 text-pink-300 hover:text-pink-200 bg-pink-500/10 border border-pink-500/30">
+                            <i class="ph-fill ph-cpu"></i> OS Lab
+                        </a>
+
+                        <div id="streak-badge" onclick="showStreakInfo()" title="Your daily study streak">
+                            🔥 <span id="streak-num">0</span> Day Streak
+                        </div>
+                        <div class="h-4 w-px bg-white/10 mx-2"></div>
+
+                        <!-- Auth UI -->
+                        <div id="auth-container" class="flex items-center gap-3">
+                            <button id="login-btn" onclick="window.location.href='/login'" class="px-5 py-2.5 rounded-full text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all flex items-center gap-2">
+                                <i class="ph-bold ph-sign-in"></i>
+                                <span>Login</span>
+                            </button>
+                            <div id="user-profile" class="hidden items-center gap-2">
+                                <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="h-8 w-8 rounded-full border border-indigo-500">
+                                <span id="user-name" class="text-sm font-bold text-white hidden md:block">Student</span>
+                                <button onclick="signOut()" class="text-xs text-slate-400 hover:text-white transition-colors" title="Sign Out">
+                                    <i class="ph-bold ph-sign-out text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="h-4 w-px bg-white/10 mx-2"></div>
+
+                        <a href="https://www.skillsseekers.com/s/store" target="_blank" class="px-4 py-2.5 rounded-full text-sm font-bold bg-white text-black hover:bg-indigo-50 hover:shadow-[0_0_25px_rgba(255,255,255,0.4)] hover:scale-105 transition-all flex items-center gap-2">
+                            <span>Skills Seekers</span>
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Dynamic Hero Section -->
-    <section class="relative pt-16 pb-20 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+    <!-- Hero Section -->
+    <div class="relative pt-24 pb-20 overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-primary/15 rounded-full blur-[140px] -z-10 animate-pulse duration-[4s]"></div>
 
-            <!-- Dynamic Animated Headline (Restored Original) -->
-            <h1 class="text-5xl md:text-8xl font-display font-bold text-white tracking-tight mb-8 leading-[1.1]" id="hero-typewriter-h1" style="min-height:3.2em">
+        <div class="relative max-w-5xl mx-auto px-4 text-center z-10 hero-content">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 text-xs font-cyber font-bold mb-6 backdrop-blur-md shadow-[0_0_25px_rgba(34,211,238,0.2)]">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                ⚡ QUANTUM 3D EXPERIENCE • 2026 EDITION
+            </div>
+
+            <h1 class="text-5xl md:text-8xl font-display font-extrabold text-white tracking-tight mb-6 leading-[1.1]" id="hero-typewriter-h1" style="min-height:2.8em">
                 <span id="hero-tw-text"></span><span class="typed-cursor"></span>
             </h1>
 
-            <!-- Subtitle with Typewriter Suffix (Restored Original) -->
-            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed" id="hero-sub-p" style="min-height:4.2em">
+            <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-8 font-light leading-relaxed" id="hero-sub-p" style="min-height:3.5em">
                 <span id="hero-sub-tw"></span><span class="typed-cursor-sub" id="hero-sub-cursor"></span>
             </p>
 
-            <!-- Quick Jump Search Bar with 3D Tilt -->
-            <div class="max-w-2xl mx-auto mb-14">
-                <form action="/library" method="GET" class="relative flex items-center bg-zinc-900/90 border border-zinc-700/80 rounded-2xl p-2 shadow-2xl focus-within:border-indigo-500 transition-all backdrop-blur-xl hover:shadow-[0_0_35px_rgba(99,102,241,0.25)]">
-                    <div class="pl-4 text-slate-400">
-                        <i class="ph-bold ph-magnifying-glass text-xl"></i>
+            <!-- Search bar and Call to action -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mb-12">
+                <div class="w-full sm:w-96 relative group">
+                    <div class="relative bg-zinc-900/80 border border-zinc-700/70 rounded-full flex items-center hover:border-indigo-500 transition-all duration-300 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/30 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md">
+                        <div class="pl-6 text-slate-400 group-focus-within:text-cyan-400 transition-colors">
+                            <i class="ph-bold ph-magnifying-glass text-lg"></i>
+                        </div>
+                        <input type="text" id="searchInput" onkeyup="filterSubjects()" class="w-full bg-transparent border-0 py-4 px-4 text-white placeholder-zinc-500 focus:ring-0 text-base font-medium outline-none" placeholder="Find subject (e.g., Calculus)...">
                     </div>
-                    <input type="text" name="q" placeholder="Search any subject, semester, or exam (e.g. Calculus, DSA Midsem)..." class="w-full bg-transparent border-0 py-3 px-4 text-sm sm:text-base text-white placeholder-zinc-500 focus:outline-none">
-                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-bold transition-all shrink-0 shadow-md flex items-center gap-1.5">
-                        <span>Search</span> <i class="ph-bold ph-arrow-right"></i>
-                    </button>
-                </form>
+                </div>
+                <a href="https://www.skillsseekers.com/s/store" target="_blank" class="px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold transition-all shadow-[0_0_25px_rgba(99,102,241,0.4)] hover:shadow-[0_0_35px_rgba(34,211,238,0.6)] flex items-center gap-2 group hover:-translate-y-1">
+                    <span>Visit Skills Seekers</span>
+                    <i class="ph-bold ph-rocket-launch group-hover:rotate-45 transition-transform"></i>
+                </a>
             </div>
 
-            <!-- Platform Live Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <div class="stat-card tilt-card">
-                    <div class="stat-number">4</div>
-                    <div class="stat-label">B.Tech Semesters</div>
+            <!-- 3D Holographic Jump Gate (Quantum Portal) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 max-w-4xl mx-auto mb-16 perspective-container">
+                <div onclick="warpToSemester('sem1')" class="portal-card p-4 text-center cursor-pointer group">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                        <i class="ph-bold ph-number-circle-one text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-white group-hover:text-blue-300 transition-colors">Sem 01</div>
+                    <div class="text-[10px] text-slate-500">Calculus & ECE</div>
                 </div>
-                <div class="stat-card tilt-card">
-                    <div class="stat-number text-blue-400">42+</div>
-                    <div class="stat-label">Verified PYQ Papers</div>
-                </div>
-                <div class="stat-card tilt-card">
-                    <div class="stat-number text-purple-400">12+</div>
-                    <div class="stat-label">Crash Courses</div>
-                </div>
-                <div class="stat-card tilt-card">
-                    <div class="stat-number text-emerald-400">100%</div>
-                    <div class="stat-label">Free Open Access</div>
-                </div>
-            </div>
 
+                <div onclick="warpToSemester('sem2')" class="portal-card p-4 text-center cursor-pointer group">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                        <i class="ph-bold ph-number-circle-two text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-white group-hover:text-purple-300 transition-colors">Sem 02</div>
+                    <div class="text-[10px] text-slate-500">Linear Alg & Java</div>
+                </div>
+
+                <div onclick="warpToSemester('sem3')" class="portal-card p-4 text-center cursor-pointer group">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+                        <i class="ph-bold ph-number-circle-three text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">Sem 03</div>
+                    <div class="text-[10px] text-slate-500">DS (C++) & SML</div>
+                </div>
+
+                <div onclick="warpToSemester('sem4')" class="portal-card p-4 text-center cursor-pointer group">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-pink-500/10 border border-pink-500/30 text-pink-400 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-pink-500/20 transition-all shadow-[0_0_15px_rgba(244,114,182,0.2)]">
+                        <i class="ph-bold ph-number-circle-four text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-white group-hover:text-pink-300 transition-colors">Sem 04</div>
+                    <div class="text-[10px] text-slate-500">DAA & OS & AI</div>
+                </div>
+
+                <a href="/dsa" class="portal-card p-4 text-center cursor-pointer group block">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-teal-500/20 transition-all shadow-[0_0_15px_rgba(20,184,166,0.2)]">
+                        <i class="ph-bold ph-tree-structure text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-white group-hover:text-teal-300 transition-colors">DSA Lab</div>
+                    <div class="text-[10px] text-slate-500">20+ 3D Algorithms</div>
+                </a>
+
+                <a href="/os" class="portal-card p-4 text-center cursor-pointer group block">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                        <i class="ph-bold ph-cpu text-lg"></i>
+                    </div>
+                    <div class="text-xs font-bold text-white group-hover:text-amber-300 transition-colors">OS Lab</div>
+                    <div class="text-[10px] text-slate-500">14+ Interactive Sims</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Highlights Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 fade-in-section">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="premium-card p-8 rounded-3xl flex flex-col items-center text-center group">
+                <div class="card-glow"></div>
+                <div class="h-14 w-14 bg-zinc-800/80 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 text-3xl relative z-10 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <i class="ph-fill ph-seal-check"></i>
+                </div>
+                <h3 class="text-white font-bold text-xl mb-3 relative z-10">Curated & Verified</h3>
+                <p class="text-slate-400 text-sm leading-relaxed relative z-10">Eliminate uncertainty. Every resource is rigorously vetted by top-performing seniors.</p>
+            </div>
+            <div class="premium-card p-8 rounded-3xl flex flex-col items-center text-center group">
+                <div class="card-glow"></div>
+                <div class="h-14 w-14 bg-zinc-800/80 rounded-2xl flex items-center justify-center text-purple-400 mb-6 text-3xl relative z-10 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <i class="ph-fill ph-target"></i>
+                </div>
+                <h3 class="text-white font-bold text-xl mb-3 relative z-10">Exam Focused</h3>
+                <p class="text-slate-400 text-sm leading-relaxed relative z-10">Precision-engineered content tailored specifically for the Bennett University curriculum.</p>
+            </div>
+            <div class="premium-card p-8 rounded-3xl flex flex-col items-center text-center group">
+                <div class="card-glow"></div>
+                <div class="h-14 w-14 bg-zinc-800/80 rounded-2xl flex items-center justify-center text-brand-accent mb-6 text-3xl relative z-10 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <i class="ph-fill ph-users-three"></i>
+                </div>
+                <h3 class="text-white font-bold text-xl mb-3 relative z-10">Community Driven</h3>
+                <p class="text-slate-400 text-sm leading-relaxed relative z-10">Built by students, for students. Fueled by the expansive Skills Seekers network.</p>
+            </div>
         </div>
     </section>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 space-y-24">
+    <!-- Exam Countdown + Filter Tabs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <div class="flex flex-wrap gap-3 mb-2">
+            <button class="sem-tab active" onclick="filterSem('all',this)">All Semesters</button>
+            <button class="sem-tab" onclick="filterSem('sem1',this)">Semester 1</button>
+            <button class="sem-tab" onclick="filterSem('sem2',this)">Semester 2</button>
+            <button class="sem-tab" onclick="filterSem('sem3',this)">Semester 3</button>
+            <button class="sem-tab" onclick="filterSem('sem4',this)">Semester 4</button>
+            <button class="sem-tab" onclick="filterSem('prep',this)" style="color:#fbbf24;border-color:rgba(251,191,36,0.3)">Prep Guide</button>
+        </div>
+    </div>
 
-        <!-- Section 1: Semester Hub Cards with 3D Depth -->
-        <section>
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 border-b border-white/5 pb-6">
-                <div>
-                    <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Select Your Semester</h2>
-                    <p class="text-slate-400 text-sm mt-1">Direct access to verified previous year questions organized by subject and exam.</p>
-                </div>
-                <a href="/library" class="text-sm text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1.5 transition-colors">
-                    Explore Universal Library <i class="ph-bold ph-arrow-right"></i>
-                </a>
+    <!-- Main Semester Sections -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 space-y-32">
+
+        <!-- Semester 1 -->
+        <section id="sem1" class="semester-section">
+            <div class="mb-12 border-l-4 border-blue-500 pl-6 py-1">
+                <h2 class="text-4xl font-display font-bold text-white">Semester 01</h2>
+                <p class="text-slate-500 mt-2 font-medium tracking-wide">Core Engineering Foundations</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <!-- Semester 1 Card -->
-                <a href="/sem1" class="sem-hub-card tilt-card group">
-                    <div class="glow-orb bg-blue-500/20 top-0 right-0"></div>
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="h-12 w-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-2xl group-hover:scale-110 transition-transform">
-                                <i class="ph-fill ph-number-circle-one"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Calculus -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                                <i class="ph-fill ph-function text-2xl"></i>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full bg-zinc-800 text-[11px] font-mono text-zinc-400 border border-zinc-700">20 Credits</span>
+                            <span class="px-2 py-1 rounded bg-zinc-800 text-[10px] font-mono text-zinc-400 border border-zinc-700">4 Credits</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mb-2 font-display group-hover:text-blue-400 transition-colors">Semester 01</h3>
-                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Calculus, Electronics, Mechanics & Electromagnetism, Python, Digital Design.</p>
-                        <div class="flex items-center justify-between text-xs font-bold text-blue-400 pt-4 border-t border-white/5">
-                            <span>5 Subjects • 15+ PYQs</span>
-                            <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-blue-400 transition-colors">Engineering Calculus</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Limits, derivatives, integrals, and their applications in engineering.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1G7kTYB2ltfbacOX7oZ2SONjCZHeRx8Ic/view?usp=drivesdk" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all group/btn hover:border-blue-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-blue-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1DzjJG5-6xhz7j9cLQQnK8rUSUXU1N_7q/view?usp=drivesdk" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all group/btn hover:border-blue-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-blue-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1Xe82-7_5BJOEz4NdQSGBqHQJJVtHjCxp/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all group/btn hover:border-blue-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-blue-400"></i>
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
 
-                <!-- Semester 2 Card -->
-                <a href="/sem2" class="sem-hub-card tilt-card group">
-                    <div class="glow-orb bg-purple-500/20 top-0 right-0"></div>
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 transition-transform">
-                                <i class="ph-fill ph-number-circle-two"></i>
+                <!-- Electronics -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 group-hover:bg-yellow-500/20 transition-colors">
+                                <i class="ph-fill ph-lightning text-2xl"></i>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full bg-zinc-800 text-[11px] font-mono text-zinc-400 border border-zinc-700">16 Credits</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mb-2 font-display group-hover:text-purple-400 transition-colors">Semester 02</h3>
-                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Linear Algebra & ODE, OOP Java, Discrete Mathematics, Environment.</p>
-                        <div class="flex items-center justify-between text-xs font-bold text-purple-400 pt-4 border-t border-white/5">
-                            <span>4 Subjects • 15+ PYQs</span>
-                            <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-yellow-400 transition-colors">Electronics</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Fundamental circuit theory, diodes, transistors and logic gates.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1Ml3dKyHPQBlWB3jP4qx6EGES0qBx-IyF/view?usp=drivesdk" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-yellow-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-yellow-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1CM6ttww-zcjEqPNeqMOOFF3Bj7V7XYDt/view?usp=drivesdk" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-yellow-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-yellow-400"></i>
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
 
-                <!-- Semester 3 Card -->
-                <a href="/sem3" class="sem-hub-card tilt-card group">
-                    <div class="glow-orb bg-rose-500/20 top-0 right-0"></div>
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="h-12 w-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-2xl group-hover:scale-110 transition-transform">
-                                <i class="ph-fill ph-number-circle-three"></i>
+                <!-- Mechanics -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 group-hover:bg-red-500/20 transition-colors">
+                                <i class="ph-fill ph-magnet text-2xl"></i>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full bg-zinc-800 text-[11px] font-mono text-zinc-400 border border-zinc-700">20 Credits</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mb-2 font-display group-hover:text-rose-400 transition-colors">Semester 03</h3>
-                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Data Structures (C++), SML Machine Learning, Probability & Statistics, Python DA, IMS.</p>
-                        <div class="flex items-center justify-between text-xs font-bold text-rose-400 pt-4 border-t border-white/5">
-                            <span>5 Subjects • 20+ PYQs</span>
-                            <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-red-400 transition-colors">Mechanics & Electromagnetism</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Newtonian mechanics, Maxwell's equations and wave optics.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1MgC1o9PMD7c1GwXKlLSHMdzEWkgmALrg/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-red-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2024 (odd)</span>
+                                <i class="ph-bold ph-download-simple text-red-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1buhBRDH5djgNx3tQII4sqC9I4GnopLUq/view?usp=drivesdk" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-red-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2024 (odd)</span>
+                                <i class="ph-bold ph-download-simple text-red-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1UWf5gaybZCcKtpskBGFPwIugUyA9boDd/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-red-500/30">
+                                <span class="text-xs font-bold text-slate-300">End Sem 2025 (Odd Sem)</span>
+                                <i class="ph-bold ph-download-simple text-red-400"></i>
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
 
-                <!-- Semester 4 Card -->
-                <a href="/sem4" class="sem-hub-card tilt-card group">
-                    <div class="glow-orb bg-amber-500/20 top-0 right-0"></div>
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition-transform">
-                                <i class="ph-fill ph-number-circle-four"></i>
+                <!-- Python -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+                                <i class="ph-fill ph-code text-2xl"></i>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full bg-zinc-800 text-[11px] font-mono text-zinc-400 border border-zinc-700">23 Credits</span>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mb-2 font-display group-hover:text-amber-400 transition-colors">Semester 04</h3>
-                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Algorithms (DAA), Operating Systems, Computer Networks, AI & ML, Microprocessors.</p>
-                        <div class="flex items-center justify-between text-xs font-bold text-amber-400 pt-4 border-t border-white/5">
-                            <span>5 Subjects • 22+ PYQs</span>
-                            <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                        </div>
-                    </div>
-                </a>
-
-            </div>
-        </section>
-
-        <!-- Section 2: Premium Skills Seekers Promotional Showcase -->
-        <section class="skills-seekers-banner rounded-3xl p-8 md:p-14 relative overflow-hidden tilt-card">
-            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                <div class="lg:col-span-8">
-                    <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight mb-4 leading-tight">
-                        Ace Your Semester with <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-purple-400 to-indigo-300">Skills Seekers Mastercourses</span>
-                    </h2>
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl font-light">
-                        Fast-track your exam preparation with high-yield video crash courses, solved tutorial sheets, and step-by-step previous year question explanations mapped directly to Bennett University curriculum.
-                    </p>
-
-                    <div class="flex flex-wrap items-center gap-4">
-                        <a href="https://www.skillsseekers.com/s/store" target="_blank" rel="noopener" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-2xl text-sm transition-all shadow-xl shadow-amber-500/20 flex items-center gap-2 group">
-                            <span>Explore All Crash Courses</span>
-                            <i class="ph-bold ph-arrow-up-right text-lg group-hover:translate-x-1 transition-transform"></i>
-                        </a>
-                        <a href="/courses" class="px-6 py-4 bg-white/10 hover:bg-white/15 text-white border border-white/20 rounded-2xl text-sm font-bold transition-all flex items-center gap-2">
-                            <span>View Course Catalog</span>
-                            <i class="ph-bold ph-books"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Right Side Interactive Feature Highlights (No hardcoded individual courses) -->
-                <div class="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
-                    <div class="p-4 rounded-2xl bg-black/50 border border-white/10 backdrop-blur-md flex items-center gap-3.5">
-                        <div class="h-10 w-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl shrink-0">
-                            <i class="ph-fill ph-check-circle"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-white">BU Syllabus Aligned</h4>
-                            <p class="text-xs text-slate-400">100% targeted to Bennett exams</p>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-2xl bg-black/50 border border-white/10 backdrop-blur-md flex items-center gap-3.5">
-                        <div class="h-10 w-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl shrink-0">
-                            <i class="ph-fill ph-video-camera"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Express Video Sprints</h4>
-                            <p class="text-xs text-slate-400">Fast concept mastery before exams</p>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-2xl bg-black/50 border border-white/10 backdrop-blur-md flex items-center gap-3.5">
-                        <div class="h-10 w-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shrink-0">
-                            <i class="ph-fill ph-file-text"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Step-by-Step Solutions</h4>
-                            <p class="text-xs text-slate-400">Solved tutorial sheets & past papers</p>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-green-400 transition-colors">Computational Thinking</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Introduction to algorithmic logic, programming foundations, and Python syntax.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1Pke5DVHy7qIniFMi55JAy6AmK8eWEU4E/view?usp=drive_link" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-green-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-green-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1Cbq7R0_-KIqCVwqC4ZqorlfBo80XLct8/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-green-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-green-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1HuFUwJ8cvv1Kp_VnCw-ikW01U8XKj0GE/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-green-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-green-400"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Section 3: Featured & High-Traffic PYQ Papers -->
-        <section>
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 border-b border-white/5 pb-6">
-                <div>
-                    <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Featured Question Papers</h2>
-                    <p class="text-slate-400 text-sm mt-1">Highest requested exam sets with instant 1-click preview.</p>
-                </div>
-                <a href="/library" class="text-sm text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1.5 transition-colors">
-                    View All 42+ Papers <i class="ph-bold ph-arrow-right"></i>
-                </a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <!-- Featured 1 -->
-                <div class="premium-card p-6 rounded-2xl flex flex-col justify-between tilt-card group">
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs text-blue-400 font-bold">Semester 1</span>
-                            <span class="text-xs text-slate-500 font-mono">Endsem 2025</span>
+                <!-- Digital Design in Sem 1 -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 group-hover:bg-pink-500/20 transition-colors">
+                                <i class="ph-fill ph-circuitry text-2xl"></i>
+                            </div>
                         </div>
-                        <h4 class="text-lg font-bold text-white mb-1 font-display group-hover:text-blue-400 transition-colors">Engineering Calculus</h4>
-                        <p class="text-xs text-slate-400 mb-6">Latest Endsem paper with multivariable integrals & series.</p>
-                    </div>
-                    <a href="https://drive.google.com/file/d/1Xe82-7_5BJOEz4NdQSGBqHQJJVtHjCxp/view?usp=sharing" class="flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-blue-400 transition-all hover:border-blue-500/40">
-                        <span>Preview Paper</span>
-                        <i class="ph-bold ph-arrow-square-out text-base"></i>
-                    </a>
-                </div>
-
-                <!-- Featured 2 -->
-                <div class="premium-card p-6 rounded-2xl flex flex-col justify-between tilt-card group">
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs text-purple-400 font-bold">Semester 2</span>
-                            <span class="text-xs text-slate-500 font-mono">Endsem 2025</span>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-pink-400 transition-colors">Digital Design</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Boolean algebra, logic gates, flip-flops and sequential circuit design.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1vjMd4MCW-zTtIYiHhhWVeyhMEd6Yvj-T/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-pink-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-pink-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1DKzexsBewTV76jxaXU37a9OuSk8idAAz/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-pink-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-pink-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1n6-tERlti9IYtHL4dswtZOv9tGGFg2D4/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-pink-500/30">
+                                <span class="text-xs font-bold text-slate-300">End term 2026</span>
+                                <i class="ph-bold ph-download-simple text-pink-400"></i>
+                            </a>
                         </div>
-                        <h4 class="text-lg font-bold text-white mb-1 font-display group-hover:text-purple-400 transition-colors">Linear Algebra & ODE</h4>
-                        <p class="text-xs text-slate-400 mb-6">Matrix decompositions, eigenvalues, and ODE solutions.</p>
                     </div>
-                    <a href="https://drive.google.com/file/d/1CmXBWHDVf-Op_GciNYj25-azKBALmszM/view?usp=sharing" class="flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-purple-400 transition-all hover:border-purple-500/40">
-                        <span>Preview Paper</span>
-                        <i class="ph-bold ph-arrow-square-out text-base"></i>
-                    </a>
-                </div>
-
-                <!-- Featured 3 -->
-                <div class="premium-card p-6 rounded-2xl flex flex-col justify-between tilt-card group">
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs text-cyan-400 font-bold">Semester 3</span>
-                            <span class="text-xs text-slate-500 font-mono">Endsem 2025</span>
-                        </div>
-                        <h4 class="text-lg font-bold text-white mb-1 font-display group-hover:text-cyan-400 transition-colors">Data Structures (C++)</h4>
-                        <p class="text-xs text-slate-400 mb-6">Binary Trees, Heaps, AVL Trees, and Graph Algorithms.</p>
-                    </div>
-                    <a href="https://drive.google.com/file/d/1L7wssCE1dwLPfqUROTE9MMkDVzSjeAiJ/view?usp=sharing" class="flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-cyan-400 transition-all hover:border-cyan-500/40">
-                        <span>Preview Paper</span>
-                        <i class="ph-bold ph-arrow-square-out text-base"></i>
-                    </a>
-                </div>
-
-                <!-- Featured 4 -->
-                <div class="premium-card p-6 rounded-2xl flex flex-col justify-between tilt-card group">
-                    <div class="tilt-inner">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs text-green-400 font-bold">Semester 4</span>
-                            <span class="text-xs text-slate-500 font-mono">Midsem 2025</span>
-                        </div>
-                        <h4 class="text-lg font-bold text-white mb-1 font-display group-hover:text-green-400 transition-colors">Operating Systems</h4>
-                        <p class="text-xs text-slate-400 mb-6">Process synchronization, Semaphores, and Paging schemes.</p>
-                    </div>
-                    <a href="https://drive.google.com/file/d/1hBUt2Q60kvYlU4pjlaLTNVkYKkYu-ES4/view?usp=sharing" class="flex items-center justify-between px-4 py-2.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-green-400 transition-all hover:border-green-500/40">
-                        <span>Preview Paper</span>
-                        <i class="ph-bold ph-arrow-square-out text-base"></i>
-                    </a>
                 </div>
 
             </div>
         </section>
 
-        <!-- Section 4: Interactive Virtual Labs -->
-        <section class="premium-card p-8 md:p-12 rounded-3xl relative overflow-hidden tilt-card">
-            <div class="card-glow"></div>
-            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div class="lg:col-span-8">
-                    <h2 class="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight mb-4">
-                        Master Complex Concepts with <span class="text-cyan-400">Virtual Interactive Labs</span>
-                    </h2>
-                    <p class="text-slate-400 text-sm sm:text-base leading-relaxed font-light mb-6">
-                        Step through data structures algorithm-by-algorithm or simulate OS CPU scheduling, page replacement, and memory allocation in real-time.
-                    </p>
-                    <div class="flex flex-wrap items-center gap-4">
-                        <a href="/dsa" class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg flex items-center gap-2">
-                            <i class="ph-bold ph-circles-three-plus text-lg"></i> Launch DSA Visualizer
-                        </a>
-                        <a href="/os" class="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-pink-400 border border-pink-500/30 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
-                            <i class="ph-bold ph-desktop text-lg"></i> Launch OS Lab Simulator
-                        </a>
+        <!-- Semester 2 -->
+        <section id="sem2" class="semester-section">
+            <div class="mb-12 border-l-4 border-purple-500 pl-6 py-1">
+                <h2 class="text-4xl font-display font-bold text-white">Semester 02</h2>
+                <p class="text-slate-500 mt-2 font-medium tracking-wide">Advanced Mathematics & Core CS</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Linear Algebra -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors">
+                                <i class="ph-fill ph-matrix-logo text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-purple-400 transition-colors">Linear Algebra & ODE</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Matrices, vector spaces, eigenvalues and differential equations.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1CmXBWHDVf-Op_GciNYj25-azKBALmszM/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-purple-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-purple-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1k2jCLTIFOwLTY5zr-qyLH_orGYshrA7k/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-purple-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2026</span>
+                                <i class="ph-bold ph-download-simple text-purple-400"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 flex justify-center">
-                    <div class="w-full max-w-xs bg-black/50 border border-white/10 rounded-2xl p-6 text-center">
-                        <div class="text-4xl mb-3">⚡</div>
-                        <div class="text-base font-bold text-white mb-1 font-display">Hands-On Practice</div>
-                        <p class="text-xs text-slate-400">Simulate Round Robin, FCFS, Binary Trees, Dijkstra, and Memory Paging.</p>
+                <!-- OOP Java -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:bg-orange-500/20 transition-colors">
+                                <i class="ph-fill ph-coffee text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-orange-400 transition-colors">OOP (Java)</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Object Oriented Paradigms, inheritance, polymorphism and Java frameworks.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1q4Obylb2K5HdqMWKiHBVoQyWuv4GUAc4/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-orange-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-orange-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1oJvzswQH_DC-DSmRapfQKke3hc-b3lW0/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-orange-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2024</span>
+                                <i class="ph-bold ph-download-simple text-orange-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/10KvtV3E2rOIo6W7nUgUyaQDYm2kq0tcF/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-orange-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-orange-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discrete Math -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 group-hover:bg-teal-500/20 transition-colors">
+                                <i class="ph-fill ph-sigma text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-teal-400 transition-colors">Discrete Mathematics</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Set theory, formal logic, graph theory, and combinatorics.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1Gqj5Otz3WURQLrSRG2DMsv2E4cD3JbfE/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-teal-500/30">
+                                <span class="text-xs font-bold text-slate-300">End term 2026</span>
+                                <i class="ph-bold ph-download-simple text-teal-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1_gly7-DpAawLIXP2ww8JIzREj_Nivs4_/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-teal-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-teal-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Environment -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                                <i class="ph-fill ph-plant text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-emerald-400 transition-colors">Environment</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Ecology, biodiversity, and environmental sustainability studies.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1UzcSvKVfFLgzh5JMG4H1oVvKV3aCkoGd/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-emerald-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025 (Even Sem)</span>
+                                <i class="ph-bold ph-download-simple text-emerald-400"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 5: Study Tools Quick Access -->
-        <section>
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 border-b border-white/5 pb-6">
-                <div>
-                    <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Study Tools & CGPA Calculator</h2>
-                    <p class="text-slate-400 text-sm mt-1">Built-in student productivity utilities to keep you focused and on track.</p>
-                </div>
-                <a href="/tools" class="text-sm text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1.5 transition-colors">
-                    Open All Study Tools <i class="ph-bold ph-arrow-right"></i>
-                </a>
+        <!-- Semester 3 -->
+        <section id="sem3" class="semester-section">
+            <div class="mb-12 border-l-4 border-rose-500 pl-6 py-1">
+                <h2 class="text-4xl font-display font-bold text-white">Semester 03</h2>
+                <p class="text-slate-500 mt-2 font-medium tracking-wide">Specialization & Data Structures</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                <div class="premium-card p-6 rounded-2xl tilt-card">
-                    <div class="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xl mb-4">
-                        <i class="ph-fill ph-timer"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Data Structures -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                                <i class="ph-fill ph-tree-structure text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-cyan-400 transition-colors">Data Structures (C++)</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Arrays, Linked Lists, Trees, Graphs, and efficient algorithm design.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1-O748iAfoXZ2_-oXyok-nlm6Ftbz_RBS/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-cyan-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-cyan-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1L7wssCE1dwLPfqUROTE9MMkDVzSjeAiJ/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-cyan-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-cyan-400"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2 font-display">Pomodoro Focus Timer</h3>
-                    <p class="text-xs text-slate-400 mb-4 leading-relaxed">Run distraction-free focus sessions with custom 25/5 intervals and sound alerts.</p>
-                    <a href="/tools" class="text-xs font-bold text-red-400 hover:underline flex items-center gap-1">Open Timer <i class="ph-bold ph-arrow-right"></i></a>
                 </div>
 
-                <div class="premium-card p-6 rounded-2xl tilt-card">
-                    <div class="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl mb-4">
-                        <i class="ph-fill ph-calculator"></i>
+                <!-- SML -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:bg-violet-500/20 transition-colors">
+                                <i class="ph-fill ph-brain text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-violet-400 transition-colors">SML (Machine Learning)</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Statistical Machine Learning concepts, models and regression analysis.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1Rrh0qLWPu2QzioSMjUWieqLb3G7arwqt/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-violet-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-violet-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1epuRQ9YcexCGA3MtUi-u0mnlv352_291/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-violet-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-violet-400"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2 font-display">SGPA / CGPA Calculator</h3>
-                    <p class="text-xs text-slate-400 mb-4 leading-relaxed">Calculate exact GPA across weighted course credits based on Bennett University scale.</p>
-                    <a href="/tools" class="text-xs font-bold text-indigo-400 hover:underline flex items-center gap-1">Calculate Score <i class="ph-bold ph-arrow-right"></i></a>
                 </div>
 
-                <div class="premium-card p-6 rounded-2xl tilt-card">
-                    <div class="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl mb-4">
-                        <i class="ph-fill ph-alarm"></i>
+                <!-- Probability & Statistics -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-colors">
+                                <i class="ph-fill ph-chart-bar text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-amber-400 transition-colors">Probability & Statistics</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Data analysis, distributions, hypothesis testing, and linear regression.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1WDe8cIwQRBrPo1jwi8xtVNUtmWvENg6C/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-amber-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-amber-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1U8e7TExeu7m0b3Dg7GPfTwjNQeEB0U_U/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg transition-all hover:bg-zinc-800 hover:border-amber-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-amber-400"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-2 font-display">Exam Target Countdown</h3>
-                    <p class="text-xs text-slate-400 mb-4 leading-relaxed">Set custom exam targets and see live days, hours, and seconds remaining.</p>
-                    <a href="/tools" class="text-xs font-bold text-amber-400 hover:underline flex items-center gap-1">Set Target <i class="ph-bold ph-arrow-right"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Semester 4 -->
+        <section id="sem4" class="semester-section">
+            <div class="mb-12 border-l-4 border-amber-500 pl-6 py-1">
+                <h2 class="text-4xl font-display font-bold text-white">Semester 04</h2>
+                <p class="text-slate-500 mt-2 font-medium tracking-wide">Advanced Computing & Systems</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Operating Systems -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+                                <i class="ph-fill ph-desktop text-2xl"></i>
+                            </div>
+                            <span class="px-2 py-1 rounded bg-zinc-800 text-[10px] font-mono text-zinc-400 border border-zinc-700">4 Credits</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-green-400 transition-colors">Operating Systems</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Process management, memory paging, deadlocks, and file systems.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1hBUt2Q60kvYlU4pjlaLTNVkYKkYu-ES4/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-green-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-green-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1kSwk8vuuqFWTG-Q1-mKxGb5xp9XVxdM0/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-green-500/30">
+                                <span class="text-xs font-bold text-slate-300">End term 2026</span>
+                                <i class="ph-bold ph-download-simple text-green-400"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Computer Networks -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                                <i class="ph-fill ph-globe text-2xl"></i>
+                            </div>
+                            <span class="px-2 py-1 rounded bg-zinc-800 text-[10px] font-mono text-zinc-400 border border-zinc-700">4 Credits</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-cyan-400 transition-colors">Computer Networks</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">OSI model, TCP/IP, routing, and switching protocols.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1qQDvtyUuQVG0hKlxbWJRdeD5aVEhlBNJ/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-cyan-500/30">
+                                <span class="text-xs font-bold text-slate-300">End term 2026</span>
+                                <i class="ph-bold ph-download-simple text-cyan-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/1U2-B5376Q6-N8LgSGYV6u2BTbUvzk7Pk/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-cyan-500/30">
+                                <span class="text-xs font-bold text-slate-300">Endsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-cyan-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAA -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                                <i class="ph-fill ph-graph text-2xl"></i>
+                            </div>
+                            <span class="px-2 py-1 rounded bg-zinc-800 text-[10px] font-mono text-zinc-400 border border-zinc-700">7 Credits</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-blue-400 transition-colors">Design & Analysis of Algorithms</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Advanced algorithm paradigms, dynamic programming, and optimization.</p>
+                        <div class="space-y-3 mt-auto">
+                            <a href="https://drive.google.com/file/d/1Nvqp4hiuyNzVmfBA5fAB2SCoTQY02aGI/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-blue-500/30">
+                                <span class="text-xs font-bold text-slate-300">End term 2026</span>
+                                <i class="ph-bold ph-download-simple text-blue-400"></i>
+                            </a>
+                            <a href="https://drive.google.com/file/d/18ETcd7jKEqxBbxtZoANfeJmPpsJ4Apun/view?usp=sharing" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all hover:border-blue-500/30">
+                                <span class="text-xs font-bold text-slate-300">Midsem 2025</span>
+                                <i class="ph-bold ph-download-simple text-blue-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preparation Guide Section -->
+        <section id="prep" class="semester-section">
+            <div class="mb-12">
+                <div class="flex flex-col md:flex-row md:items-end gap-4 mb-2">
+                    <h2 class="text-4xl font-display font-bold text-white">Skills Seekers : Preparation Guide</h2>
+                    <span class="w-fit px-3 py-1 bg-brand-accent/10 text-brand-accent border border-brand-accent/20 rounded-full text-xs font-bold uppercase tracking-wider mb-2 animate-pulse">Most Recommended</span>
+                </div>
+                <p class="text-slate-400 max-w-2xl font-light leading-relaxed">Exclusive crash courses, playlists, and solved papers designed to fast-track your exam success.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Calculus Course -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                                <i class="ph-fill ph-function text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-blue-400 transition-colors">Engineering Calculus Prep</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">End Sem Tutorial Sheets & PYQs solved step-by-step.</p>
+                        <div class="mt-auto">
+                            <a href="https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4" target="_blank" rel="noopener" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all group/btn hover:border-blue-500/30">
+                                <span class="text-xs font-bold text-slate-300">View Course</span>
+                                <i class="ph-bold ph-arrow-up-right text-blue-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DSA Course -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                                <i class="ph-fill ph-tree-structure text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-cyan-400 transition-colors">Data Structures (C++)</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">End Term Express Crash Course using C++ for trees, graphs & algorithms.</p>
+                        <div class="mt-auto">
+                            <a href="https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97" target="_blank" rel="noopener" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all group/btn hover:border-cyan-500/30">
+                                <span class="text-xs font-bold text-slate-300">View Course</span>
+                                <i class="ph-bold ph-arrow-up-right text-cyan-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OS Course -->
+                <div class="premium-card rounded-2xl p-1 subject-card group">
+                    <div class="card-glow"></div>
+                    <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="h-12 w-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+                                <i class="ph-fill ph-desktop text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 subject-name font-display group-hover:text-green-400 transition-colors">Operating Systems Express</h3>
+                        <p class="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">Complete crash course covering CPU scheduling, deadlocks, and virtual memory.</p>
+                        <div class="mt-auto">
+                            <a href="https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602" target="_blank" rel="noopener" class="flex items-center justify-between px-4 py-3 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-all group/btn hover:border-green-500/30">
+                                <span class="text-xs font-bold text-slate-300">View Course</span>
+                                <i class="ph-bold ph-arrow-up-right text-green-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="semester-section py-16 relative rounded-3xl overflow-hidden border border-white/5">
+            <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-purple-900/20 to-brand-accent/5 blur-[80px] z-[-1]"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="stat-item group">
+                    <h3 class="text-5xl md:text-6xl font-bold text-white mb-3 font-display group-hover:text-indigo-400 transition-colors">15+</h3>
+                    <p class="text-xs text-indigo-200 uppercase tracking-widest font-bold">Courses</p>
+                </div>
+                <div class="stat-item group">
+                    <h3 class="text-5xl md:text-6xl font-bold text-white mb-3 font-display group-hover:text-purple-400 transition-colors">25,000+</h3>
+                    <p class="text-xs text-indigo-200 uppercase tracking-widest font-bold">Students Enrolled</p>
+                </div>
+                <div class="stat-item group">
+                    <h3 class="text-5xl md:text-6xl font-bold text-white mb-3 font-display group-hover:text-brand-accent transition-colors">180K+</h3>
+                    <p class="text-xs text-indigo-200 uppercase tracking-widest font-bold">Views on YouTube</p>
+                </div>
+                <div class="stat-item group">
+                    <h3 class="text-5xl md:text-6xl font-bold text-white mb-3 font-display group-hover:text-teal-400 transition-colors">100%</h3>
+                    <p class="text-xs text-indigo-200 uppercase tracking-widest font-bold">Best Resources</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- WhatsApp Contribution Banner -->
+        <section class="semester-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+            <div class="premium-card p-1 rounded-3xl group relative overflow-hidden">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-gradient-to-r from-zinc-900 via-zinc-900 to-indigo-950/40 p-10 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-10 border border-zinc-800 backdrop-blur-xl">
+                    <div class="text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 text-indigo-400 mb-3 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
+                            <i class="ph-fill ph-hand-heart text-lg"></i>
+                            <span class="text-xs font-bold tracking-widest uppercase">Student Community</span>
+                        </div>
+                        <h3 class="text-3xl font-display font-bold text-white mb-3 leading-tight">Got Resources? <span class="text-indigo-400">Help Your Juniors!</span></h3>
+                        <p class="text-slate-400 text-sm max-w-lg leading-relaxed">If you possess verified PYQs, lecture notes, or useful PDFs, contribute them now. We verify and archive them for the benefit of the entire university.</p>
+                    </div>
+                    <a href="https://wa.me/919588598168" target="_blank" rel="noopener" class="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-green-50 hover:scale-105 transition-all flex items-center gap-3 whitespace-nowrap shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                        <i class="ph-bold ph-whatsapp-logo text-lg text-green-600"></i>
+                        <span>Send via WhatsApp</span>
+                    </a>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Floating Productivity FABs -->
+    <!-- Floating Action Buttons -->
     <div class="widget-fab">
-        <button class="fab-btn fab-pomodoro" onclick="togglePanel('pomodoro-panel')" title="Pomodoro Focus Timer">
+        <div class="fab-btn fab-pomodoro" onclick="togglePanel('pomodoro-panel')" title="Pomodoro Timer">
             <i class="ph-fill ph-timer"></i>
-        </button>
-        <button class="fab-btn fab-notes" onclick="togglePanel('notes-panel')" title="Sticky Notes">
-            <i class="ph-fill ph-note-pencil"></i>
-        </button>
-        <button class="fab-btn fab-bookmarks" onclick="togglePanel('bookmarks-panel')" title="Saved Bookmarks">
+        </div>
+        <div class="fab-btn fab-notes" onclick="togglePanel('notes-panel')" title="Sticky Notes">
+            <i class="ph-fill ph-note"></i>
+        </div>
+        <div class="fab-btn fab-bookmarks" onclick="togglePanel('bookmarks-panel')" title="Saved Resources">
             <i class="ph-fill ph-bookmark-simple"></i>
-        </button>
+        </div>
     </div>
 
-    <!-- Side Panels -->
-    <div class="side-panel" id="pomodoro-panel">
+    <!-- Pomodoro Panel -->
+    <div id="pomodoro-panel" class="side-panel" style="right:80px;">
         <div class="panel-header">
-            <h4>⏱ Focus Timer</h4>
-            <button class="panel-close" onclick="togglePanel('pomodoro-panel')">✕</button>
+            <h4>⏱ Pomodoro Focus Timer</h4>
+            <button class="panel-close" onclick="togglePanel('pomodoro-panel')"><i class="ph-bold ph-x"></i></button>
         </div>
-        <div class="panel-body text-center">
-            <div class="flex justify-center gap-2 mb-4">
-                <button class="pomo-mode-btn active" id="pomo-work-btn" onclick="setPomoMode('work')">Focus (25m)</button>
-                <button class="pomo-mode-btn" id="pomo-short-btn" onclick="setPomoMode('short')">Short Break (5m)</button>
-                <button class="pomo-mode-btn" id="pomo-long-btn" onclick="setPomoMode('long')">Long Break (15m)</button>
+        <div class="panel-body">
+            <div class="flex gap-2 mb-4 justify-center">
+                <button class="pomo-mode-btn active" id="pomo-work-btn" onclick="setPomoMode('work')">Focus 25m</button>
+                <button class="pomo-mode-btn" id="pomo-short-btn" onclick="setPomoMode('short')">Short 5m</button>
+                <button class="pomo-mode-btn" id="pomo-long-btn" onclick="setPomoMode('long')">Long 15m</button>
             </div>
             <div class="pomodoro-ring">
                 <svg width="140" height="140" viewBox="0 0 140 140">
                     <circle class="bg" cx="70" cy="70" r="60"></circle>
                     <circle class="prog" id="pomo-ring" cx="70" cy="70" r="60"></circle>
                 </svg>
+                <div id="pomodoro-display" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:32px;margin:0;">25:00</div>
             </div>
-            <div id="pomodoro-display">25:00</div>
-            <div class="flex justify-center gap-3 mt-4">
+            <div class="flex gap-3 justify-center mt-4">
                 <button class="pomo-btn pomo-btn-start" id="pomo-start-btn" onclick="togglePomodoro()">▶ Start</button>
                 <button class="pomo-btn pomo-btn-reset" onclick="resetPomodoro()">↺ Reset</button>
             </div>
-            <p class="text-xs text-zinc-500 mt-4">Completed today: <span id="pomo-session-count" class="text-white font-bold">0</span> sessions</p>
+            <div class="mt-4 text-center text-xs text-slate-500">Sessions today: <span id="pomo-session-count">0</span></div>
         </div>
     </div>
 
-    <div class="side-panel" id="notes-panel">
+    <!-- Notes Panel -->
+    <div id="notes-panel" class="side-panel" style="right:80px;">
         <div class="panel-header">
             <h4>📝 Quick Notes</h4>
-            <button class="panel-close" onclick="togglePanel('notes-panel')">✕</button>
+            <button class="panel-close" onclick="togglePanel('notes-panel')"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="panel-body">
             <div id="notes-container"></div>
-            <button class="add-note-btn mt-2" onclick="addNote()">+ Add Note</button>
+            <button class="add-note-btn" onclick="addNote()">＋ Add Note</button>
         </div>
     </div>
 
-    <div class="side-panel" id="bookmarks-panel">
+    <!-- Bookmarks Panel -->
+    <div id="bookmarks-panel" class="side-panel" style="right:80px;">
         <div class="panel-header">
-            <h4>🔖 Saved Bookmarks</h4>
-            <button class="panel-close" onclick="togglePanel('bookmarks-panel')">✕</button>
+            <h4>🔖 Saved Resources</h4>
+            <button class="panel-close" onclick="togglePanel('bookmarks-panel')"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="panel-body">
             <div id="bookmarks-list"></div>
@@ -591,33 +2039,325 @@
     </div>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top">
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
         <i class="ph-bold ph-arrow-up"></i>
     </button>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 py-12 bg-black/60 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
-            <div class="flex items-center gap-3">
-                <img src="/logo.jpg" alt="Logo" class="h-6 w-6 rounded-full">
-                <p>&copy; 2026 Skills Seekers & BU Resource Hub. Crafted for academic excellence.</p>
+    <footer class="border-t border-zinc-800 bg-black pt-20 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <img src="/logo.jpg" alt="Logo" class="h-8 w-8 rounded-full">
+                        <h2 class="text-xl font-display font-bold text-white">BU Resource Hub</h2>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed">A student-first initiative to make exam preparation seamless, effective, and data-driven.</p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-6 text-sm uppercase tracking-wider">Quick Links</h3>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="#sem1" class="hover:text-indigo-400 transition-colors">First Semester</a></li>
+                        <li><a href="#sem2" class="hover:text-indigo-400 transition-colors">Second Semester</a></li>
+                        <li><a href="#sem3" class="hover:text-indigo-400 transition-colors">Third Semester</a></li>
+                        <li><a href="#sem4" class="hover:text-indigo-400 transition-colors">Fourth Semester</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-6 text-sm uppercase tracking-wider">Skills Seekers</h3>
+                    <ul class="space-y-3 text-sm text-slate-500">
+                        <li><a href="https://www.skillsseekers.com" target="_blank" class="hover:text-indigo-400 transition-colors">Main Website</a></li>
+                        <li><a href="https://www.skillsseekers.com/s/store" target="_blank" class="hover:text-indigo-400 transition-colors">Premium Courses</a></li>
+                        <li><a href="https://www.youtube.com/@SkillsSeekers-PrathamKocher" target="_blank" class="hover:text-indigo-400 transition-colors">YouTube Channel</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-6 text-sm uppercase tracking-wider">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/pratham_kocher/?next=%2F" target="_blank" class="h-10 w-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-all">
+                            <i class="ph-fill ph-instagram-logo text-xl"></i>
+                        </a>
+                        <a href="http://linkedin.com/in/pratham-kocher-7a91bb25a" target="_blank" class="h-10 w-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-all">
+                            <i class="ph-fill ph-linkedin-logo text-xl"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="flex items-center gap-6">
-                <a href="/home" class="hover:text-indigo-400 transition-colors">Dashboard</a>
-                <a href="/library" class="hover:text-indigo-400 transition-colors">PYQ Library</a>
-                <a href="/courses" class="hover:text-indigo-400 transition-colors">Courses</a>
-                <a href="/tools" class="hover:text-indigo-400 transition-colors">Study Tools</a>
-                <a href="https://www.skillsseekers.com" target="_blank" class="hover:text-indigo-400 transition-colors">Skills Seekers ↗</a>
+            <div class="border-t border-zinc-900 pt-8 text-center text-xs text-zinc-600">
+                &copy; 2026 Skills Seekers & BU Resource Hub. Crafted for academic excellence.
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="/js/auth.js"></script>
-    <script src="/js/tools.js"></script>
-    <script src="/js/drive-preview.js"></script>
-    <script src="/js/animations.js"></script>
-    <script src="/js/app.js"></script>
+    <!-- Inlined Client-Side Logic -->
+    <script>
+        // ── 3D Background Canvas (Three.js) ──
+        let scene, camera, renderer, particles;
+        function init3DBackground() {
+            const canvas = document.getElementById('canvas-container');
+            if (!canvas || typeof THREE === 'undefined') return;
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const count = 700;
+            const geom = new THREE.BufferGeometry();
+            const pos = new Float32Array(count * 3);
+            for (let i = 0; i < count * 3; i += 3) {
+                pos[i] = (Math.random() - 0.5) * 80;
+                pos[i + 1] = (Math.random() - 0.5) * 80;
+                pos[i + 2] = (Math.random() - 0.5) * 60;
+            }
+            geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ size: 0.18, color: 0x6366f1, transparent: true, opacity: 0.65 });
+            particles = new THREE.Points(geom, mat);
+            scene.add(particles);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (particles) {
+                    particles.rotation.y += 0.0006;
+                    particles.rotation.x += 0.0003;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // ── Typewriter Headings ──
+        const phrases = [
+            'Elevate Your\nAcademic <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Performance.</span>',
+            'Crack Every\nExam With <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Confidence.</span>',
+            'Your Academic\nSuccess Starts <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-brand-accent">Here.</span>'
+        ];
+        let pIdx = 0, chIdx = 0, isDeleting = false;
+        function typeHeading() {
+            const el = document.getElementById('hero-tw-text');
+            if (!el) return;
+            const full = phrases[pIdx];
+            const cleanText = full.replace(/<[^>]*>/g, '');
+            if (!isDeleting) {
+                chIdx++;
+                el.innerHTML = getPartialHTML(full, chIdx);
+                if (chIdx >= cleanText.length) {
+                    setTimeout(() => { isDeleting = true; typeHeading(); }, 2400);
+                    return;
+                }
+            } else {
+                chIdx--;
+                el.innerHTML = getPartialHTML(full, chIdx);
+                if (chIdx <= 0) {
+                    isDeleting = false;
+                    pIdx = (pIdx + 1) % phrases.length;
+                    setTimeout(typeHeading, 400);
+                    return;
+                }
+            }
+            setTimeout(typeHeading, isDeleting ? 30 : 65);
+        }
+
+        function getPartialHTML(html, visibleCount) {
+            let visible = 0, out = '', inTag = false;
+            for (let i = 0; i < html.length; i++) {
+                if (html[i] === '<') { inTag = true; out += html[i]; continue; }
+                if (html[i] === '>') { inTag = false; out += html[i]; continue; }
+                if (inTag) { out += html[i]; continue; }
+                if (visible < visibleCount) { out += html[i]; visible++; }
+            }
+            return out;
+        }
+
+        function typeSubtitle() {
+            const subEl = document.getElementById('hero-sub-tw');
+            if (!subEl) return;
+            const text = 'The ultimate archive of verified PYQs, comprehensive and strategic crash courses for Bennett University students.';
+            let i = 0;
+            function step() {
+                if (i < text.length) {
+                    subEl.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(step, 20);
+                } else {
+                    subEl.innerHTML += '<br><span class="text-indigo-400 font-semibold">Engineered by Skills Seekers.</span>';
+                }
+            }
+            step();
+        }
+
+        // ── 3D Card Hover Perspective ──
+        function initCardTilt() {
+            document.querySelectorAll('.premium-card, .portal-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const cx = rect.width / 2;
+                    const cy = rect.height / 2;
+                    const rx = ((y - cy) / cy) * -8;
+                    const ry = ((x - cx) / cx) * 8;
+                    card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(10px)`;
+                    card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                    card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+                });
+            });
+        }
+
+        // ── Drive Modal ──
+        function openDriveModal(url, title) {
+            const modal = document.getElementById('drive-modal');
+            const iframe = document.getElementById('drive-iframe');
+            const titleEl = document.getElementById('drive-modal-title');
+            const openLink = document.getElementById('drive-modal-open-link');
+            const dlLink = document.getElementById('drive-modal-download');
+            const spinner = document.getElementById('drive-spinner');
+            if (!modal || !iframe) return;
+
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            const id = match ? match[1] : '';
+            const previewUrl = id ? `https://drive.google.com/file/d/${id}/preview` : url;
+
+            if (titleEl) titleEl.textContent = title || 'Document Preview';
+            if (openLink) openLink.href = url;
+            if (dlLink) dlLink.href = id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
+            if (spinner) spinner.classList.remove('hidden');
+
+            iframe.src = previewUrl;
+            iframe.onload = () => { if (spinner) spinner.classList.add('hidden'); };
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDriveModal() {
+            const modal = document.getElementById('drive-modal');
+            const iframe = document.getElementById('drive-iframe');
+            if (modal) modal.classList.remove('open');
+            if (iframe) iframe.src = '';
+            document.body.style.overflow = '';
+        }
+
+        // ── UI Controls ──
+        function warpToSemester(id) {
+            const target = document.getElementById(id);
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function filterSem(sem, btn) {
+            document.querySelectorAll('.sem-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.querySelectorAll('.semester-section').forEach(sec => {
+                sec.style.display = (sem === 'all' || sec.id === sem) ? 'block' : 'none';
+            });
+        }
+
+        function filterSubjects() {
+            const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            document.querySelectorAll('.subject-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(q) ? 'block' : 'none';
+            });
+        }
+
+        function openMobileMenu() { document.getElementById('mobile-menu')?.classList.add('open'); }
+        function closeMobileMenu() { document.getElementById('mobile-menu')?.classList.remove('open'); }
+        function togglePanel(id) { document.getElementById(id)?.classList.toggle('open'); }
+
+        // ── Pomodoro Timer ──
+        let pomoTime = 25 * 60, pomoRunning = false, pomoInterval = null, pomoMode = 'work';
+        function setPomoMode(mode) {
+            pomoMode = mode;
+            pomoTime = mode === 'work' ? 25 * 60 : (mode === 'short' ? 5 * 60 : 15 * 60);
+            document.querySelectorAll('.pomo-mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`pomo-${mode}-btn`)?.classList.add('active');
+            updatePomoDisplay();
+        }
+        function updatePomoDisplay() {
+            const m = Math.floor(pomoTime / 60).toString().padStart(2, '0');
+            const s = (pomoTime % 60).toString().padStart(2, '0');
+            const el = document.getElementById('pomodoro-display');
+            if (el) el.textContent = `${m}:${s}`;
+        }
+        function togglePomodoro() {
+            const btn = document.getElementById('pomo-start-btn');
+            if (pomoRunning) {
+                clearInterval(pomoInterval);
+                pomoRunning = false;
+                if (btn) btn.textContent = '▶ Start';
+            } else {
+                pomoRunning = true;
+                if (btn) btn.textContent = '⏸ Pause';
+                pomoInterval = setInterval(() => {
+                    if (pomoTime > 0) {
+                        pomoTime--;
+                        updatePomoDisplay();
+                    } else {
+                        clearInterval(pomoInterval);
+                        pomoRunning = false;
+                        if (btn) btn.textContent = '▶ Start';
+                    }
+                }, 1000);
+            }
+        }
+        function resetPomodoro() {
+            clearInterval(pomoInterval);
+            pomoRunning = false;
+            setPomoMode(pomoMode);
+            const btn = document.getElementById('pomo-start-btn');
+            if (btn) btn.textContent = '▶ Start';
+        }
+
+        // ── Notes & Bookmarks ──
+        function addNote() {
+            const c = document.getElementById('notes-container');
+            if (!c) return;
+            const div = document.createElement('div');
+            div.className = 'sticky-note';
+            div.innerHTML = '<button class="sticky-note-del" onclick="this.parentElement.remove()">✕</button><textarea placeholder="Write quick note..."></textarea>';
+            c.appendChild(div);
+        }
+
+        // ── Scroll Progress & Back to Top ──
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+            const bar = document.getElementById('scroll-progress');
+            if (bar) bar.style.width = pct + '%';
+            const btt = document.getElementById('back-to-top');
+            if (btt) btt.classList.toggle('visible', window.scrollY > 400);
+        });
+
+        // ── Intercept Drive links for modal preview ──
+        document.addEventListener('click', e => {
+            const link = e.target.closest('a[href*="drive.google.com"]');
+            if (link) {
+                e.preventDefault();
+                const card = link.closest('.subject-card');
+                const title = (card ? card.querySelector('.subject-name')?.textContent : '') + ' • ' + (link.querySelector('span')?.textContent || 'PYQ');
+                openDriveModal(link.href, title);
+            }
+        });
+
+        // ── Init on DOM Ready ──
+        document.addEventListener('DOMContentLoaded', () => {
+            init3DBackground();
+            typeHeading();
+            typeSubtitle();
+            initCardTilt();
+            updatePomoDisplay();
+        });
+    </script>
 </body>
 
 </html>
