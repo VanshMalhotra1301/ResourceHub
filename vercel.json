@@ -1,68 +1,76 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/login",
-      "destination": "/pages/auth/auth.html"
-    },
-    {
-      "source": "/signup",
-      "destination": "/pages/auth/signup.html"
-    },
-    {
-      "source": "/home",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/sem1",
-      "destination": "/pages/semesters/sem1.html"
-    },
-    {
-      "source": "/sem2",
-      "destination": "/pages/semesters/sem2.html"
-    },
-    {
-      "source": "/sem3",
-      "destination": "/pages/semesters/sem3.html"
-    },
-    {
-      "source": "/sem4",
-      "destination": "/pages/semesters/sem4.html"
-    },
-    {
-      "source": "/library",
-      "destination": "/pages/library.html"
-    },
-    {
-      "source": "/courses",
-      "destination": "/pages/courses.html"
-    },
-    {
-      "source": "/tools",
-      "destination": "/pages/tools.html"
-    },
-    {
-      "source": "/dsa",
-      "destination": "/pages/dsa/visual-dsa.html"
-    },
-    {
-      "source": "/os",
-      "destination": "/pages/os/os-visual.html"
-    },
-    {
-      "source": "/test",
-      "destination": "/pages/auth/test_auth.html"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "pages/**,css/**,js/**,index.html,logo.jpg,skills.png"
     }
-  ],
-  "redirects": [
+  },
+  "routes": [
     {
-      "source": "/",
-      "destination": "/login",
-      "permanent": false
+      "handle": "filesystem"
+    },
+    {
+      "src": "/login",
+      "dest": "/pages/auth/auth.html"
+    },
+    {
+      "src": "/signup",
+      "dest": "/pages/auth/signup.html"
+    },
+    {
+      "src": "/home",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/sem1",
+      "dest": "/pages/semesters/sem1.html"
+    },
+    {
+      "src": "/sem2",
+      "dest": "/pages/semesters/sem2.html"
+    },
+    {
+      "src": "/sem3",
+      "dest": "/pages/semesters/sem3.html"
+    },
+    {
+      "src": "/sem4",
+      "dest": "/pages/semesters/sem4.html"
+    },
+    {
+      "src": "/library",
+      "dest": "/pages/library.html"
+    },
+    {
+      "src": "/courses",
+      "dest": "/pages/courses.html"
+    },
+    {
+      "src": "/tools",
+      "dest": "/pages/tools.html"
+    },
+    {
+      "src": "/dsa",
+      "dest": "/pages/dsa/visual-dsa.html"
+    },
+    {
+      "src": "/os",
+      "dest": "/pages/os/os-visual.html"
+    },
+    {
+      "src": "/test",
+      "dest": "/pages/auth/test_auth.html"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/",
+      "status": 302,
+      "headers": {
+        "Location": "/login"
+      }
     }
   ]
 }

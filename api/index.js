@@ -211,11 +211,21 @@ app.get('/dsa', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', '
 app.get('/os', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
 app.get('/test', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'test_auth.html')));
 
-// ── Static assets (images, fonts, etc.) ───────────
+// ── Static assets (images, fonts, css, js, etc.) ───
 app.use(express.static(path.join(__dirname, '..'), { index: false }));
 
-// ── Fallback ───────────────────────────────────────
-app.use((req, res) => res.redirect('/login'));
+// ── Fallback handler (DO NOT redirect static assets to login) ──
+app.use((req, res) => {
+    // If requesting static file, return 404 instead of 302 redirecting to login
+    if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(req.path)) {
+        return res.status(404).type('text/plain').send('Asset not found');
+    }
+    // Only redirect unknown browser navigation to /login
+    if (req.accepts('html')) {
+        return res.redirect('/login');
+    }
+    return res.status(404).json({ error: 'Not found' });
+});
 
 if (require.main === module) {
     app.listen(PORT, () => {
