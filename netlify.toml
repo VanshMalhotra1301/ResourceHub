@@ -1,5 +1,6 @@
 [build]
   functions = "netlify/functions"
+  publish = "."
 
 [[redirects]]
   from = "/api/*"
@@ -8,12 +9,12 @@
 
 [[redirects]]
   from = "/login"
-  to = "/auth.html"
+  to = "/pages/auth/auth.html"
   status = 200
 
 [[redirects]]
   from = "/signup"
-  to = "/signup.html"
+  to = "/pages/auth/signup.html"
   status = 200
 
 [[redirects]]
@@ -22,11 +23,51 @@
   status = 200
 
 [[redirects]]
-  from = "/test"
-  to = "/test_auth.html"
+  from = "/sem1"
+  to = "/pages/semesters/sem1.html"
   status = 200
 
 [[redirects]]
-  from = "/*"
-  to = "/auth.html"
+  from = "/sem2"
+  to = "/pages/semesters/sem2.html"
   status = 200
+
+[[redirects]]
+  from = "/sem3"
+  to = "/pages/semesters/sem3.html"
+  status = 200
+
+[[redirects]]
+  from = "/sem4"
+  to = "/pages/semesters/sem4.html"
+  status = 200
+
+[[redirects]]
+  from = "/library"
+  to = "/pages/library.html"
+  status = 200
+
+[[redirects]]
+  from = "/courses"
+  to = "/pages/courses.html"
+  status = 200
+
+[[redirects]]
+  from = "/tools"
+  to = "/pages/tools.html"
+  status = 200
+
+[[redirects]]
+  from = "/dsa"
+  to = "/pages/dsa/visual-dsa.html"
+  status = 200
+
+[[redirects]]
+  from = "/os"
+  to = "/pages/os/os-visual.html"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/pages/auth/auth.html"
+  status = 302

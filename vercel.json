@@ -1,33 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "skills.png",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "logo.jpg",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "pages/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/login",
-      "permanent": false
-    }
-  ],
+  "version": 2,
   "rewrites": [
     {
       "source": "/login",
@@ -42,12 +14,55 @@
       "destination": "/index.html"
     },
     {
+      "source": "/sem1",
+      "destination": "/pages/semesters/sem1.html"
+    },
+    {
+      "source": "/sem2",
+      "destination": "/pages/semesters/sem2.html"
+    },
+    {
+      "source": "/sem3",
+      "destination": "/pages/semesters/sem3.html"
+    },
+    {
+      "source": "/sem4",
+      "destination": "/pages/semesters/sem4.html"
+    },
+    {
+      "source": "/library",
+      "destination": "/pages/library.html"
+    },
+    {
+      "source": "/courses",
+      "destination": "/pages/courses.html"
+    },
+    {
+      "source": "/tools",
+      "destination": "/pages/tools.html"
+    },
+    {
+      "source": "/dsa",
+      "destination": "/pages/dsa/visual-dsa.html"
+    },
+    {
+      "source": "/os",
+      "destination": "/pages/os/os-visual.html"
+    },
+    {
       "source": "/test",
       "destination": "/pages/auth/test_auth.html"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api"
+      "destination": "/api/index.js"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/login",
+      "permanent": false
     }
   ]
 }
