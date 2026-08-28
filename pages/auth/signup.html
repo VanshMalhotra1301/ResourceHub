@@ -4,11 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | Skills Seekers Resource Hub 3D</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Space+Grotesk:wght@600;700&display=swap"
-        rel="stylesheet">
+    <title>Create Free Account | BU Resource Hub &amp; Skills Seekers</title>
+    <meta name="description" content="Create your free student account on BU Resource Hub to access Bennett University PYQs, video courses, solved tutorials, and interactive CS simulators.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons & Three.js -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
         *,
         *::before,
@@ -18,19 +25,33 @@
             padding: 0;
         }
 
+        :root {
+            --primary: #a855f7;
+            --primary-hover: #9333ea;
+            --secondary: #6366f1;
+            --accent: #f472b6;
+            --accent-cyan: #22d3ee;
+            --bg-dark: #030308;
+            --card-bg: rgba(12, 10, 24, 0.82);
+            --border-subtle: rgba(168, 85, 247, 0.22);
+            --border-glow: rgba(244, 114, 182, 0.5);
+        }
+
         body {
             min-height: 100vh;
-            background: #030308;
+            background: var(--bg-dark);
             color: #e5e7eb;
             font-family: 'Inter', system-ui, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px 16px;
             perspective: 1200px;
             overflow-x: hidden;
+            position: relative;
         }
 
+        /* 3D WebGL Background Canvas */
         #signup-3d-canvas {
             position: fixed;
             inset: 0;
@@ -40,322 +61,650 @@
             height: 100vh;
         }
 
-        .card {
+        /* Ambient Glow Blobs */
+        .ambient-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.25;
+            animation: pulse-blob 8s ease-in-out infinite alternate;
+        }
+
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 450px;
+            height: 450px;
+            background: #a855f7;
+        }
+
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: #6366f1;
+            animation-delay: -4s;
+        }
+
+        @keyframes pulse-blob {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.2; }
+            100% { transform: scale(1.15) translate(30px, 30px); opacity: 0.35; }
+        }
+
+        /* Main Glassmorphic Container */
+        .auth-container {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 880px;
-            background: rgba(10, 11, 20, 0.75);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            border-radius: 28px;
+            max-width: 960px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 32px;
             overflow: hidden;
             display: flex;
-            box-shadow: 0 0 80px rgba(168, 85, 247, 0.2), 0 40px 80px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 0 80px rgba(168, 85, 247, 0.18), 0 35px 70px rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
             transform-style: preserve-3d;
-            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
-            transition: transform 0.15s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.15s ease-out, border-color 0.4s ease, box-shadow 0.4s ease;
         }
 
-        .card:hover {
-            border-color: rgba(244, 114, 182, 0.5);
-            box-shadow: 0 0 100px rgba(244, 114, 182, 0.25), 0 45px 90px rgba(0, 0, 0, 0.8);
+        .auth-container:hover {
+            border-color: rgba(168, 85, 247, 0.45);
+            box-shadow: 0 0 90px rgba(168, 85, 247, 0.25), 0 40px 80px rgba(0, 0, 0, 0.85);
         }
 
-        .brand {
-            width: 42%;
-            padding: 60px 44px;
-            background: linear-gradient(160deg, rgba(22, 16, 35, 0.7) 0%, rgba(8, 6, 18, 0.95) 100%);
+        /* Left Branding & Highlights Panel */
+        .brand-side {
+            width: 45%;
+            padding: 56px 44px;
+            background: linear-gradient(165deg, rgba(26, 16, 45, 0.75) 0%, rgba(10, 6, 22, 0.95) 100%);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            transform: translateZ(20px);
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
         }
 
-        .brand-logo {
-            width: 86px;
-            height: 86px;
-            border-radius: 20px;
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .logo-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 22px;
-            background: rgba(168, 85, 247, 0.12);
-            border: 1px solid rgba(168, 85, 247, 0.2);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.35);
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            flex-shrink: 0;
         }
 
-        .brand-logo img {
+        .logo-wrap img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
         }
 
-        .brand h2 {
+        .brand-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             color: #fff;
-            line-height: 1.3;
-            margin-bottom: 12px;
+            line-height: 1.2;
         }
 
-        .brand p {
-            font-size: 13px;
-            color: #6b7280;
-            line-height: 1.65;
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .typewriter-box {
+            min-height: 84px;
+            margin-bottom: 24px;
+        }
+
+        .typewriter-prefix {
+            font-size: 12px;
+            font-weight: 600;
+            color: #c084fc;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .typewriter-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.1em;
+            background: var(--accent);
+            vertical-align: middle;
+            margin-left: 3px;
+            box-shadow: 0 0 10px var(--accent);
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Feature Pills */
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             margin-bottom: 28px;
         }
 
-        .dots {
+        .feature-item {
             display: flex;
-            gap: 7px;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.25s ease;
         }
 
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
+        .feature-item:hover {
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.25);
+            transform: translateX(4px);
         }
 
-        .form-wrap {
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .brand-footer-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            font-size: 11px;
+            color: #e9d5ff;
+            font-weight: 600;
+        }
+
+        /* Right Form Panel */
+        .form-side {
             flex: 1;
-            padding: 60px 48px;
+            padding: 50px 48px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .form-wrap h3 {
-            font-size: 26px;
+        .form-side h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
             font-weight: 700;
-            color: #fff;
+            color: #ffffff;
             margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .form-wrap .sub {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 28px;
+        .form-side .form-sub {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 22px;
         }
 
-        .feedback {
+        .feedback-alert {
             display: none;
             padding: 13px 16px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 500;
-            line-height: 1.45;
             margin-bottom: 18px;
+            animation: slideDown 0.3s ease;
         }
 
-        .feedback.error {
-            background: rgba(239, 68, 68, 0.09);
-            border: 1px solid rgba(239, 68, 68, 0.28);
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-alert.error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
             color: #fca5a5;
         }
 
-        .feedback.success {
-            background: rgba(34, 197, 94, 0.09);
-            border: 1px solid rgba(34, 197, 94, 0.28);
+        .feedback-alert.success {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.35);
             color: #86efac;
         }
 
-        .field {
-            margin-bottom: 16px;
+        /* Form Inputs */
+        .input-group {
+            margin-bottom: 14px;
         }
 
-        .field label {
-            display: block;
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 11px;
             font-weight: 700;
-            color: #6b7280;
+            color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.09em;
-            margin-bottom: 8px;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
         }
 
-        .field input {
+        .input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            font-size: 18px;
+            color: #64748b;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .input-field {
             width: 100%;
-            padding: 13px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            border-radius: 12px;
+            padding: 13px 16px 13px 44px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
             font-size: 14px;
             font-weight: 500;
-            color: #f9fafb;
+            color: #f8fafc;
             font-family: 'Inter', sans-serif;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            transition: all 0.2s ease;
         }
 
-        .field input::placeholder {
-            color: #374151;
+        .input-field::placeholder {
+            color: #475569;
         }
 
-        .field input:focus {
-            border-color: rgba(168, 85, 247, 0.65);
+        .input-field:focus {
+            border-color: var(--primary);
             background: rgba(168, 85, 247, 0.06);
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.13);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
         }
 
-        .btn {
+        .input-field:focus + .input-icon,
+        .input-box:focus-within .input-icon {
+            color: #c084fc;
+        }
+
+        .pw-toggle {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+
+        .pw-toggle:hover {
+            color: #e2e8f0;
+        }
+
+        /* Submit Button */
+        .submit-btn {
             width: 100%;
             padding: 14px;
             margin-top: 6px;
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            color: #fff;
+            background: linear-gradient(135deg, #9333ea 0%, #4f46e5 100%);
+            color: #ffffff;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 14px;
             font-weight: 700;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
             cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.01em;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(147, 51, 234, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
-            box-shadow: 0 0 28px rgba(168, 85, 247, 0.4);
+        .submit-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7e22ce 0%, #4338ca 100%);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
             transform: translateY(-1px);
         }
 
-        .btn:active {
+        .submit-btn:active {
             transform: translateY(0);
         }
 
-        .btn:disabled {
-            opacity: 0.55;
+        .submit-btn:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
         .spinner {
-            display: inline-block;
-            width: 15px;
-            height: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            border-top-color: #fff;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
             border-radius: 50%;
             animation: spin 0.65s linear infinite;
-            vertical-align: middle;
-            margin-right: 8px;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
-        .switch {
-            margin-top: 22px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        /* Form Footer Switch */
+        .switch-prompt {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             text-align: center;
             font-size: 13px;
-            color: #6b7280;
+            color: #64748b;
         }
 
-        .switch a {
+        .switch-prompt a {
             color: #c084fc;
             font-weight: 600;
             text-decoration: none;
             margin-left: 4px;
+            transition: color 0.2s;
         }
 
-        .switch a:hover {
-            color: #a855f7;
+        .switch-prompt a:hover {
+            color: #f5d0fe;
+            text-decoration: underline;
         }
 
-        @media (max-width: 660px) {
-            .card {
+        /* Responsive Layout */
+        @media (max-width: 820px) {
+            .auth-container {
                 flex-direction: column;
+                max-width: 480px;
             }
 
-            .brand {
+            .brand-side {
                 width: 100%;
-                padding: 36px 28px 24px;
+                padding: 40px 32px 28px;
                 border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             }
 
-            .form-wrap {
-                padding: 28px 24px;
+            .form-side {
+                padding: 32px 32px;
+            }
+
+            .typewriter-box {
+                min-height: auto;
+            }
+
+            .features-list {
+                display: none;
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- 3D Three.js Scene -->
     <canvas id="signup-3d-canvas"></canvas>
-    <div class="card" id="signup-card">
 
-        <div class="brand">
-            <div class="brand-logo">
-                <img src="/skills.png" alt="Skills Seekers"
-                    onerror="this.src='https://ui-avatars.com/api/?name=SS&background=7c3aed&color=fff&size=86&font-size=0.5'">
+    <!-- Ambient Glow Blobs -->
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <!-- Main Auth Card -->
+    <div class="auth-container" id="auth-card">
+
+        <!-- Left Brand & Auto-Typing Showcase -->
+        <div class="brand-side">
+            <div>
+                <!-- Brand Header -->
+                <div class="brand-header">
+                    <div class="logo-wrap">
+                        <img src="/logo.jpg" alt="BU Resource Hub Logo" onerror="this.src='/skills.png'">
+                    </div>
+                    <div>
+                        <h2 class="brand-title">BU Resource Hub</h2>
+                        <span class="brand-badge"><i class="ph-fill ph-sparkle"></i> Skills Seekers 3D</span>
+                    </div>
+                </div>
+
+                <!-- Auto-Typewriter Display -->
+                <div class="typewriter-box">
+                    <div class="typewriter-prefix">
+                        <i class="ph-bold ph-rocket-launch"></i> Start Free Journey
+                    </div>
+                    <div class="typewriter-text">
+                        <span id="typewriter-target">Loading...</span><span class="typewriter-cursor"></span>
+                    </div>
+                </div>
+
+                <!-- Curated Platform Feature Pills -->
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+                            <i class="ph-fill ph-book-bookmark"></i>
+                        </div>
+                        <div class="feature-text">
+                            <strong>All Semesters 1 to 4:</strong> Core subjects, formula sheets &amp; syllabus notes.
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+                            <i class="ph-fill ph-check-square-offset"></i>
+                        </div>
+                        <div class="feature-text">
+                            <strong>100% Free Access:</strong> Full previous years question papers &amp; exam solutions.
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon" style="background: rgba(244, 114, 182, 0.15); color: #f472b6;">
+                            <i class="ph-fill ph-fire"></i>
+                        </div>
+                        <div class="feature-text">
+                            <strong>Study Streak &amp; Tools:</strong> Integrated Pomodoro focus clock &amp; sticky notes.
+                        </div>
+                    </div>
+                </div>
             </div>
-            <h2>Join Skills Seekers<br>Resource Hub</h2>
-            <p>Create a free account. Access PYQs, notes, crash courses &amp; more.</p>
-            <div class="dots">
-                <div class="dot" style="background:#6366f1"></div>
-                <div class="dot" style="background:#a855f7"></div>
-                <div class="dot" style="background:#fbbf24"></div>
+
+            <!-- Trust Badge Strip -->
+            <div class="brand-footer-pill">
+                <span class="flex items-center gap-1.5"><i class="ph-fill ph-shield-check" style="color:#34d399;"></i> 100% Secure &amp; Instant</span>
+                <span style="color:#fbbf24; font-family:'Space Grotesk', sans-serif;">⭐ Top Rated</span>
             </div>
         </div>
 
-        <div class="form-wrap">
-            <h3>Create Account ✨</h3>
-            <p class="sub">Free forever — no credit card needed</p>
+        <!-- Right Sign Up Form -->
+        <div class="form-side">
+            <h3>Create Account 🚀</h3>
+            <p class="form-sub">Sign up for free lifetime access to resources</p>
 
-            <div id="feedback" class="feedback"></div>
+            <div id="feedback" class="feedback-alert"></div>
 
             <form id="signup-form">
-                <div class="field">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" required placeholder="John Doe" autocomplete="name">
+                <!-- Name Field -->
+                <div class="input-group">
+                    <label class="input-label" for="name">
+                        <span>Full Name</span>
+                    </label>
+                    <div class="input-box">
+                        <i class="ph-bold ph-user input-icon"></i>
+                        <input type="text" id="name" class="input-field" required placeholder="Vansh Malhotra" autocomplete="name">
+                    </div>
                 </div>
-                <div class="field">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" required placeholder="you@example.com" autocomplete="email">
+
+                <!-- Email Field -->
+                <div class="input-group">
+                    <label class="input-label" for="email">
+                        <span>Email Address</span>
+                    </label>
+                    <div class="input-box">
+                        <i class="ph-bold ph-envelope-simple input-icon"></i>
+                        <input type="email" id="email" class="input-field" required placeholder="you@bennett.edu.in" autocomplete="email">
+                    </div>
                 </div>
-                <div class="field">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" required minlength="6" placeholder="Minimum 6 characters"
-                        autocomplete="new-password">
+
+                <!-- Password Field -->
+                <div class="input-group">
+                    <div class="input-label">
+                        <label for="password">Password</label>
+                        <span style="color:#94a3b8; font-size:10px; font-weight:normal;">Min 6 characters</span>
+                    </div>
+                    <div class="input-box">
+                        <i class="ph-bold ph-lock-key input-icon"></i>
+                        <input type="password" id="password" class="input-field" required minlength="6" placeholder="••••••••" autocomplete="new-password">
+                        <button type="button" class="pw-toggle" onclick="togglePasswordVisibility('password', this)" title="Toggle password view">
+                            <i class="ph-bold ph-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" id="btn" class="btn">Create Account</button>
+
+                <!-- Sign Up Button -->
+                <button type="submit" id="btn" class="submit-btn">
+                    <span>Create Free Account</span>
+                    <i class="ph-bold ph-arrow-right"></i>
+                </button>
             </form>
 
-            <div class="switch">
-                Already have an account? <a href="/login">Sign in →</a>
+            <div class="switch-prompt">
+                Already have an account? <a href="/login">Sign in here →</a>
             </div>
         </div>
+
     </div>
 
+    <!-- Interactive Scripts -->
     <script>
-        const form = document.getElementById('signup-form');
-        const btn = document.getElementById('btn');
-        const feedback = document.getElementById('feedback');
-
-        // If already logged in via sessionStorage, go to home
-        if (sessionStorage.getItem('ss_user')) {
-            window.location.href = '/home';
+        // Password Visibility Toggle
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'ph-bold ph-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'ph-bold ph-eye';
+            }
         }
 
+        // Auto-Typewriter Logic
+        const typewriterPhrases = [
+            "Join Thousands of BU Engineers",
+            "Unlock 60+ Bennett University PYQs",
+            "Master Semester Exams with Ease",
+            "Boost CGPA with Solved Tutorials",
+            "Explore 3D CS Simulators & Labs"
+        ];
+
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const targetEl = document.getElementById('typewriter-target');
+
+        function typeLoop() {
+            const currentPhrase = typewriterPhrases[phraseIndex];
+
+            if (isDeleting) {
+                targetEl.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                targetEl.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 30 : 65;
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                typeSpeed = 2200;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % typewriterPhrases.length;
+                typeSpeed = 450;
+            }
+
+            setTimeout(typeLoop, typeSpeed);
+        }
+        typeLoop();
+
+        // Feedback Helper
+        const feedback = document.getElementById('feedback');
         function showMsg(text, type) {
             feedback.textContent = text;
-            feedback.className = 'feedback ' + type;
+            feedback.className = 'feedback-alert ' + type;
             feedback.style.display = 'block';
         }
 
-        let signupDone = false; // track successful signup so finally block doesn't reset UI
+        // Form Submit Handler
+        const form = document.getElementById('signup-form');
+        const btn = document.getElementById('btn');
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -368,15 +717,15 @@
                 showMsg('Please fill in all fields.', 'error');
                 return;
             }
+
             if (password.length < 6) {
                 showMsg('Password must be at least 6 characters.', 'error');
                 return;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span>Creating account...';
+            btn.innerHTML = '<span class="spinner"></span> <span>Creating Account...</span>';
             feedback.style.display = 'none';
-            signupDone = false;
 
             try {
                 const res = await fetch('/api/signup', {
@@ -388,82 +737,80 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    signupDone = true;
-                    if (data.session) {
+                    if (data.user) {
                         sessionStorage.setItem('ss_user', JSON.stringify(data.user));
-                        sessionStorage.setItem('ss_token', data.session.access_token);
-                        showMsg('✓ Account created! Redirecting...', 'success');
-                        setTimeout(() => { window.location.href = '/home'; }, 700);
-                    } else {
-                        // Email confirmation required — keep form dimmed
-                        showMsg('✓ Account created! Check your email inbox for a confirmation link, then sign in.', 'success');
-                        form.style.opacity = '0.4';
-                        form.style.pointerEvents = 'none';
-                        btn.disabled = true;
-                        btn.innerHTML = 'Check your email ✉️';
                     }
+                    if (data.session && data.session.access_token) {
+                        sessionStorage.setItem('ss_token', data.session.access_token);
+                    }
+
+                    showMsg('✓ Account created! Entering Resource Hub...', 'success');
+                    setTimeout(() => { window.location.href = '/home'; }, 600);
                 } else {
-                    showMsg('❌ ' + (data.error || 'Signup failed. Please try again.'), 'error');
+                    showMsg('Sign up failed: ' + (data.error || 'Please try again with a different email.'), 'error');
                 }
             } catch (err) {
-                showMsg('Network error: ' + err.message, 'error');
+                showMsg('Network error — please check your connection.', 'error');
             } finally {
-                // Only re-enable button if signup did NOT succeed
-                if (!signupDone) {
-                    btn.disabled = false;
-                    btn.innerHTML = 'Create Account';
-                }
+                btn.disabled = false;
+                btn.innerHTML = '<span>Create Free Account</span> <i class="ph-bold ph-arrow-right"></i>';
             }
         });
 
-        // 3D Card Tilt Physics
-        const card = document.getElementById('signup-card');
-        if (card) {
+        // 3D Card Interactive Tilt Physics
+        const card = document.getElementById('auth-card');
+        if (card && window.innerWidth > 820) {
             window.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
-                const rotX = -((y - centerY) / centerY) * 10;
-                const rotY = ((x - centerX) / centerX) * 10;
-                card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.01, 1.01, 1.01)`;
+                const rotX = -((y - centerY) / centerY) * 7;
+                const rotY = ((x - centerX) / centerX) * 7;
+                card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.008, 1.008, 1.008)`;
             });
             window.addEventListener('mouseleave', () => {
                 card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
             });
         }
 
-        // 3D WebGL Background Scene
+        // Three.js Ambient Particle Space
         (function initSignup3D() {
             const canvas = document.getElementById('signup-3d-canvas');
             if (!canvas || typeof THREE === 'undefined') return;
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 180;
+            camera.position.z = 160;
 
             const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            // Particles
-            const count = 750;
+            // Starfield Particles
+            const count = 600;
             const geo = new THREE.BufferGeometry();
             const pos = new Float32Array(count * 3);
             for (let i = 0; i < count * 3; i++) {
-                pos[i] = (Math.random() - 0.5) * 600;
+                pos[i] = (Math.random() - 0.5) * 500;
             }
             geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ color: 0xa855f7, size: 2.2, transparent: true, opacity: 0.8 });
+            const mat = new THREE.PointsMaterial({ color: 0xc084fc, size: 2.0, transparent: true, opacity: 0.75 });
             const particles = new THREE.Points(geo, mat);
             scene.add(particles);
 
-            // Floating crystal wireframe
-            const crystalGeo = new THREE.DodecahedronGeometry(48, 0);
-            const crystalMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.25 });
-            const crystal = new THREE.Mesh(crystalGeo, crystalMat);
-            scene.add(crystal);
+            // Floating Wireframe Polyhedron
+            const polyGeo = new THREE.OctahedronGeometry(42, 1);
+            const polyMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.22 });
+            const polyhedron = new THREE.Mesh(polyGeo, polyMat);
+            scene.add(polyhedron);
+
+            // Floating Outer Torus Ring
+            const torusGeo = new THREE.TorusGeometry(58, 1.2, 8, 40);
+            const torusMat = new THREE.MeshBasicMaterial({ color: 0xf472b6, wireframe: true, transparent: true, opacity: 0.18 });
+            const torus = new THREE.Mesh(torusGeo, torusMat);
+            scene.add(torus);
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -473,13 +820,16 @@
 
             function anim() {
                 requestAnimationFrame(anim);
-                particles.rotation.y += 0.0012;
-                crystal.rotation.x += 0.002;
-                crystal.rotation.y += 0.0025;
+                particles.rotation.y += 0.0008;
+                polyhedron.rotation.x += 0.002;
+                polyhedron.rotation.y += 0.0025;
+                torus.rotation.x -= 0.0015;
+                torus.rotation.z += 0.002;
                 renderer.render(scene, camera);
             }
             anim();
         })();
     </script>
 </body>
+
 </html>
