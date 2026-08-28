@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Courses | Skills Seekers</title>
-    <meta name="description" content="Explore high-yield video crash courses, solved tutorial sheets, and exam masterpacks engineered specifically for Bennett University curriculum.">
+    <title>Skills Seekers Courses | Bennett University Resource Hub</title>
+    <meta name="description" content="Explore verified video crash courses, solved tutorial sheets, and exam masterpacks tailored directly to Bennett University semester syllabi by Skills Seekers.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -142,236 +142,1638 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-32">
 
         <!-- Breadcrumbs -->
-        <div class="breadcrumb">
+        <div class="breadcrumb mb-8">
             <a href="/home"><i class="ph-bold ph-house"></i> Dashboard</a>
             <i class="ph-bold ph-caret-right text-xs"></i>
-            <span class="current">Courses Platform</span>
+            <span class="current">Skills Seekers Courses</span>
         </div>
 
-        <!-- Header -->
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-bold uppercase tracking-wider mb-4">
-                <i class="ph-bold ph-graduation-cap"></i> Skills Seekers Academy
+        <!-- Header Banner -->
+        <div class="text-center max-w-3xl mx-auto mb-10">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-bold uppercase tracking-wider mb-4 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+                <i class="ph-bold ph-graduation-cap text-base"></i> Skills Seekers Official Academy
             </div>
             <h1 class="text-4xl md:text-6xl font-display font-bold text-white tracking-tight mb-4">
                 Targeted <span class="text-gradient">Crash Courses</span>
             </h1>
-            <p class="text-slate-400 text-base leading-relaxed font-light">
+            <p class="text-slate-400 text-sm md:text-base leading-relaxed font-light">
                 High-yield video courses, step-by-step solved tutorials, and strategic exam masterpacks tailored directly to Bennett University semester syllabi.
             </p>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="flex flex-wrap items-center justify-between gap-4 bg-zinc-900/60 border border-zinc-800 p-4 rounded-2xl mb-12">
+        <!-- Statistics Badges Strip -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
+            <div class="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
+                <span class="text-2xl font-bold text-white font-display block">20+</span>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Video Courses</span>
+            </div>
+            <div class="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
+                <span class="text-2xl font-bold text-indigo-400 font-display block">100%</span>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">BU Syllabus Mapped</span>
+            </div>
+            <div class="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
+                <span class="text-2xl font-bold text-emerald-400 font-display block">100+</span>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tutorials Solved</span>
+            </div>
+            <div class="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
+                <span class="text-2xl font-bold text-amber-400 font-display block">4.9 ★</span>
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Student Rating</span>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-zinc-900/70 border border-zinc-800 p-4 rounded-2xl mb-10 backdrop-blur-md">
+            
+            <!-- Category / Semester Pills -->
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 mr-2">Semester:</span>
-                <button class="exam-chip active course-sem-btn" onclick="filterCourses('all', this)">All Semesters</button>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 mr-1 hidden sm:inline">Filter:</span>
+                <button class="exam-chip active course-sem-btn" onclick="filterCourses('all', this)">All Courses (<span id="count-all">20</span>)</button>
                 <button class="exam-chip course-sem-btn" onclick="filterCourses('1', this)">Semester 1</button>
                 <button class="exam-chip course-sem-btn" onclick="filterCourses('2', this)">Semester 2</button>
                 <button class="exam-chip course-sem-btn" onclick="filterCourses('3', this)">Semester 3</button>
                 <button class="exam-chip course-sem-btn" onclick="filterCourses('4', this)">Semester 4</button>
+                <button class="exam-chip course-sem-btn" onclick="filterCourses('package', this)">Combo Bundles</button>
+                <button class="exam-chip course-sem-btn" onclick="filterCourses('other', this)">Mentorship & Electives</button>
             </div>
 
-            <div class="w-full sm:w-64 relative">
-                <input type="text" id="courseSearch" onkeyup="searchCourses()" placeholder="Search courses..." class="w-full bg-black/50 border border-zinc-700/60 rounded-xl py-2 px-3.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
+            <!-- Instant Search Input -->
+            <div class="w-full lg:w-72 relative">
+                <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="courseSearch" onkeyup="searchCourses()" placeholder="Search by subject, topic, instructor..." class="w-full bg-black/60 border border-zinc-700/60 rounded-xl py-2.5 pl-10 pr-3.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition-colors">
             </div>
         </div>
 
-        <!-- Course Cards Catalog Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="course-grid">
+        <!-- Course Cards Catalog Grid (All 20 Courses) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="course-grid">
 
-            <!-- Course 1 -->
-            <div class="course-card p-6" data-sem="1">
-                <div class="course-card-badge bg-blue-500/20 text-blue-400 border border-blue-500/30">Sem 1 • Math</div>
-                <div class="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-5">
-                    <i class="ph-fill ph-function text-2xl"></i>
+            <!-- Course Card: Intelligent Model Design using AI (Mid + End) Term Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/6a842303a33bff187396bfde/6a842303a33bff187396bfde_scaled_cover.jpg?v=2" alt="Intelligent Model Design using AI (Mid + End) Term Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 4 • AI / ML</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        8% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vansh Malhotra</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Engineering Calculus</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">Complete End-Sem Tutorial Sheets, step-by-step limits & multivariable integrals, and 2024-2025 verified PYQ solutions.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-indigo-400 font-semibold">Video + Solved Sheets</span>
-                    <a href="https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Intelligent Model Design using AI (Mid + End) Term Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        End & Mid-Term master course covering Neural Network architectures, supervised/unsupervised pipelines, hyperparameter tuning, model evaluation, and verified BU exam papers.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Neural Architectures</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Hyperparameter Tuning</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Mid & End Solved PYQs</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹599</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Intelligent-Model-Design-using-AI-Mid--End-Term-Express-Crash-Course-6a842303a33bff187396bfde" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 2 -->
-            <div class="course-card p-6" data-sem="1">
-                <div class="course-card-badge bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">Sem 1 • Circuits</div>
-                <div class="h-12 w-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-5">
-                    <i class="ph-fill ph-lightning text-2xl"></i>
+            <!-- Course Card: End Term Express Crash Course Package : Microprocessors & CA, Computer Networks & OS -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="true">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/699db92295163240f1b9254d/699db92295163240f1b9254d_scaled_cover.jpg?v=1" alt="End Term Express Crash Course Package : Microprocessors & CA, Computer Networks & OS" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                        <span>Sem 4 • 3-in-1 Combo</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        35% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Skills Seekers Faculty</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Electronics (ECE)</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">End-Sem solved tutorial sheets, diode circuits, BJT/FET small-signal models, and digital logic gates decoded.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-yellow-400 font-semibold">Video + Notes</span>
-                    <a href="https://www.skillsseekers.com/courses/ECE-END-SEM-TUTORIAL-SHEETS--PYQ-SOLVED-2025-6904f0913315445bda01a275" target="_blank" rel="noopener" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded-xl text-xs transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        End Term Express Crash Course Package : Microprocessors & CA, Computer Networks & OS
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        The ultimate 3-in-1 Semester 4 bundle combining MCA, Computer Networks, and Operating Systems with complete video lectures, revision sheets, and previous paper breakdowns.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">MCA + Networks + OS</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Full Syllabus Revision</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Save ₹699 on Bundle</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹1,300</span>
+                                <span class="text-xs text-slate-500 line-through">₹1,999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/End-term-Express-Crash-Course-Bundle-Microprocessors-and-Commputer-Architecture--Computer-Networks-and-Operating-Systems-699db92295163240f1b9254d" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 3 -->
-            <div class="course-card p-6" data-sem="1">
-                <div class="course-card-badge bg-red-500/20 text-red-400 border border-red-500/30">Sem 1 • Physics</div>
-                <div class="h-12 w-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 mb-5">
-                    <i class="ph-fill ph-magnet text-2xl"></i>
+            <!-- Course Card: Design and Analysis of Algorithms - FULL SYLLABUS - Placement & Exam Prep -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/6975cddfcbf54f7e05ec38ff/6975cddfcbf54f7e05ec38ff_scaled_cover.jpg?v=1" alt="Design and Analysis of Algorithms - FULL SYLLABUS - Placement & Exam Prep" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 4 • Algorithms</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        69% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Hrehaan Ahuja</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Mechanics & Electromagnetism</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">End Term Express Crash Course covering Maxwell's equations, rotational dynamics, waves, and optics.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-red-400 font-semibold">Express Sprint</span>
-                    <a href="https://www.skillsseekers.com/courses/Mechanics-End-Term-Express-Crash-Course-67c81c40eadd7267af53e1ad" target="_blank" rel="noopener" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Design and Analysis of Algorithms - FULL SYLLABUS - Placement & Exam Prep
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Master DAA from core theory to placement interviews: Asymptotic analysis, Divide & Conquer, Dynamic Programming, Greedy approaches, Graph algorithms, and NP-Completeness.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">DP & Greedy Proofs</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Graph Algorithms</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Placement Ready</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹499</span>
+                                <span class="text-xs text-slate-500 line-through">₹1,599</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Design-and-Analysis-of-Algorithms--FULL-SYLLABUS--For-Placement-Preparations-Very-Important---Full-Mid-Sem-End-Sem-6975cddfcbf54f7e05ec38ff" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 4 -->
-            <div class="course-card p-6" data-sem="1">
-                <div class="course-card-badge bg-green-500/20 text-green-400 border border-green-500/30">Sem 1 • Coding</div>
-                <div class="h-12 w-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 mb-5">
-                    <i class="ph-fill ph-terminal text-2xl"></i>
+            <!-- Course Card: Operating Systems (Mid + End) Term Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/695d4f66949d112b79278602/695d4f66949d112b79278602_scaled_cover.jpg?v=2" alt="Operating Systems (Mid + End) Term Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 4 • Systems</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        17% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vansh Malhotra</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Python (Computational Thinking)</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">Theory lectures, solved tutorial sheets, control structures, list comprehensions, and past paper walkthroughs.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-green-400 font-semibold">Mid+End Sem Hunt</span>
-                    <a href="https://www.skillsseekers.com/courses/Python-Mid-Sem-Hunt--Theory--Tutorial-Sheets-Solved---By--Pratham-Kocher-Copy-67373fde108e6312f95e2fe0" target="_blank" rel="noopener" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Operating Systems (Mid + End) Term Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Targeted OS exam preparation: CPU scheduling, Banker's Deadlock Algorithm, Semaphore synchronization, Paging, Virtual Memory, and disk scheduling algorithms.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Deadlock & Semaphores</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Virtual Memory & Paging</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Solved Exam Numericals</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹499</span>
+                                <span class="text-xs text-slate-500 line-through">₹599</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 5 -->
-            <div class="course-card p-6" data-sem="2">
-                <div class="course-card-badge bg-purple-500/20 text-purple-400 border border-purple-500/30">Sem 2 • Math</div>
-                <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-5">
-                    <i class="ph-fill ph-matrix-logo text-2xl"></i>
+            <!-- Course Card: Microprocessors & Computer Architecture (Mid+End) Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/69628f196254b83697fd78e7/69628f196254b83697fd78e7_scaled_cover.jpg?v=2" alt="Microprocessors & Computer Architecture (Mid+End) Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 4 • Architecture</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        21% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vansh Malhotra</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Linear Algebra & ODE</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">Complete Theory lectures, solved tutorial questions, diagonalization, and ordinary differential equations.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-purple-400 font-semibold">End Sem Masterpack</span>
-                    <a href="https://www.skillsseekers.com/courses/Linear-Algebra-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2025-69c506916b8037fc81a925f6" target="_blank" rel="noopener" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Microprocessors & Computer Architecture (Mid+End) Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Full MCA coverage: 8086 architecture & assembly instructions, addressing modes, pipelining, hazards, memory hierarchy, cache mapping, and past exam questions.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">8086 Assembly Codes</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Pipelining & Hazards</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Cache Mapping Derivations</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹699</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Microprocessors-and-Computer-Architecture-Mid-Term-Express-Crash-Course-69628f196254b83697fd78e7" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 6 -->
-            <div class="course-card p-6" data-sem="2">
-                <div class="course-card-badge bg-teal-500/20 text-teal-400 border border-teal-500/30">Sem 2 • Math</div>
-                <div class="h-12 w-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-5">
-                    <i class="ph-fill ph-sigma text-2xl"></i>
+            <!-- Course Card: Computer Network Mid + End-Sem Course (Theory + Practice + PYQs) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/67fbad4d1712547038d3df19/67fbad4d1712547038d3df19_scaled_cover.jpg?v=1" alt="Computer Network Mid + End-Sem Course (Theory + Practice + PYQs)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 4 • Networks</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        50% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Discrete Mathematics</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">Set theory, logic proofs, trees, graph coloring, and algebraic structures for computer science.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-teal-400 font-semibold">Complete Series</span>
-                    <a href="https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad" target="_blank" rel="noopener" class="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Computer Network Mid + End-Sem Course (Theory + Practice + PYQs)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Complete Computer Networks syllabus: OSI & TCP/IP stack layers, framing, CRC error detection, IPv4/IPv6 subnetting, CIDR, routing protocols, and DNS/TCP handshake.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Subnetting & CIDR</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">TCP/IP Protocol Stack</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Solved Problem Bank</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹499</span>
+                                <span class="text-xs text-slate-500 line-through">₹999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 7 -->
-            <div class="course-card p-6" data-sem="1">
-                <div class="course-card-badge bg-pink-500/20 text-pink-400 border border-pink-500/30">Sem 1 • Hardware</div>
-                <div class="h-12 w-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-5">
-                    <i class="ph-fill ph-circuitry text-2xl"></i>
+            <!-- Course Card: CSET 312 - AI/ML End SEM Prep -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="4" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/69d7eae1c8ed5dbf5d44f309/69d7eae1c8ed5dbf5d44f309_scaled_cover.jpg?v=1" alt="CSET 312 - AI/ML End SEM Prep" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 4 • AI / ML</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        17% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vinayak Gupta</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Digital Design</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">Boolean minimization, sequential circuit timing, state diagram synthesis, and question bank walkthroughs.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-pink-400 font-semibold">Video + Question Bank</span>
-                    <a href="https://www.skillsseekers.com/courses/Digital-Design--Lectures--Notes--Question-Banks--PYP--65f3c32854bc821a1192472f" target="_blank" rel="noopener" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        CSET 312 - AI/ML End SEM Prep
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        BU syllabus-mapped prep for CSET 312: Supervised/Unsupervised models, Neural networks, Convolutional filters, NLP basics, and exam-focused question walk-throughs.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">CSET 312 Specific</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">CNN & NLP Basics</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Solved Past Papers</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹499</span>
+                                <span class="text-xs text-slate-500 line-through">₹599</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/CSET-312---AIML-End-SEM-Prep-69d7eae1c8ed5dbf5d44f309" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 8 -->
-            <div class="course-card p-6" data-sem="3">
-                <div class="course-card-badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Sem 3 • Core CS</div>
-                <div class="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5">
-                    <i class="ph-fill ph-tree-structure text-2xl"></i>
+            <!-- Course Card: Data Structures using C++ Mid + End-Term Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="3" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/6a84b55b3c9a5e1bd7515ef0/6a84b55b3c9a5e1bd7515ef0_scaled_cover.jpg?v=2" alt="Data Structures using C++ Mid + End-Term Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 3 • Core CS</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        27% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Samman Dev Dubey</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Data Structures (C++)</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">End-Term express crash course: Trees, Graphs, Hash maps, Heaps, and time complexity analysis.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-cyan-400 font-semibold">Express Crash Course</span>
-                    <a href="https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97" target="_blank" rel="noopener" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Data Structures using C++ Mid + End-Term Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Complete DSA with C++: Pointers, STL containers, Linked Lists, Stacks, Queues, Binary Search Trees, AVL balance rotations, Heaps, and Graph BFS/DFS implementations.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">AVL Rotations & Trees</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Graph Algorithms</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">C++ STL Masterclass</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹749</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-Express-Crash-Course-6a84b55b3c9a5e1bd7515ef0" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 9 -->
-            <div class="course-card p-6" data-sem="3">
-                <div class="course-card-badge bg-violet-500/20 text-violet-400 border border-violet-500/30">Sem 3 • AI/ML</div>
-                <div class="h-12 w-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-5">
-                    <i class="ph-fill ph-brain text-2xl"></i>
+            <!-- Course Card: Statistical Machine Learning (Mid + End) Term Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="3" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/6a8422844b93a4aeead5c37e/6a8422844b93a4aeead5c37e_scaled_cover.jpg?v=1" alt="Statistical Machine Learning (Mid + End) Term Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 3 • Machine Learning</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        8% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vansh Malhotra</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Statistical Machine Learning</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">SML Mid & End Term Prep: regression, bias-variance tradeoff, decision boundaries, and clustering algorithms.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-violet-400 font-semibold">Mid & End Term Crash Course</span>
-                    <a href="https://www.skillsseekers.com/courses/Statistical-Machine-Learning-Mid-End-Term-Crash-Course-6a8422844b93a4aeead5c37e" target="_blank" rel="noopener" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Statistical Machine Learning (Mid + End) Term Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Master SML concepts: Linear & Logistic Regression, Gradient Descent, Naive Bayes, Decision Trees, K-Means clustering, PCA derivations, and previous semester paper solutions.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">PCA & Clustering Math</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Gradient Descent</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Step-by-Step Derivations</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹599</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Statistical-Machine-Learning-Mid-End-Term-Crash-Course-6a8422844b93a4aeead5c37e" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 10 -->
-            <div class="course-card p-6" data-sem="3">
-                <div class="course-card-badge bg-amber-500/20 text-amber-400 border border-amber-500/30">Sem 3 • Math</div>
-                <div class="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-5">
-                    <i class="ph-fill ph-chart-bar text-2xl"></i>
+            <!-- Course Card: Probability & Statistics End-Term Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="3" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/68f24c05943a5543bdb86135/68f24c05943a5543bdb86135_scaled_cover.jpg?v=4" alt="Probability & Statistics End-Term Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 3 • Mathematics</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        31% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vansh Malhotra</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Probability & Statistics</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">Distributions, hypothesis testing, confidence intervals, regression, and solved PYQ sets.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-amber-400 font-semibold">End Term Express</span>
-                    <a href="https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135" target="_blank" rel="noopener" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-black font-bold rounded-xl text-xs transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Probability & Statistics End-Term Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        End-Term Math Express: Discrete & continuous probability density functions, Bayes Theorem, expectations, hypothesis testing (z-test, t-test, chi-square), and regression lines.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Hypothesis Testing</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Bayes Theorem & PDFs</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Solved Question Sheets</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹799</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 11 -->
-            <div class="course-card p-6" data-sem="4">
-                <div class="course-card-badge bg-green-500/20 text-green-400 border border-green-500/30">Sem 4 • Systems</div>
-                <div class="h-12 w-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 mb-5">
-                    <i class="ph-fill ph-desktop text-2xl"></i>
+            <!-- Course Card: IMS END-Sem Course (Theory + Questions Practice + PYQs) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="3" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/67499a62a0101406538b095b/67499a62a0101406538b095b_scaled_cover.jpg?v=2" alt="IMS END-Sem Course (Theory + Questions Practice + PYQs)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 3 • Databases</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        50% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Operating Systems</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">CPU scheduling, Banker's algorithm, virtual memory paging, and deadlock resolution crash course.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-green-400 font-semibold">End Term Express</span>
-                    <a href="https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602" target="_blank" rel="noopener" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        IMS END-Sem Course (Theory + Questions Practice + PYQs)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Complete Information Management Systems course: Relational algebra, advanced SQL queries, ER-to-relational mapping, 1NF-BCNF normalization, transaction ACID, and serializability.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">SQL & Normalization</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">ER Mapping & Indexing</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Transaction Management</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹499</span>
+                                <span class="text-xs text-slate-500 line-through">₹999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/IMS-End-Sem-Course--Theory--Questions-Practice-67499a62a0101406538b095b" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Course 12 -->
-            <div class="course-card p-6" data-sem="4">
-                <div class="course-card-badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Sem 4 • Networks</div>
-                <div class="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5">
-                    <i class="ph-fill ph-globe text-2xl"></i>
+            <!-- Course Card: IMS Mid-Sem Course (Theory + Questions Practice) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="3" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/66f69c7cc9d8e75c6fb99d1d/66f69c7cc9d8e75c6fb99d1d_scaled_cover.jpg?v=2" alt="IMS Mid-Sem Course (Theory + Questions Practice)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 3 • Databases</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        40% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2 font-display">Computer Networks</h3>
-                <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">OSI & TCP/IP stack, routing protocols, flow control, subnetting, and full theory + practice problem bank.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span class="text-xs text-cyan-400 font-semibold">Full Exam Course</span>
-                    <a href="https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19" target="_blank" rel="noopener" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-                        Enroll Now <i class="ph-bold ph-arrow-right"></i>
-                    </a>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        IMS Mid-Sem Course (Theory + Questions Practice)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Targeted Mid-Sem preparation for IMS: Database architectures, Entity-Relationship modeling, Schema design, relational algebra, and SQL DDL/DML fundamentals.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">ER Diagrams</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Relational Algebra</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Mid-Term Question Bank</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹299</span>
+                                <span class="text-xs text-slate-500 line-through">₹499</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/IMS-Mid---Sem-Course-66f69c7cc9d8e75c6fb99d1d" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
+            <!-- Course Card: (Digital Design + Linear Algebra + DMS) Complete End Term Package -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="2" data-package="true">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/69e07c89d5bf1319ba104a81/69e07c89d5bf1319ba104a81_scaled_cover.jpg?v=1" alt="(Digital Design + Linear Algebra + DMS) Complete End Term Package" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                        <span>Sem 2 • 3-in-1 Combo</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        12% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Skills Seekers Faculty</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        (Digital Design + Linear Algebra + DMS) Complete End Term Package
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        All-in-one Semester 2 bundle covering Digital Design, Linear Algebra & ODE, and Discrete Mathematical Structures with complete video lectures, notes, tutorial sheets, and question banks.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">3 Full End-Sem Courses</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Complete Notes & Solved PYQs</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Discounted Combo Price</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹1,149</span>
+                                <span class="text-xs text-slate-500 line-through">₹1,300</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Digital-Design--Linear-Algebra--Discrete-Mathematics-Complete-End-Term-Courses-69e07c89d5bf1319ba104a81" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: Mechanics & Electromagnetism End-Term Express Crash Course -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="1" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/67c81c40eadd7267af53e1ad/67c81c40eadd7267af53e1ad_scaled_cover.jpg?v=18" alt="Mechanics & Electromagnetism End-Term Express Crash Course" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 1 • Physics</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        31% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Vansh Malhotra</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Mechanics & Electromagnetism End-Term Express Crash Course
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        High-yield physics express course: Harmonic oscillators, wave equation, Maxwell's electromagnetic field equations, electrostatics, magnetostatics, and step-by-step solved numericals.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Maxwell's Equations</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Wave & Oscillations</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Step-by-step Numericals</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹799</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Mechanics-End-Term-Express-Crash-Course-67c81c40eadd7267af53e1ad" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: Digital Design (Lectures + Notes + Question Banks + PYP) (Mid + End Term) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="1" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/65f3c32854bc821a1192472f/65f3c32854bc821a1192472f_scaled_cover.jpg?v=1" alt="Digital Design (Lectures + Notes + Question Banks + PYP) (Mid + End Term)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 1 • Hardware</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        50% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Digital Design (Lectures + Notes + Question Banks + PYP) (Mid + End Term)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Complete Digital Logic & Hardware design: Boolean algebra, K-Maps, combinational circuits (Multiplexers, Encoders, Adders), Flip-Flops, Counters, FSM state design, and solved question banks.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">K-Maps & Combinational</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Sequential Circuits & FSMs</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Question Bank & PYPs</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹499</span>
+                                <span class="text-xs text-slate-500 line-through">₹999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Digital-Design--Lectures--Notes--Question-Banks--PYP--65f3c32854bc821a1192472f" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: Python Mid + End-Sem Sprint (Theory + Solved Tutorial Sheets) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="1" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/67373fde108e6312f95e2fe0/67373fde108e6312f95e2fe0_scaled_cover.jpg?v=3" alt="Python Mid + End-Sem Sprint (Theory + Solved Tutorial Sheets)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Sem 1 • Coding</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        60% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Python Mid + End-Sem Sprint (Theory + Solved Tutorial Sheets)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Complete Python programming & computational thinking package: variable scopes, loops, list/dict comprehensions, functions, file handling, exception handling, and solved tutorial questions.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Tutorial Sheets Solved</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Python Core & Logic</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Mid + End-Sem Sprint</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹399</span>
+                                <span class="text-xs text-slate-500 line-through">₹999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Python-Mid-Sem-Hunt--Theory--Tutorial-Sheets-Solved---By--Pratham-Kocher-Copy-67373fde108e6312f95e2fe0" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: Automata Theory and Computability (Mid + End-Sem Sprint) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="other" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/6912054225c39a250b05a0e2/6912054225c39a250b05a0e2_scaled_cover.jpg?v=2" alt="Automata Theory and Computability (Mid + End-Sem Sprint)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Elective • Theory of CS</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        45% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Automata Theory and Computability (Mid + End-Sem Sprint)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Full Sprint covering DFA/NFA conversions, Regular Expressions, Arden's Theorem, Context-Free Grammars, Pushdown Automata (PDA), Turing Machines, and Chomsky Hierarchy.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">DFA/NFA & Regex</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Pushdown Automata</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Turing Machines</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹549</span>
+                                <span class="text-xs text-slate-500 line-through">₹999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--End-Sem-Sprint--6912054225c39a250b05a0e2" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: Automata Theory and Computability (Mid-Sem Sprint) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="other" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/68c0425bc9ae602969c092b2/68c0425bc9ae602969c092b2_scaled_cover.jpg?v=2" alt="Automata Theory and Computability (Mid-Sem Sprint)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Elective • Theory of CS</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        40% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        Automata Theory and Computability (Mid-Sem Sprint)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Focused Mid-Sem course on finite state automata, NFA-DFA subset construction, minimization of DFA, regular languages, and Pumping Lemma.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">NFA to DFA</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">DFA Minimization</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Pumping Lemma</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹299</span>
+                                <span class="text-xs text-slate-500 line-through">₹499</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--Mid-Sem-Sprint--68c0425bc9ae602969c092b2" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: 1 - 1 Live Class (Personal Mentorship & Doubt Clearing) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="other" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/69e76bd21b1eb847ee042c2c/69e76bd21b1eb847ee042c2c_scaled_cover.jpg?v=1" alt="1 - 1 Live Class (Personal Mentorship & Doubt Clearing)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>1-on-1 Mentorship</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        25% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        1 - 1 Live Class (Personal Mentorship & Doubt Clearing)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Personalized 1-on-1 private tutoring, custom study roadmaps, live code reviews, doubt-solving sessions, and direct mentorship tailored to your academic and placement goals.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Direct 1-on-1 Live Sessions</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Customized Study Plan</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Instant Doubt Clearing</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹14,999</span>
+                                <span class="text-xs text-slate-500 line-through">₹19,999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/1---1-live-Class-69e76bd21b1eb847ee042c2c" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Course Card: One to One Live Class (Academic & Placement Coaching) -->
+            <div class="course-card relative group flex flex-col bg-zinc-950/80 border border-zinc-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.18)] hover:-translate-y-1" data-sem="other" data-package="false">
+                
+                <!-- Thumbnail Cover with Badge Overlay -->
+                <div class="relative h-48 w-full overflow-hidden bg-zinc-900 border-b border-zinc-800/60">
+                    <img src="https://d502jbuhuh9wk.cloudfront.net/courses/698449f7522d9c0cbe02e9be/698449f7522d9c0cbe02e9be_scaled_cover.jpg?v=1" alt="One to One Live Class (Academic & Placement Coaching)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <!-- Semester / Type Badge -->
+                    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                        <span>1-on-1 Mentorship</span>
+                    </div>
+
+                    
+                    <!-- Discount Tag -->
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[10px] font-bold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
+                        25% OFF
+                    </div>
+                    
+
+                    <!-- Instructor Pill -->
+                    <div class="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-slate-300 font-medium bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                        <i class="ph-bold ph-user-circle text-indigo-400 text-sm"></i>
+                        <span>Pratham Kocher</span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex flex-col flex-grow">
+                    <h3 class="text-base font-bold text-white font-display mb-2 line-clamp-2 group-hover:text-indigo-300 transition-colors leading-snug">
+                        One to One Live Class (Academic & Placement Coaching)
+                    </h3>
+
+                    <p class="text-xs text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        Direct 1-on-1 private live learning sessions with expert faculty for exam cramming, placement prep, project debugging, and concept mastery.
+                    </p>
+
+                    <!-- Key Highlights -->
+                    <div class="space-y-1.5 mb-5 mt-auto pt-3 border-t border-white/5">
+                        
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Private Tutoring</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Exam Strategy & Projects</span>
+    </div>
+  
+    <div class="flex items-center gap-1.5 text-[11px] text-slate-300">
+      <i class="ph-bold ph-check-circle text-emerald-400 text-xs flex-shrink-0"></i>
+      <span class="truncate">Dedicated Mentorship</span>
+    </div>
+  
+                    </div>
+
+                    <!-- Price & Enroll CTA Footer -->
+                    <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80">
+                        <div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-extrabold text-white font-display">₹14,999</span>
+                                <span class="text-xs text-slate-500 line-through">₹19,999</span>
+                            </div>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block">Instant Lifetime Access</span>
+                        </div>
+
+                        <a href="https://www.skillsseekers.com/courses/One-to-One-Live-Class-698449f7522d9c0cbe02e9be" target="_blank" rel="noopener" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5 group/btn hover:scale-105 active:scale-95">
+                            <span>Enroll</span>
+                            <i class="ph-bold ph-arrow-up-right text-xs group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="no-courses-found" class="hidden text-center py-16">
+            <div class="h-16 w-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-4 text-slate-500 text-3xl">
+                <i class="ph-bold ph-magnifying-glass"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">No matching courses found</h3>
+            <p class="text-xs text-slate-400 mb-4">Try searching with a different subject keyword or resetting the semester filter.</p>
+            <button onclick="resetFilters()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-xs font-bold transition-all">
+                Reset Filters
+            </button>
+        </div>
+
+        <!-- Skills Seekers Direct Link Promo Banner -->
+        <div class="mt-16 p-8 rounded-3xl bg-gradient-to-r from-indigo-950/60 via-purple-950/40 to-black/60 border border-indigo-500/30 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-sm">
+            <div class="max-w-xl">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="ph-bold ph-sparkle"></i> Official Store
+                </div>
+                <h3 class="text-2xl font-bold text-white font-display mb-2">Need Direct Store Access?</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Visit the official Skills Seekers website to browse bundles, activate memberships, and attend live doubt-solving sessions with top educators.
+                </p>
+            </div>
+            <a href="https://www.skillsseekers.com/courses" target="_blank" rel="noopener" class="px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-bold text-sm transition-all shadow-lg shadow-indigo-600/30 flex items-center gap-2 whitespace-nowrap hover:scale-105 active:scale-95">
+                <span>Visit Skills Seekers Store</span>
+                <i class="ph-bold ph-arrow-up-right"></i>
+            </a>
         </div>
 
     </main>
@@ -398,32 +1800,53 @@
     <script src="/js/animations.js"></script>
     <script src="/js/app.js"></script>
     <script>
-        let currentCourseSem = 'all';
+        let currentCourseFilter = 'all';
 
-        function filterCourses(sem, btn) {
+        function filterCourses(filter, btn) {
             document.querySelectorAll('.course-sem-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            currentCourseSem = sem;
+            currentCourseFilter = filter;
             searchCourses();
+        }
+
+        function resetFilters() {
+            document.getElementById('courseSearch').value = '';
+            filterCourses('all', document.querySelector('.course-sem-btn'));
         }
 
         function searchCourses() {
             const query = (document.getElementById('courseSearch').value || '').toLowerCase().trim();
             const cards = document.querySelectorAll('.course-card');
+            let visibleCount = 0;
 
             cards.forEach(card => {
                 const sem = card.getAttribute('data-sem') || '';
+                const isPackage = card.getAttribute('data-package') === 'true';
                 const text = (card.textContent || '').toLowerCase();
 
-                const matchesSem = (currentCourseSem === 'all' || sem === currentCourseSem);
+                let matchesFilter = false;
+                if (currentCourseFilter === 'all') {
+                    matchesFilter = true;
+                } else if (currentCourseFilter === 'package') {
+                    matchesFilter = isPackage;
+                } else if (currentCourseFilter === sem) {
+                    matchesFilter = true;
+                }
+
                 const matchesQuery = (!query || text.includes(query));
 
-                if (matchesSem && matchesQuery) {
+                if (matchesFilter && matchesQuery) {
                     card.style.display = 'flex';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            const noResults = document.getElementById('no-courses-found');
+            if (noResults) {
+                noResults.classList.toggle('hidden', visibleCount > 0);
+            }
         }
     </script>
 </body>
