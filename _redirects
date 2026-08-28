@@ -1,0 +1,11 @@
+/dsa /pages/dsa/visual-dsa.html 200
+/visual-dsa.html /pages/dsa/visual-dsa.html 200
+/dsa/visual-dsa.html /pages/dsa/visual-dsa.html 200
+/dsa/* /pages/dsa/:splat 200
+/dsa-* /pages/dsa/dsa-:splat 200
+/os /pages/os/os-visual.html 200
+/os-visual.html /pages/os/os-visual.html 200
+/os/os-visual.html /pages/os/os-visual.html 200
+/os/* /pages/os/:splat 200
+/os-* /pages/os/os-:splat 200
+/pages/* /pages/:splat 200

@@ -95,8 +95,44 @@
       "dest": "/pages/dsa/visual-dsa.html"
     },
     {
+      "src": "/dsa/visual-dsa.html",
+      "dest": "/pages/dsa/visual-dsa.html"
+    },
+    {
+      "src": "/visual-dsa.html",
+      "dest": "/pages/dsa/visual-dsa.html"
+    },
+    {
+      "src": "/dsa/(.*)",
+      "dest": "/pages/dsa/$1"
+    },
+    {
+      "src": "/dsa-(.*)",
+      "dest": "/pages/dsa/dsa-$1"
+    },
+    {
       "src": "/os",
       "dest": "/pages/os/os-visual.html"
+    },
+    {
+      "src": "/os/os-visual.html",
+      "dest": "/pages/os/os-visual.html"
+    },
+    {
+      "src": "/os-visual.html",
+      "dest": "/pages/os/os-visual.html"
+    },
+    {
+      "src": "/os/(.*)",
+      "dest": "/pages/os/$1"
+    },
+    {
+      "src": "/os-(.*)",
+      "dest": "/pages/os/os-$1"
+    },
+    {
+      "src": "/pages/(.*)",
+      "dest": "/pages/$1"
     },
     {
       "src": "/test",

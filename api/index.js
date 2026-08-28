@@ -225,7 +225,15 @@ app.get('/library', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages
 app.get('/courses', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'courses.html')));
 app.get('/tools', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'tools.html')));
 app.get('/dsa', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
+app.get('/dsa/visual-dsa.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
+app.get('/visual-dsa.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
+app.get('/dsa/:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', req.params.file)));
+app.get('/dsa-:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'dsa-' + req.params.file)));
 app.get('/os', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
+app.get('/os/os-visual.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
+app.get('/os-visual.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
+app.get('/os/:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', req.params.file)));
+app.get('/os-:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-' + req.params.file)));
 app.get('/test', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'test_auth.html')));
 
 // ── Static assets (images, fonts, css, js, etc.) ───
