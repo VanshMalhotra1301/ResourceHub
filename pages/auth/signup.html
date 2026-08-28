@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | Skills Seekers Resource Hub</title>
+    <title>Create Account | Skills Seekers Resource Hub 3D</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;800&family=Space+Grotesk:wght@600;700&display=swap"
         rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         *,
         *::before,
@@ -19,48 +20,60 @@
 
         body {
             min-height: 100vh;
-            background: #050505;
+            background: #030308;
             color: #e5e7eb;
             font-family: 'Inter', system-ui, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            perspective: 1200px;
+            overflow-x: hidden;
         }
 
-        body::before {
-            content: '';
+        #signup-3d-canvas {
             position: fixed;
             inset: 0;
-            background:
-                radial-gradient(ellipse 60% 50% at 85% 50%, rgba(168, 85, 247, 0.10) 0%, transparent 100%),
-                radial-gradient(ellipse 50% 40% at 15% 20%, rgba(99, 102, 241, 0.07) 0%, transparent 100%);
             pointer-events: none;
+            z-index: 0;
+            width: 100vw;
+            height: 100vh;
         }
 
         .card {
             position: relative;
+            z-index: 10;
             width: 100%;
             max-width: 880px;
-            background: rgba(10, 10, 14, 0.92);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
+            background: rgba(10, 11, 20, 0.75);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 28px;
             overflow: hidden;
             display: flex;
-            box-shadow: 0 0 100px rgba(168, 85, 247, 0.12), 0 40px 80px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(20px);
+            box-shadow: 0 0 80px rgba(168, 85, 247, 0.2), 0 40px 80px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            transition: transform 0.15s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(244, 114, 182, 0.5);
+            box-shadow: 0 0 100px rgba(244, 114, 182, 0.25), 0 45px 90px rgba(0, 0, 0, 0.8);
         }
 
         .brand {
             width: 42%;
             padding: 60px 44px;
-            background: linear-gradient(160deg, rgba(18, 18, 28, 0.7) 0%, rgba(6, 6, 12, 0.95) 100%);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            background: linear-gradient(160deg, rgba(22, 16, 35, 0.7) 0%, rgba(8, 6, 18, 0.95) 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
+            transform: translateZ(20px);
         }
 
         .brand-logo {
@@ -280,7 +293,8 @@
 </head>
 
 <body>
-    <div class="card">
+    <canvas id="signup-3d-canvas"></canvas>
+    <div class="card" id="signup-card">
 
         <div class="brand">
             <div class="brand-logo">
@@ -401,7 +415,71 @@
                 }
             }
         });
+
+        // 3D Card Tilt Physics
+        const card = document.getElementById('signup-card');
+        if (card) {
+            window.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotX = -((y - centerY) / centerY) * 10;
+                const rotY = ((x - centerX) / centerX) * 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.01, 1.01, 1.01)`;
+            });
+            window.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            });
+        }
+
+        // 3D WebGL Background Scene
+        (function initSignup3D() {
+            const canvas = document.getElementById('signup-3d-canvas');
+            if (!canvas || typeof THREE === 'undefined') return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 180;
+
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Particles
+            const count = 750;
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(count * 3);
+            for (let i = 0; i < count * 3; i++) {
+                pos[i] = (Math.random() - 0.5) * 600;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xa855f7, size: 2.2, transparent: true, opacity: 0.8 });
+            const particles = new THREE.Points(geo, mat);
+            scene.add(particles);
+
+            // Floating crystal wireframe
+            const crystalGeo = new THREE.DodecahedronGeometry(48, 0);
+            const crystalMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.25 });
+            const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+            scene.add(crystal);
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            function anim() {
+                requestAnimationFrame(anim);
+                particles.rotation.y += 0.0012;
+                crystal.rotation.x += 0.002;
+                crystal.rotation.y += 0.0025;
+                renderer.render(scene, camera);
+            }
+            anim();
+        })();
     </script>
 </body>
-
 </html>

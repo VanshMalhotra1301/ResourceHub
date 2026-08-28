@@ -200,6 +200,15 @@ app.get('/', (req, res) => res.redirect('/login'));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'auth.html')));
 app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'signup.html')));
 app.get('/home', (req, res) => res.sendFile(path.join(__dirname, '..', 'index.html')));
+app.get('/sem1', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem1.html')));
+app.get('/sem2', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem2.html')));
+app.get('/sem3', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem3.html')));
+app.get('/sem4', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem4.html')));
+app.get('/library', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'library.html')));
+app.get('/courses', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'courses.html')));
+app.get('/tools', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'tools.html')));
+app.get('/dsa', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
+app.get('/os', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
 app.get('/test', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'test_auth.html')));
 
 // ── Static assets (images, fonts, etc.) ───────────

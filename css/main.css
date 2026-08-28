@@ -1,0 +1,286 @@
+/* =========================================================
+   BU Resource Hub - Main Stylesheet (Base, Layout, Reset)
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #050505;
+    overflow-x: hidden;
+    color: #e5e7eb;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Background Canvas */
+#canvas-container {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Glassmorphic Navbar */
+.glass-nav {
+    background: rgba(5, 5, 5, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Scroll Progress Bar */
+#scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #a855f7, #fbbf24);
+    z-index: 9999;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+/* Back to Top Button */
+#back-to-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 200;
+    background: rgba(99, 102, 241, 0.9);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    font-size: 18px;
+}
+
+#back-to-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#back-to-top:hover {
+    background: rgba(99, 102, 241, 1);
+    transform: scale(1.1);
+}
+
+/* Mobile Hamburger Menu */
+#hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+#hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #94a3b8;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+#mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(5, 5, 5, 0.97);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+#mobile-menu.open {
+    display: flex;
+}
+
+#mobile-menu a {
+    font-size: 24px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+#mobile-menu a:hover {
+    color: #fff;
+}
+
+#menu-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: #71717a;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    #hamburger {
+        display: flex;
+    }
+}
+
+/* Text Gradient Utility */
+.text-gradient {
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #52525b;
+}
+
+/* =========================================================
+   NAVBAR DROPDOWN & MULTI-PAGE NAVIGATION
+   ========================================================= */
+.nav-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: rgba(14, 14, 22, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    margin-top: 6px;
+    animation: dropIn 0.2s ease-out;
+}
+
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-dropdown:hover .nav-dropdown-content,
+.nav-dropdown:focus-within .nav-dropdown-content {
+    display: block;
+}
+
+.nav-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.nav-dropdown-item:hover {
+    background: rgba(99, 102, 241, 0.15);
+    color: #fff;
+    transform: translateX(4px);
+}
+
+.nav-dropdown-item i {
+    font-size: 16px;
+    color: #818cf8;
+}
+
+/* Nav Active Link Indicator */
+.nav-link {
+    position: relative;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+    color: #ffffff;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    font-weight: 600;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.breadcrumb a:hover {
+    color: #6366f1;
+}
+
+.breadcrumb span.current {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+

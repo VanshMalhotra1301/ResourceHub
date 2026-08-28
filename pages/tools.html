@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Study Tools | BU Resource Hub</title>
+    <meta name="description" content="Productivity and academic utilities for Bennett University students: Pomodoro Focus Timer, SGPA/CGPA Calculator, Exam Countdown, and Sticky Notes.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            primary: '#6366f1',
+                            secondary: '#a855f7',
+                            accent: '#fbbf24',
+                            dark: '#050505',
+                            surface: '#0f0f13',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons & GSAP -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/tools.css">
+</head>
+
+<body class="text-slate-300 antialiased selection:bg-brand-primary selection:text-white">
+
+    <!-- Scroll Progress -->
+    <div id="scroll-progress"></div>
+
+    <!-- Background Ambient Canvas -->
+    <canvas id="canvas-container"></canvas>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu">
+        <button id="menu-close" onclick="closeMobileMenu()">✕</button>
+        <a href="/home" onclick="closeMobileMenu()">Dashboard</a>
+        <a href="/sem1" onclick="closeMobileMenu()">Semester 1</a>
+        <a href="/sem2" onclick="closeMobileMenu()">Semester 2</a>
+        <a href="/sem3" onclick="closeMobileMenu()">Semester 3</a>
+        <a href="/sem4" onclick="closeMobileMenu()">Semester 4</a>
+        <a href="/library" onclick="closeMobileMenu()">PYQ Library</a>
+        <a href="/courses" onclick="closeMobileMenu()">Courses</a>
+        <a href="/tools" onclick="closeMobileMenu()" style="color:#818cf8">Study Tools</a>
+        <a href="/dsa" onclick="closeMobileMenu()">DSA Lab</a>
+        <a href="/os" onclick="closeMobileMenu()">OS Lab</a>
+        <a href="https://www.skillsseekers.com" target="_blank" style="color:#6ee7b7">Skills Seekers ↗</a>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="/home" class="flex items-center gap-3.5 group">
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all duration-500 overflow-hidden bg-white">
+                        <img src="/logo.jpg" alt="BU Logo" class="h-full w-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-display font-bold text-white tracking-tight group-hover:text-indigo-300 transition-colors">BU Resource Hub</h1>
+                        <div class="flex items-center gap-2">
+                            <span class="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                            <p class="text-[10px] text-indigo-400 uppercase tracking-widest font-bold">Productivity Suite</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden lg:flex items-center space-x-1">
+                    <a href="/home" class="nav-link">Dashboard</a>
+
+                    <div class="nav-dropdown">
+                        <button class="nav-link flex items-center gap-1.5">
+                            Semesters <i class="ph-bold ph-caret-down text-xs"></i>
+                        </button>
+                        <div class="nav-dropdown-content">
+                            <a href="/sem1" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-one"></i> Semester 1</a>
+                            <a href="/sem2" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-two"></i> Semester 2</a>
+                            <a href="/sem3" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-three"></i> Semester 3</a>
+                            <a href="/sem4" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-four"></i> Semester 4</a>
+                        </div>
+                    </div>
+
+                    <a href="/library" class="nav-link">PYQ Library</a>
+                    <a href="/courses" class="nav-link">Courses</a>
+                    <a href="/tools" class="nav-link active">Study Tools</a>
+                    <a href="/dsa" class="nav-link text-cyan-400 hover:text-cyan-300 flex items-center gap-1"><i class="ph-fill ph-circles-three-plus"></i> DSA Lab</a>
+                    <a href="/os" class="nav-link text-pink-400 hover:text-pink-300 flex items-center gap-1"><i class="ph-fill ph-cpu"></i> OS Lab</a>
+
+                    <div id="streak-badge" onclick="showStreakInfo()" title="Your daily study streak">
+                        🔥 <span id="streak-num">0</span> Day Streak
+                    </div>
+
+                    <div class="h-4 w-px bg-white/10 mx-2"></div>
+
+                    <!-- Auth UI -->
+                    <div id="auth-container" class="flex items-center gap-3">
+                        <button id="login-btn" onclick="window.location.href='/login'" class="px-5 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 transition-all flex items-center gap-2">
+                            <i class="ph-bold ph-sign-in"></i> <span>Login</span>
+                        </button>
+                        <div id="user-profile" class="hidden items-center gap-2">
+                            <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="h-8 w-8 rounded-full border border-indigo-500">
+                            <span id="user-name" class="text-sm font-bold text-white hidden md:block">Student</span>
+                            <button onclick="signOut()" class="text-xs text-slate-400 hover:text-white transition-colors" title="Sign Out">
+                                <i class="ph-bold ph-sign-out text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-32">
+
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb">
+            <a href="/home"><i class="ph-bold ph-house"></i> Dashboard</a>
+            <i class="ph-bold ph-caret-right text-xs"></i>
+            <span class="current">Study Tools Hub</span>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-4">
+                <i class="ph-bold ph-wrench"></i> Student Utilities
+            </div>
+            <h1 class="text-4xl md:text-6xl font-display font-bold text-white tracking-tight mb-4">
+                Academic <span class="text-gradient">Study Tools</span>
+            </h1>
+            <p class="text-slate-400 text-base leading-relaxed font-light">
+                Focus sessions, grade calculators, target planners, and smart notes designed to boost your academic workflow.
+            </p>
+        </div>
+
+        <!-- Main Tools Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+
+            <!-- Tool 1: Dedicated Pomodoro Focus Timer (7 cols on lg) -->
+            <div class="lg:col-span-6 premium-card p-8 rounded-3xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xl">
+                                <i class="ph-fill ph-timer"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white font-display">Pomodoro Focus Timer</h3>
+                                <p class="text-xs text-slate-400">Scientifically proven 25/5 interval study cycle</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-xs font-mono text-slate-300">
+                            Sessions: <strong id="tools-pomo-sessions" class="text-white">0</strong>
+                        </span>
+                    </div>
+
+                    <!-- Mode Selectors -->
+                    <div class="flex justify-center gap-2 mb-8">
+                        <button class="pomo-mode-btn active" id="pomo-work-btn" onclick="setPomoMode('work')">Focus (25 min)</button>
+                        <button class="pomo-mode-btn" id="pomo-short-btn" onclick="setPomoMode('short')">Short Break (5 min)</button>
+                        <button class="pomo-mode-btn" id="pomo-long-btn" onclick="setPomoMode('long')">Long Break (15 min)</button>
+                    </div>
+
+                    <!-- Circular Progress Ring -->
+                    <div class="pomodoro-ring" style="width: 170px; height: 170px;">
+                        <svg width="170" height="170" viewBox="0 0 140 140">
+                            <circle class="bg" cx="70" cy="70" r="60"></circle>
+                            <circle class="prog" id="pomo-ring" cx="70" cy="70" r="60"></circle>
+                        </svg>
+                    </div>
+
+                    <div id="pomodoro-display" class="text-6xl font-extrabold text-white text-center font-display my-6 tracking-wider">25:00</div>
+                </div>
+
+                <div class="flex justify-center gap-4 mt-4">
+                    <button class="pomo-btn pomo-btn-start px-8 py-3 text-sm" id="pomo-start-btn" onclick="togglePomodoro()">▶ Start Session</button>
+                    <button class="pomo-btn pomo-btn-reset px-6 py-3 text-sm" onclick="resetPomodoro()">↺ Reset</button>
+                </div>
+            </div>
+
+            <!-- Tool 2: Exam Countdown & Target Planner (5 cols on lg) -->
+            <div class="lg:col-span-6 premium-card p-8 rounded-3xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
+                            <i class="ph-fill ph-alarm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white font-display">Exam Countdown</h3>
+                            <p class="text-xs text-slate-400">Set target deadlines and track remaining time</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-3 my-8 text-center">
+                        <div class="countdown-card p-4">
+                            <div class="countdown-val text-3xl" id="cd-days">--</div>
+                            <div class="countdown-label text-[10px]">Days</div>
+                        </div>
+                        <div class="countdown-card p-4">
+                            <div class="countdown-val text-3xl" id="cd-hours">--</div>
+                            <div class="countdown-label text-[10px]">Hours</div>
+                        </div>
+                        <div class="countdown-card p-4">
+                            <div class="countdown-val text-3xl" id="cd-mins">--</div>
+                            <div class="countdown-label text-[10px]">Mins</div>
+                        </div>
+                        <div class="countdown-card p-4">
+                            <div class="countdown-val text-3xl" id="cd-secs">--</div>
+                            <div class="countdown-label text-[10px]">Secs</div>
+                        </div>
+                    </div>
+
+                    <div id="cd-exam-label" class="text-center text-sm font-bold text-indigo-400 uppercase tracking-widest mb-6">⏳ Upcoming Exam Target</div>
+                </div>
+
+                <div class="bg-zinc-900/70 border border-zinc-800 p-4 rounded-2xl">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Set Target Exam</span>
+                    <div class="flex flex-col sm:flex-row gap-2.5">
+                        <input type="date" id="exam-date-input" class="bg-black/60 border border-zinc-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 flex-1" />
+                        <input type="text" id="exam-name-input" placeholder="Exam name (e.g. Endsem 2026)" class="bg-black/60 border border-zinc-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 flex-1" />
+                        <button onclick="setExamDate()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-md shrink-0">Set Target</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tool 3: SGPA / CGPA Interactive Multi-Semester Calculator -->
+        <div class="premium-card p-8 md:p-10 rounded-3xl mb-12">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-white/5">
+                <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-2xl">
+                        <i class="ph-fill ph-calculator"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white font-display">SGPA & CGPA Grade Calculator</h2>
+                        <p class="text-sm text-slate-400">Bennett University 10-Point Grading Scale Calculation</p>
+                    </div>
+                </div>
+
+                <!-- Grading Scale Key -->
+                <div class="flex items-center gap-3 text-xs bg-zinc-900/80 border border-zinc-800 px-4 py-2.5 rounded-xl font-mono text-slate-400">
+                    <span>91+=10 (O)</span>
+                    <span class="text-zinc-600">•</span>
+                    <span>81-90=9 (A+)</span>
+                    <span class="text-zinc-600">•</span>
+                    <span>71-80=8 (A)</span>
+                    <span class="text-zinc-600">•</span>
+                    <span>61-70=7 (B+)</span>
+                </div>
+            </div>
+
+            <!-- Subject Rows Container -->
+            <div class="space-y-4 mb-8" id="subjectContainer">
+                <div class="grid grid-cols-12 gap-3 text-xs font-bold uppercase tracking-wider text-slate-500 px-2">
+                    <div class="col-span-6">Subject Title</div>
+                    <div class="col-span-3">Credits</div>
+                    <div class="col-span-3">Marks (0-100)</div>
+                </div>
+
+                <!-- Initial Rows -->
+                <div class="subject-row grid grid-cols-12 gap-3 items-center">
+                    <div class="col-span-6">
+                        <input type="text" placeholder="e.g. Engineering Calculus" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all placeholder-zinc-600">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="number" placeholder="4" value="4" class="credit-input w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="number" placeholder="92" class="marks-input w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="subject-row grid grid-cols-12 gap-3 items-center">
+                    <div class="col-span-6">
+                        <input type="text" placeholder="e.g. Data Structures" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all placeholder-zinc-600">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="number" placeholder="4" value="4" class="credit-input w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="number" placeholder="85" class="marks-input w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="subject-row grid grid-cols-12 gap-3 items-center">
+                    <div class="col-span-6">
+                        <input type="text" placeholder="e.g. Operating Systems" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all placeholder-zinc-600">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="number" placeholder="4" value="4" class="credit-input w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                    <div class="col-span-3">
+                        <input type="number" placeholder="78" class="marks-input w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center gap-4 mb-8">
+                <button onclick="addSubjectRow()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-slate-300 hover:text-white text-sm font-bold transition-all flex items-center justify-center gap-2 border border-zinc-800">
+                    <i class="ph-bold ph-plus"></i> Add Subject Row
+                </button>
+                <button onclick="calculateCGPA()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition-all flex-grow shadow-lg shadow-indigo-500/20 text-center">
+                    Calculate SGPA
+                </button>
+            </div>
+
+            <!-- Calculation Result Display -->
+            <div id="resultArea" class="hidden p-8 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-indigo-500/5 blur-xl"></div>
+                <span class="text-xs text-indigo-300 uppercase tracking-widest block mb-2 font-bold relative z-10">Calculated SGPA Score</span>
+                <span id="cgpaValue" class="text-6xl font-extrabold text-white font-display relative z-10">0.00</span>
+                <p class="text-xs text-slate-400 mt-2 relative z-10">Calculated across all weighted course credits.</p>
+            </div>
+        </div>
+
+        <!-- Sticky Notes Memo Board & Bookmarks Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Sticky Notes (6 cols) -->
+            <div class="lg:col-span-6 premium-card p-8 rounded-3xl">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-xl">
+                            <i class="ph-fill ph-note-pencil"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white font-display">Study Scratchpad</h3>
+                            <p class="text-xs text-slate-400">Save quick revision formulas and tasks</p>
+                        </div>
+                    </div>
+                    <button onclick="addNote()" class="px-3.5 py-1.5 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 border border-yellow-500/40 rounded-xl text-xs font-bold transition-all">
+                        + New Note
+                    </button>
+                </div>
+
+                <div id="notes-container" class="space-y-3 min-h-[160px]"></div>
+            </div>
+
+            <!-- Saved Bookmarks (6 cols) -->
+            <div class="lg:col-span-6 premium-card p-8 rounded-3xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl">
+                        <i class="ph-fill ph-bookmark-simple"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white font-display">Saved Bookmarks</h3>
+                        <p class="text-xs text-slate-400">Quick access to all your bookmarked papers</p>
+                    </div>
+                </div>
+
+                <div id="bookmarks-list" class="space-y-2 min-h-[160px]"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 bg-black/60 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
+            <div class="flex items-center gap-3">
+                <img src="/logo.jpg" alt="Logo" class="h-6 w-6 rounded-full">
+                <p>&copy; 2026 Skills Seekers & BU Resource Hub. Crafted for academic excellence.</p>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="/home" class="hover:text-indigo-400 transition-colors">Dashboard</a>
+                <a href="/library" class="hover:text-indigo-400 transition-colors">PYQ Library</a>
+                <a href="/courses" class="hover:text-indigo-400 transition-colors">Courses</a>
+                <a href="https://www.skillsseekers.com" target="_blank" class="hover:text-indigo-400 transition-colors">Skills Seekers ↗</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script src="/js/tools.js"></script>
+    <script src="/js/cgpa.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pomoCount = localStorage.getItem('bu_pomo_sessions_today') || '0';
+            const countEl = document.getElementById('tools-pomo-sessions');
+            if (countEl) countEl.textContent = pomoCount;
+        });
+    </script>
+</body>
+
+</html>

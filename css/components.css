@@ -1,0 +1,438 @@
+/* =========================================================
+   BU Resource Hub - Component Styles (Cards, Tabs, Badges)
+   ========================================================= */
+
+/* Content Visibility Containment for 60+ FPS Long Page Scrolling */
+.semester-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 700px;
+}
+
+/* Premium Glassmorphic Cards */
+.premium-card {
+    background: rgba(20, 20, 20, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+    will-change: transform;
+}
+
+.premium-card:hover {
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    background: rgba(25, 25, 25, 0.7);
+}
+
+/* Card Mouse Spotlight */
+.premium-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.18),
+            transparent 45%);
+}
+
+.premium-card:hover::before {
+    opacity: 1;
+}
+
+/* Inner Glow Effect */
+.card-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(99, 102, 241, 0.1),
+            transparent 45%);
+}
+
+.premium-card:hover .card-glow {
+    opacity: 1;
+}
+
+/* Bookmark Icon Button on Cards */
+.bm-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #52525b;
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+
+.bm-btn:hover,
+.bm-btn.saved {
+    color: #6366f1;
+}
+
+.bm-btn.saved i::before {
+    content: "\f12e"; /* phosphor bookmark-simple-fill */
+}
+
+/* Semester Filter Tabs */
+.sem-tab {
+    padding: 8px 20px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.sem-tab:hover {
+    color: #fff;
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.sem-tab.active {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.6);
+    color: #a5b4fc;
+}
+
+/* Streak Badge */
+#streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 99px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fbbf24;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#streak-badge:hover {
+    background: rgba(251, 191, 36, 0.2);
+    transform: scale(1.05);
+}
+
+/* Exam Countdown Box */
+.countdown-card {
+    background: rgba(99, 102, 241, 0.07);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+}
+
+.countdown-val {
+    font-size: 36px;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1;
+}
+
+.countdown-label {
+    font-size: 10px;
+    color: #6366f1;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 4px;
+}
+
+/* Announcement Bar */
+#announce-bar {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+    border-bottom: 1px solid rgba(99, 102, 241, 0.25);
+    backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c4b5fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 60;
+}
+
+#announce-bar button {
+    position: absolute;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #7c7c8a;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+#announce-bar button:hover {
+    color: #fff;
+}
+
+/* Study Tips Ticker */
+#tips-ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    background: rgba(168, 85, 247, 0.07);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+    padding: 8px 0;
+}
+
+#tips-ticker-inner {
+    display: inline-block;
+    animation: ticker 160s linear infinite;
+    padding-left: 100%;
+    font-size: 13px;
+    color: #c084fc;
+    font-weight: 500;
+}
+
+#tips-ticker-inner span {
+    margin-right: 60px;
+}
+
+@keyframes ticker {
+    from {
+        transform: translateX(0)
+    }
+
+    to {
+        transform: translateX(-100%)
+    }
+}
+
+/* Hero Typewriter Cursors */
+.typed-cursor {
+    display: inline-block;
+    width: 3px;
+    background: #a855f7;
+    animation: blink 0.7s infinite;
+    vertical-align: text-bottom;
+    height: 1em;
+    border-radius: 2px;
+}
+
+.typed-cursor-sub {
+    display: inline-block;
+    width: 2px;
+    background: #6366f1;
+    animation: blink 0.7s infinite;
+    vertical-align: text-bottom;
+    height: 1em;
+    border-radius: 1px;
+    opacity: 0.8;
+    transition: opacity 0.6s ease;
+}
+
+.typed-cursor-sub.done {
+    opacity: 0;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+/* =========================================================
+   EXAM FILTER PILLS & BADGES
+   ========================================================= */
+.exam-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.exam-chip:hover {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.35);
+    color: #e2e8f0;
+}
+
+.exam-chip.active {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: #6366f1;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+}
+
+/* Course Cards in Dedicated Catalog */
+.course-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.15);
+}
+
+.course-card-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+/* Semester Hub Cards on Dashboard */
+.sem-hub-card {
+    background: linear-gradient(135deg, rgba(25, 25, 35, 0.75), rgba(15, 15, 22, 0.75));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.sem-hub-card:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 35px rgba(99, 102, 241, 0.25);
+}
+
+.sem-hub-card .glow-orb {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    opacity: 0.15;
+    transition: opacity 0.3s ease;
+}
+
+.sem-hub-card:hover .glow-orb {
+    opacity: 0.35;
+}
+
+/* 3D Tilt & Lighting */
+.tilt-card {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.18s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    will-change: transform;
+}
+
+.tilt-inner {
+    transform: translateZ(24px);
+}
+
+/* Typed Cursors */
+.typed-cursor {
+    display: inline-block;
+    width: 3px;
+    background: linear-gradient(180deg, #818cf8, #fbbf24);
+    animation: blinkCursor 0.75s infinite;
+    vertical-align: baseline;
+    height: 0.85em;
+    margin-left: 6px;
+    border-radius: 2px;
+}
+
+.typed-cursor-sub {
+    display: inline-block;
+    width: 2px;
+    background: #6366f1;
+    animation: blinkCursor 0.75s infinite;
+    vertical-align: text-bottom;
+    height: 1em;
+    border-radius: 1px;
+    opacity: 0.85;
+    transition: opacity 0.6s ease;
+}
+
+.typed-cursor-sub.done {
+    opacity: 0;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Subtle 3D Floating Animation */
+.float-3d {
+    animation: float3D 6s ease-in-out infinite;
+}
+
+@keyframes float3D {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(0.8deg); }
+}
+
+/* Skills Seekers Premium Promo Banner */
+.skills-seekers-banner {
+    background: radial-gradient(120% 120% at 50% 0%, rgba(99, 102, 241, 0.18) 0%, rgba(168, 85, 247, 0.12) 40%, rgba(5, 5, 5, 0.85) 100%), #0a0a10;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.skills-seekers-banner::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg at 50% 50%, rgba(99, 102, 241, 0.08), rgba(251, 191, 36, 0.08), rgba(168, 85, 247, 0.08), rgba(99, 102, 241, 0.08));
+    animation: rotateConic 18s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes rotateConic {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
