@@ -100,17 +100,31 @@
             </p>
 
             <div class="space-y-3 mb-6">
-                <a id="email-share-link" href="mailto:vanshscholars2006@gmail.com?subject=PYQ%20Submission%20-%20Semester%205" class="flex items-center justify-between p-3.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-300 hover:text-emerald-200 transition-all font-semibold text-sm group">
+                <!-- WhatsApp Option -->
+                <a id="wa-share-link" href="https://wa.me/919588598168?text=Hi%2C%20I%20want%20to%20share%20a%20Question%20Paper%20PYQ%20for%20Semester%205%20(General)" target="_blank" rel="noopener" class="flex items-center justify-between p-3.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/40 rounded-xl text-[#25D366] hover:text-[#38e478] transition-all font-bold text-sm group">
                     <div class="flex items-center gap-3">
-                        <i class="ph-bold ph-envelope-simple text-lg text-emerald-400"></i>
-                        <span>Email Papers to Team</span>
+                        <i class="ph-fill ph-whatsapp-logo text-xl"></i>
+                        <span>Share on WhatsApp: +91 9588598168</span>
                     </div>
                     <i class="ph-bold ph-arrow-square-out group-hover:translate-x-1 transition-transform"></i>
                 </a>
 
-                <div class="flex items-center justify-between p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-slate-300">
-                    <span class="font-mono text-slate-400 select-all">vanshscholars2006@gmail.com</span>
-                    <button onclick="navigator.clipboard.writeText('vanshscholars2006@gmail.com'); alert('Email copied to clipboard!');" class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded text-[11px] font-bold">Copy</button>
+                <!-- Email Option -->
+                <a id="email-share-link" href="mailto:vanshscholars2006@gmail.com?subject=PYQ%20Submission%20-%20Semester%205" class="flex items-center justify-between p-3.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-300 hover:text-emerald-200 transition-all font-semibold text-sm group">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-bold ph-envelope-simple text-lg text-emerald-400"></i>
+                        <span>Email Papers to Vansh</span>
+                    </div>
+                    <i class="ph-bold ph-arrow-square-out group-hover:translate-x-1 transition-transform"></i>
+                </a>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="navigator.clipboard.writeText('9588598168'); alert('WhatsApp number copied: 9588598168');" class="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs text-slate-300 hover:text-white font-medium flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="ph-bold ph-copy text-[#25D366]"></i> Copy WhatsApp
+                    </button>
+                    <button onclick="navigator.clipboard.writeText('vanshscholars2006@gmail.com'); alert('Email copied: vanshscholars2006@gmail.com');" class="p-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs text-slate-300 hover:text-white font-medium flex items-center justify-center gap-1.5 transition-colors">
+                        <i class="ph-bold ph-copy text-emerald-400"></i> Copy Email
+                    </button>
                 </div>
             </div>
 
@@ -775,10 +789,20 @@
             const modal = document.getElementById('contribute-modal');
             const subElem = document.getElementById('modal-subject-name');
             const emailLink = document.getElementById('email-share-link');
-            if (subElem) subElem.textContent = subject || 'Semester 5 General';
+            const waLink = document.getElementById('wa-share-link');
+            
+            const subjName = subject || 'Semester 5 General';
+            if (subElem) subElem.textContent = subjName;
+            
+            if (waLink) {
+                const waMsg = `Hi! I want to share a Question Paper (PYQ) for Semester 5 - ${subjName}. (Attaching file...)`;
+                waLink.href = `https://wa.me/919588598168?text=${encodeURIComponent(waMsg)}`;
+            }
+
             if (emailLink) {
-                const subjParam = encodeURIComponent(`PYQ Submission - Semester 5 (${subject})`);
-                emailLink.href = `mailto:vanshscholars2006@gmail.com?subject=${subjParam}`;
+                const subjParam = encodeURIComponent(`Question Paper PYQ: Semester 5 - ${subjName}`);
+                const bodyText = `Hi Team,\n\nI want to share a Question Paper PYQ for Semester 5 - ${subjName}.\n\n[Please find the question paper PDF/photos attached to this email]\n\nThank you!`;
+                emailLink.href = `mailto:vanshscholars2006@gmail.com?subject=${subjParam}&body=${encodeURIComponent(bodyText)}`;
             }
             if (modal) modal.classList.remove('hidden');
         }
