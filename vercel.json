@@ -79,6 +79,10 @@
       "dest": "/pages/semesters/sem4.html"
     },
     {
+      "src": "/sem5",
+      "dest": "/pages/semesters/sem5.html"
+    },
+    {
       "src": "/library",
       "dest": "/pages/library.html"
     },

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semester 5 PYQs & Resources | BU Resource Hub</title>
+    <meta name="description" content="Access Semester 5 subjects, syllabus, study materials, and PYQs for Bennett University - Intelligent Model Design, Automata, NLP, Image Video Processing, SPM, AI & Society, Agile, and MLOps.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            primary: '#10b981',
+                            secondary: '#06b6d4',
+                            accent: '#fbbf24',
+                            dark: '#050505',
+                            surface: '#0f0f13',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons & GSAP -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/tools.css">
+</head>
+
+<body class="text-slate-300 antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Drive Preview Modal -->
+    <div id="drive-modal" role="dialog" aria-modal="true" aria-label="Document Preview" onclick="if(event.target===this)closeDriveModal()">
+        <div id="drive-modal-inner">
+            <div id="drive-modal-header">
+                <i class="ph-fill ph-file-pdf" style="color:#10b981;font-size:18px;flex-shrink:0"></i>
+                <span id="drive-modal-title">Document</span>
+                <span class="drive-modal-tag">Preview</span>
+                <a id="drive-modal-open-link" href="#" target="_blank" rel="noopener" title="Open in Drive">
+                    <i class="ph-bold ph-arrow-square-out"></i> <span>Open in Drive</span>
+                </a>
+                <a id="drive-modal-download" href="#" target="_blank" rel="noopener" title="Download file" download>
+                    <i class="ph-bold ph-download-simple"></i> <span>Download</span>
+                </a>
+                <button id="drive-modal-close" onclick="closeDriveModal()" title="Close preview">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            <div id="drive-iframe-wrapper">
+                <div id="drive-spinner">
+                    <div class="spinner-ring"></div>
+                    <p>Loading document&hellip;</p>
+                </div>
+                <iframe id="drive-iframe" src="" allow="autoplay" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contribute PYQ Modal -->
+    <div id="contribute-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" onclick="if(event.target===this)closeContributeModal()">
+        <div class="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+            <button onclick="closeContributeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-xl">✕</button>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
+                    <i class="ph-fill ph-upload-simple"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold font-display text-white">Share PYQ Papers</h3>
+                    <p class="text-xs text-slate-400">Help fellow students by sharing past papers</p>
+                </div>
+            </div>
+            
+            <div class="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 mb-6">
+                <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider block mb-1">Subject Selected</span>
+                <p id="modal-subject-name" class="text-base font-bold text-white">Semester 5 General</p>
+            </div>
+
+            <p class="text-sm text-slate-300 mb-6 leading-relaxed">
+                If you have question papers (photos, scanned PDFs, or drive links) for this subject from Midsem, Endsem, or class tests, please share them with us:
+            </p>
+
+            <div class="space-y-3 mb-6">
+                <a id="email-share-link" href="mailto:support@skillsseekers.com?subject=PYQ%20Submission%20-%20Semester%205" class="flex items-center justify-between p-3.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-300 hover:text-emerald-200 transition-all font-semibold text-sm group">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-bold ph-envelope-simple text-lg text-emerald-400"></i>
+                        <span>Email Papers to Team</span>
+                    </div>
+                    <i class="ph-bold ph-arrow-square-out group-hover:translate-x-1 transition-transform"></i>
+                </a>
+
+                <div class="flex items-center justify-between p-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-slate-300">
+                    <span class="font-mono text-slate-400 select-all">support@skillsseekers.com</span>
+                    <button onclick="navigator.clipboard.writeText('support@skillsseekers.com'); alert('Email copied to clipboard!');" class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded text-[11px] font-bold">Copy</button>
+                </div>
+            </div>
+
+            <button onclick="closeContributeModal()" class="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl text-sm transition-colors">
+                Close Window
+            </button>
+        </div>
+    </div>
+
+    <!-- Scroll Progress -->
+    <div id="scroll-progress"></div>
+
+    <!-- Background Ambient Canvas -->
+    <canvas id="canvas-container"></canvas>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu">
+        <button id="menu-close" onclick="closeMobileMenu()">✕</button>
+        <a href="/home" onclick="closeMobileMenu()">Dashboard</a>
+        <a href="/sem1" onclick="closeMobileMenu()">Semester 1</a>
+        <a href="/sem2" onclick="closeMobileMenu()">Semester 2</a>
+        <a href="/sem3" onclick="closeMobileMenu()">Semester 3</a>
+        <a href="/sem4" onclick="closeMobileMenu()">Semester 4</a>
+        <a href="/sem5" onclick="closeMobileMenu()" style="color:#34d399">Semester 5</a>
+        <a href="/library" onclick="closeMobileMenu()">PYQ Library</a>
+        <a href="/courses" onclick="closeMobileMenu()">Courses</a>
+        <a href="/tools" onclick="closeMobileMenu()">Study Tools</a>
+        <a href="/dsa" onclick="closeMobileMenu()">DSA Lab</a>
+        <a href="/os" onclick="closeMobileMenu()">OS Lab</a>
+        <a href="https://www.skillsseekers.com" target="_blank" style="color:#6ee7b7">Skills Seekers ↗</a>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="/home" class="flex items-center gap-3.5 group">
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-500 overflow-hidden bg-white">
+                        <img src="/logo.jpg" alt="BU Logo" class="h-full w-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-display font-bold text-white tracking-tight group-hover:text-emerald-300 transition-colors">BU Resource Hub</h1>
+                        <div class="flex items-center gap-2">
+                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">Academic Platform</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden lg:flex items-center space-x-1">
+                    <a href="/home" class="nav-link">Dashboard</a>
+
+                    <div class="nav-dropdown">
+                        <button class="nav-link active flex items-center gap-1.5">
+                            Semesters <i class="ph-bold ph-caret-down text-xs"></i>
+                        </button>
+                        <div class="nav-dropdown-content">
+                            <a href="/sem1" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-one"></i> Semester 1</a>
+                            <a href="/sem2" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-two"></i> Semester 2</a>
+                            <a href="/sem3" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-three"></i> Semester 3</a>
+                            <a href="/sem4" class="nav-dropdown-item"><i class="ph-fill ph-number-circle-four"></i> Semester 4</a>
+                            <a href="/sem5" class="nav-dropdown-item active font-bold text-emerald-400"><i class="ph-fill ph-number-circle-five"></i> Semester 5</a>
+                        </div>
+                    </div>
+
+                    <a href="/library" class="nav-link">PYQ Library</a>
+                    <a href="/courses" class="nav-link">Courses</a>
+                    <a href="/tools" class="nav-link">Study Tools</a>
+                    <a href="/dsa" class="nav-link text-cyan-400 hover:text-cyan-300 flex items-center gap-1"><i class="ph-fill ph-circles-three-plus"></i> DSA Lab</a>
+                    <a href="/os" class="nav-link text-pink-400 hover:text-pink-300 flex items-center gap-1"><i class="ph-fill ph-cpu"></i> OS Lab</a>
+
+                    <div id="streak-badge" onclick="showStreakInfo()" title="Your daily study streak">
+                        🔥 <span id="streak-num">0</span> Day Streak
+                    </div>
+
+                    <div class="h-4 w-px bg-white/10 mx-2"></div>
+
+                    <!-- Auth UI -->
+                    <div id="auth-container" class="flex items-center gap-3">
+                        <button id="login-btn" onclick="window.location.href='/login'" class="px-5 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 transition-all flex items-center gap-2">
+                            <i class="ph-bold ph-sign-in"></i> <span>Login</span>
+                        </button>
+                        <div id="user-profile" class="hidden items-center gap-2">
+                            <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff" alt="Profile" class="h-8 w-8 rounded-full border border-emerald-500">
+                            <span id="user-name" class="text-sm font-bold text-white hidden md:block">Student</span>
+                            <button onclick="signOut()" class="text-xs text-slate-400 hover:text-white transition-colors" title="Sign Out">
+                                <i class="ph-bold ph-sign-out text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-32">
+        
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb">
+            <a href="/home"><i class="ph-bold ph-house"></i> Dashboard</a>
+            <i class="ph-bold ph-caret-right text-xs"></i>
+            <span>Semesters</span>
+            <i class="ph-bold ph-caret-right text-xs"></i>
+            <span class="current">Semester 5</span>
+        </div>
+
+        <!-- Semester Header Banner -->
+        <div class="premium-card p-8 md:p-12 rounded-3xl mb-10 relative overflow-hidden">
+            <div class="card-glow" style="background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.25), transparent 60%);"></div>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="ph-bold ph-cpu"></i> Advanced AI, Theory & Applied Engineering
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-display font-bold text-white tracking-tight mb-3">
+                        Semester 05 <span class="text-gradient" style="background: linear-gradient(135deg, #34d399, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Resources</span>
+                    </h1>
+                    <p class="text-slate-400 text-base max-w-2xl leading-relaxed font-light">
+                        Explore core and elective curricula: Intelligent Model Design, Automata / Theory of Computation, NLP, Image Video Processing, SPM, AI and Society, Agile Software Development, and MLOps.
+                    </p>
+                </div>
+
+                <!-- Quick Stats Box -->
+                <div class="grid grid-cols-3 gap-4 bg-black/40 border border-white/5 rounded-2xl p-4 shrink-0 text-center">
+                    <div class="px-2">
+                        <span class="text-2xl font-bold font-display text-white block">8</span>
+                        <span class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Subjects</span>
+                    </div>
+                    <div class="px-2 border-x border-white/10">
+                        <span class="text-2xl font-bold font-display text-emerald-400 block">26</span>
+                        <span class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Credits</span>
+                    </div>
+                    <div class="px-2">
+                        <span class="text-2xl font-bold font-display text-amber-400 block">Soon</span>
+                        <span class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">PYQs Status</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Callout Banner: Share PYQs -->
+        <div class="p-6 md:p-8 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-zinc-900/60 to-cyan-950/40 border border-emerald-500/30 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden backdrop-blur-md">
+            <div class="flex items-start gap-4">
+                <div class="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl shrink-0 mt-0.5">
+                    <i class="ph-fill ph-megaphone-simple"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-1 font-display">Semester 5 Question Papers are Being Collected</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed max-w-2xl font-light">
+                        PYQs for Semester 5 subjects are <strong class="text-amber-400">coming soon</strong>. If you have past Midsem, Endsem papers, class quizzes, or notes, please share them with us so we can verify and upload them for everyone!
+                    </p>
+                </div>
+            </div>
+            <button onclick="openContributeModal('Semester 5 General')" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2 shrink-0 group">
+                <i class="ph-bold ph-upload-simple text-base"></i>
+                <span>Share Papers With Us</span>
+                <i class="ph-bold ph-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 mr-2">Filter Courses:</span>
+                <button class="exam-chip active" onclick="filterExam('all', this)">All Subjects (8)</button>
+                <button class="exam-chip" onclick="filterExam('Core', this)">4-Credit Core</button>
+                <button class="exam-chip" onclick="filterExam('Elective', this)">3-Credit Applied</button>
+            </div>
+
+            <div class="w-full sm:w-72 relative">
+                <div class="relative bg-zinc-900/80 border border-zinc-700/60 rounded-xl flex items-center focus-within:border-emerald-500 transition-colors">
+                    <div class="pl-3.5 text-slate-400">
+                        <i class="ph-bold ph-magnifying-glass text-sm"></i>
+                    </div>
+                    <input type="text" id="searchInput" onkeyup="filterSubjects()" placeholder="Filter subjects (e.g. NLP, MLOps)..." class="w-full bg-transparent border-0 py-2.5 px-3 text-sm text-white placeholder-zinc-500 focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="subjects-grid">
+
+            <!-- Subject 1: Intelligent Model Design -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Core">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:bg-violet-500/20 transition-colors">
+                            <i class="ph-fill ph-brain text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-violet-500/10 text-violet-400 text-xs font-mono border border-violet-500/20">4 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-violet-400 transition-colors">Intelligent Model Design</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Deep learning architectures, neural model design patterns, transfer learning, fine-tuning, hyperparameter optimization & model compression.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('Intelligent Model Design')" class="w-full py-2 px-3 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/30 text-violet-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 2: Automata / Theory of Computation -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Core">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                            <i class="ph-fill ph-gear-six text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-mono border border-blue-500/20">4 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-blue-400 transition-colors">Automata / Theory of Computation</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Finite Automata (DFA/NFA), Regular Expressions, Context-Free Grammars, Pushdown Automata, Turing Machines & Decidability.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('Automata / Theory of Computation')" class="w-full py-2 px-3 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 3: Natural Language Processing -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Elective">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                            <i class="ph-fill ph-chat-circle-dots text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono border border-emerald-500/20">3 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-emerald-400 transition-colors">Natural Language Processing</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Tokenization, Word Embeddings (Word2Vec, GloVe), RNN/LSTM sequence models, Attention mechanisms & Transformer architectures.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('Natural Language Processing')" class="w-full py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 4: Image & Video Processing -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Elective">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:bg-rose-500/20 transition-colors">
+                            <i class="ph-fill ph-image text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 text-xs font-mono border border-rose-500/20">3 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-rose-400 transition-colors">Image Video Processing</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Spatial & frequency filtering, edge detection, morphological transforms, video compression, motion estimation & OpenCV vision.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('Image Video Processing')" class="w-full py-2 px-3 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 5: Software Project Management -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Elective">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-colors">
+                            <i class="ph-fill ph-kanban text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-mono border border-amber-500/20">3 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-amber-400 transition-colors">Software Project Management</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Project planning, cost estimation (COCOMO), CPM/PERT critical path scheduling, risk mitigation & software quality metrics.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('Software Project Management')" class="w-full py-2 px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 6: AI and Society -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Elective">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 group-hover:bg-sky-500/20 transition-colors">
+                            <i class="ph-fill ph-scales text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 text-xs font-mono border border-sky-500/20">3 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-sky-400 transition-colors">AI and Society</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Ethical AI governance, algorithmic fairness, bias mitigation, differential privacy, intellectual property & policy frameworks.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('AI and Society')" class="w-full py-2 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 7: Agile Software Development -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Elective">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 group-hover:bg-teal-500/20 transition-colors">
+                            <i class="ph-fill ph-arrows-clockwise text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-400 text-xs font-mono border border-teal-500/20">3 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-teal-400 transition-colors">Agile Software Development</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">Scrum & Kanban methodologies, sprint planning, user stories, Test-Driven Development (TDD), CI/CD pipelines & agile velocity.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('Agile Software Development')" class="w-full py-2 px-3 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject 8: MLOps -->
+            <div class="premium-card rounded-2xl p-1 subject-card group" data-category="Elective">
+                <div class="card-glow"></div>
+                <div class="relative z-10 bg-black/60 p-7 h-full rounded-xl flex flex-col backdrop-blur-sm">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
+                            <i class="ph-fill ph-cloud-arrow-up text-2xl"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-mono border border-cyan-500/20">3 Credits</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 subject-name font-display group-hover:text-cyan-400 transition-colors">MLOps</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow leading-relaxed">End-to-end ML lifecycle, model registries & versioning (MLflow/DVC), feature stores, Docker containerization & production monitoring.</p>
+
+                    <!-- PYQ Status & Notice -->
+                    <div class="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+                                <i class="ph-fill ph-hourglass-medium"></i> PYQs Coming Soon
+                            </span>
+                            <span class="text-[11px] text-slate-500">In collection</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal mb-3">
+                            Papers are currently not available. If you have past midsem or endsem question papers, please share with us!
+                        </p>
+                        <button onclick="openContributeModal('MLOps')" class="w-full py-2 px-3 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 group/btn">
+                            <i class="ph-bold ph-upload-simple"></i>
+                            <span>Share Papers For This Subject</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 opacity-60">
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Midsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 bg-zinc-900/40 border border-zinc-800/50 rounded-xl text-xs text-slate-500">
+                            <span class="flex items-center gap-2"><i class="ph-bold ph-file-dashed text-slate-500"></i> Endsem Paper</span>
+                            <span class="text-[11px] italic">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Floating Productivity FABs -->
+    <div class="widget-fab">
+        <button class="fab-btn fab-pomodoro" onclick="togglePanel('pomodoro-panel')" title="Pomodoro Focus Timer">
+            <i class="ph-fill ph-timer"></i>
+        </button>
+        <button class="fab-btn fab-notes" onclick="togglePanel('notes-panel')" title="Sticky Notes">
+            <i class="ph-fill ph-note-pencil"></i>
+        </button>
+        <button class="fab-btn fab-bookmarks" onclick="togglePanel('bookmarks-panel')" title="Saved Bookmarks">
+            <i class="ph-fill ph-bookmark-simple"></i>
+        </button>
+    </div>
+
+    <!-- Side Panels -->
+    <div class="side-panel" id="pomodoro-panel">
+        <div class="panel-header">
+            <h4>⏱ Focus Timer</h4>
+            <button class="panel-close" onclick="togglePanel('pomodoro-panel')">✕</button>
+        </div>
+        <div class="panel-body text-center">
+            <div class="flex justify-center gap-2 mb-4">
+                <button class="pomo-mode-btn active" id="pomo-work-btn" onclick="setPomoMode('work')">Focus (25m)</button>
+                <button class="pomo-mode-btn" id="pomo-short-btn" onclick="setPomoMode('short')">Short Break (5m)</button>
+                <button class="pomo-mode-btn" id="pomo-long-btn" onclick="setPomoMode('long')">Long Break (15m)</button>
+            </div>
+            <div class="pomodoro-ring">
+                <svg width="140" height="140" viewBox="0 0 140 140">
+                    <circle class="bg" cx="70" cy="70" r="60"></circle>
+                    <circle class="prog" id="pomo-ring" cx="70" cy="70" r="60"></circle>
+                </svg>
+            </div>
+            <div id="pomodoro-display">25:00</div>
+            <div class="flex justify-center gap-3 mt-4">
+                <button class="pomo-btn pomo-btn-start" id="pomo-start-btn" onclick="togglePomodoro()">▶ Start</button>
+                <button class="pomo-btn pomo-btn-reset" onclick="resetPomodoro()">↺ Reset</button>
+            </div>
+            <p class="text-xs text-zinc-500 mt-4">Completed today: <span id="pomo-session-count" class="text-white font-bold">0</span> sessions</p>
+        </div>
+    </div>
+
+    <div class="side-panel" id="notes-panel">
+        <div class="panel-header">
+            <h4>📝 Quick Notes</h4>
+            <button class="panel-close" onclick="togglePanel('notes-panel')">✕</button>
+        </div>
+        <div class="panel-body">
+            <div id="notes-container"></div>
+            <button class="add-note-btn mt-2" onclick="addNote()">+ Add Note</button>
+        </div>
+    </div>
+
+    <div class="side-panel" id="bookmarks-panel">
+        <div class="panel-header">
+            <h4>🔖 Saved Bookmarks</h4>
+            <button class="panel-close" onclick="togglePanel('bookmarks-panel')">✕</button>
+        </div>
+        <div class="panel-body">
+            <div id="bookmarks-list"></div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top">
+        <i class="ph-bold ph-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 bg-black/60 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
+            <div class="flex items-center gap-3">
+                <img src="/logo.jpg" alt="Logo" class="h-6 w-6 rounded-full">
+                <p>&copy; 2026 Skills Seekers & BU Resource Hub. Crafted for academic excellence.</p>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="/home" class="hover:text-emerald-400 transition-colors">Dashboard</a>
+                <a href="/library" class="hover:text-emerald-400 transition-colors">PYQ Library</a>
+                <a href="/courses" class="hover:text-emerald-400 transition-colors">Courses</a>
+                <a href="/tools" class="hover:text-emerald-400 transition-colors">Study Tools</a>
+                <a href="https://www.skillsseekers.com" target="_blank" class="hover:text-emerald-400 transition-colors">Skills Seekers ↗</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/tools.js"></script>
+    <script src="/js/cgpa.js"></script>
+    <script src="/js/drive-preview.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        function filterExam(type, btn) {
+            document.querySelectorAll('.exam-chip').forEach(c => c.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            const cards = document.querySelectorAll('.subject-card');
+            cards.forEach(c => {
+                const cat = c.getAttribute('data-category') || '';
+                if (type === 'all' || cat === type) {
+                    c.style.display = '';
+                } else {
+                    c.style.display = 'none';
+                }
+            });
+        }
+
+        function openContributeModal(subject) {
+            const modal = document.getElementById('contribute-modal');
+            const subElem = document.getElementById('modal-subject-name');
+            const emailLink = document.getElementById('email-share-link');
+            if (subElem) subElem.textContent = subject || 'Semester 5 General';
+            if (emailLink) {
+                const subjParam = encodeURIComponent(`PYQ Submission - Semester 5 (${subject})`);
+                emailLink.href = `mailto:support@skillsseekers.com?subject=${subjParam}`;
+            }
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeContributeModal() {
+            const modal = document.getElementById('contribute-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

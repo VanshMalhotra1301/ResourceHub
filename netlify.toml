@@ -43,6 +43,11 @@
   status = 200
 
 [[redirects]]
+  from = "/sem5"
+  to = "/pages/semesters/sem5.html"
+  status = 200
+
+[[redirects]]
   from = "/library"
   to = "/pages/library.html"
   status = 200

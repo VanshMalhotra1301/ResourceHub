@@ -221,6 +221,7 @@ app.get('/sem1', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 
 app.get('/sem2', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem2.html')));
 app.get('/sem3', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem3.html')));
 app.get('/sem4', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem4.html')));
+app.get('/sem5', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem5.html')));
 app.get('/library', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'library.html')));
 app.get('/courses', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'courses.html')));
 app.get('/tools', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'tools.html')));
