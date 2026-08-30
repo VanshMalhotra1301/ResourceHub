@@ -5,22 +5,28 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ── Supabase (server-side, singleton) ──────────────
-const SUPA_URL = 'https://bxgbijoqrhvnwzdchedr.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4Z2Jpam9xcmh2bnd6ZGNoZWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzQ1MjUsImV4cCI6MjA5MDgxMDUyNX0.vuxFdc6ps06v41YvpTe3igN8XgXpJsSoCh9zD3bdWiU';
+// ── Supabase Configuration (Singleton) ──────────────
+const SUPA_URL = process.env.SUPABASE_URL || 'https://bxgbijoqrhvnwzdchedr.supabase.co';
+const SUPA_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4Z2Jpam9xcmh2bnd6ZGNoZWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzQ1MjUsImV4cCI6MjA5MDgxMDUyNX0.vuxFdc6ps06v41YvpTe3igN8XgXpJsSoCh9zD3bdWiU';
+
 const supabase = createClient(SUPA_URL, SUPA_KEY, {
     auth: { persistSession: false, autoRefreshToken: false }
 });
 
 // ── Middleware ─────────────────────────────────────
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// ── Helpers ───────────────────────────────────────
+// ── Validation & Sanitization Helpers ──────────────
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function isValidUUID(str) {
     return typeof str === 'string' && UUID_REGEX.test(str);
+}
+
+function isValidEmail(email) {
+    return typeof email === 'string' && EMAIL_REGEX.test(email.trim()) && email.length <= 254;
 }
 
 function sanitizeString(str, maxLen = 200) {
@@ -28,35 +34,51 @@ function sanitizeString(str, maxLen = 200) {
     return str.trim().substring(0, maxLen);
 }
 
-// ── In-memory throttle for /api/track (per user, per feature+action) ──
-// Prevents duplicate DB writes from rapid clicks
-const trackThrottle = new Map(); // key -> timestamp
-const THROTTLE_MS = 5000; // 5s cooldown per unique tracking event
+// ── In-Memory Throttle for Telemetry ──────────────
+const trackThrottle = new Map();
+const THROTTLE_MS = 5000;
 
 function isThrottled(key) {
     const now = Date.now();
     const last = trackThrottle.get(key);
     if (last && now - last < THROTTLE_MS) return true;
     trackThrottle.set(key, now);
-    // Cleanup old entries periodically (prevent memory leak in long-running)
-    if (trackThrottle.size > 5000) {
+    
+    // Periodically cleanup cache if large
+    if (trackThrottle.size > 2000) {
         for (const [k, v] of trackThrottle) {
-            if (now - v > THROTTLE_MS * 2) trackThrottle.delete(k);
+            if (now - v > THROTTLE_MS * 3) trackThrottle.delete(k);
         }
     }
     return false;
 }
 
-// ── AUTH API ROUTES ────────────────────────────────
+// ── API ROUTES ─────────────────────────────────────
+
+// GET /api/health - Health check endpoint
+app.get('/api/health', async (req, res) => {
+    try {
+        const { error } = await supabase.from('users_realtime').select('id').limit(1);
+        if (error) {
+            return res.status(500).json({ status: 'degraded', database: error.message });
+        }
+        return res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+    } catch (e) {
+        return res.status(500).json({ status: 'unhealthy', error: e.message });
+    }
+});
 
 // POST /api/signup
 app.post('/api/signup', async (req, res) => {
     const name = sanitizeString(req.body?.name, 100);
-    const email = sanitizeString(req.body?.email, 254);
+    const email = sanitizeString(req.body?.email, 254).toLowerCase();
     const password = req.body?.password;
 
     if (!name || !email || !password) {
         return res.status(400).json({ success: false, error: 'All fields are required.' });
+    }
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
     }
     if (typeof password !== 'string' || password.length < 6) {
         return res.status(400).json({ success: false, error: 'Password must be at least 6 characters.' });
@@ -74,24 +96,22 @@ app.post('/api/signup', async (req, res) => {
             return res.status(400).json({ success: false, error: error.message });
         }
 
-        // Upsert into users_realtime — the trigger also does this, but upsert
-        // with onConflict ensures idempotency (no duplicate key errors)
+        // Sync to public.users_realtime (idempotent upsert)
         if (data?.user?.id) {
             const { error: upsertErr } = await supabase.from('users_realtime').upsert([{
                 id: data.user.id,
                 email: data.user.email,
                 full_name: name,
                 created_at: new Date().toISOString()
-            }], { onConflict: 'id', ignoreDuplicates: true });
+            }], { onConflict: 'id' });
 
             if (upsertErr) {
-                // Non-fatal: the trigger may have already inserted the row
-                console.warn('[Signup] users_realtime upsert warning:', upsertErr.message);
+                console.warn('[Signup] users_realtime upsert notice:', upsertErr.message);
             }
         }
 
         const hasSession = !!(data?.session);
-        console.log(`[Signup OK] ${email} | Auto-login: ${hasSession}`);
+        console.log(`[Signup OK] ${email} | Session: ${hasSession}`);
 
         return res.json({
             success: true,
@@ -108,13 +128,13 @@ app.post('/api/signup', async (req, res) => {
         });
     } catch (err) {
         console.error('[Signup Exception]', err.message);
-        return res.status(500).json({ success: false, error: 'Server error. Please try again.' });
+        return res.status(500).json({ success: false, error: 'Server error during signup. Please try again.' });
     }
 });
 
 // POST /api/login
 app.post('/api/login', async (req, res) => {
-    const email = sanitizeString(req.body?.email, 254);
+    const email = sanitizeString(req.body?.email, 254).toLowerCase();
     const password = req.body?.password;
 
     if (!email || !password || typeof password !== 'string') {
@@ -130,7 +150,7 @@ app.post('/api/login', async (req, res) => {
         }
 
         if (!data?.session || !data?.user) {
-            return res.status(401).json({ success: false, error: 'Authentication failed. Please try again.' });
+            return res.status(401).json({ success: false, error: 'Authentication failed. Please check credentials.' });
         }
 
         let userName = data.user.user_metadata?.full_name || data.user.user_metadata?.name;
@@ -165,28 +185,28 @@ app.post('/api/login', async (req, res) => {
         });
     } catch (err) {
         console.error('[Login Exception]', err.message);
-        return res.status(500).json({ success: false, error: 'Server error. Please try again.' });
+        return res.status(500).json({ success: false, error: 'Server error during login. Please try again.' });
     }
 });
 
-// POST /api/logout  (session is managed client-side via sessionStorage)
+// POST /api/logout
 app.post('/api/logout', (req, res) => res.json({ success: true }));
 
-// POST /api/track  (feature usage — non-critical, throttled, validated)
+// POST /api/track (telemetry tracking)
 app.post('/api/track', async (req, res) => {
     const user_id = req.body?.user_id;
     const feature_name = sanitizeString(req.body?.feature_name, 100);
     const action = sanitizeString(req.body?.action, 200);
 
-    // Validate UUID to prevent FK violations
+    // Validate UUID to prevent FK constraint failures
     if (!user_id || !isValidUUID(user_id)) {
-        return res.json({ success: false, reason: 'invalid_user' });
+        return res.json({ success: false, reason: 'invalid_user_id' });
     }
     if (!feature_name || !action) {
         return res.json({ success: false, reason: 'missing_fields' });
     }
 
-    // Throttle: same user + feature + action within 5s = skip
+    // Cooldown check per user/feature/action
     const throttleKey = `${user_id}:${feature_name}:${action}`;
     if (isThrottled(throttleKey)) {
         return res.json({ success: true, throttled: true });
@@ -200,8 +220,7 @@ app.post('/api/track', async (req, res) => {
         }]);
 
         if (error) {
-            // Log but don't crash — tracking is non-critical
-            console.warn('[Track Warning]', error.message);
+            console.warn('[Track Notice]', error.message);
             return res.json({ success: false, reason: error.message });
         }
 
@@ -237,16 +256,14 @@ app.get('/os/:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'page
 app.get('/os-:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-' + req.params.file)));
 app.get('/test', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'test_auth.html')));
 
-// ── Static assets (images, fonts, css, js, etc.) ───
+// ── Static Assets ──────────────────────────────────
 app.use(express.static(path.join(__dirname, '..'), { index: false }));
 
-// ── Fallback handler (DO NOT redirect static assets to login) ──
+// ── Fallback Handler ───────────────────────────────
 app.use((req, res) => {
-    // If requesting static file, return 404 instead of 302 redirecting to login
     if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(req.path)) {
         return res.status(404).type('text/plain').send('Asset not found');
     }
-    // Only redirect unknown browser navigation to /login
     if (req.accepts('html')) {
         return res.redirect('/login');
     }
@@ -256,7 +273,7 @@ app.use((req, res) => {
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`\n=========================================`);
-        console.log(`🚀 Server is running!`);
+        console.log(`🚀 BU Resource Hub Server is running!`);
         console.log(`👉 http://localhost:${PORT}`);
         console.log(`=========================================\n`);
     });
