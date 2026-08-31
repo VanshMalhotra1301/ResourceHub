@@ -100,7 +100,13 @@
             'Computer Networks': 'https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19',
             'Operating Systems': 'https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602',
             'Artificial Intelligence & ML': 'https://www.skillsseekers.com/courses/AI-and-ML-End-Sem-Sprint-69386305006ffc1a762fa256',
-            'Environment': 'https://www.skillsseekers.com/s/store'
+            'Environment': 'https://www.skillsseekers.com/s/store',
+            'Automata / Theory of Computation': 'https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--End-Sem-Sprint--6912054225c39a250b05a0e2',
+            'Automata': 'https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--End-Sem-Sprint--6912054225c39a250b05a0e2',
+            'Intelligent Model Design': 'https://www.skillsseekers.com/s/store',
+            'Natural Language Processing': 'https://www.skillsseekers.com/s/store',
+            'Software Project Management': 'https://www.skillsseekers.com/s/store',
+            'AI and Society': 'https://www.skillsseekers.com/s/store'
         };
 
         const FALLBACK_URL = 'https://www.skillsseekers.com/s/store';
