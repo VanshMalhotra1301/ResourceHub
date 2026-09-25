@@ -82,34 +82,44 @@
         const MAX_PER_SUBJECT = 2;
 
         const courseMap = {
-            'Engineering Calculus': 'https://www.skillsseekers.com/courses/Engineering-Calculus-END-SEM-TUTORIAL-SHEETS--PYQ-2025-68ebe50c73460975dc74ccf4',
-            'Electronics': 'https://www.skillsseekers.com/courses/ECE-END-SEM-TUTORIAL-SHEETS--PYQ-SOLVED-2025-6904f0913315445bda01a275',
+            'Engineering Calculus': 'https://www.skillsseekers.com/courses/Engineering-Calculus--6a9c33c23281b0338cfbb9a9',
+            'Calculus': 'https://www.skillsseekers.com/courses/Engineering-Calculus--6a9c33c23281b0338cfbb9a9',
+            'Electronics': 'https://www.skillsseekers.com/courses/ECE-END-TERM-EXPRESS-TUTORIAL-SHEETS--PYQ-SOLVED--6aa528bbd7479e875f3051ac',
+            'ECE': 'https://www.skillsseekers.com/courses/ECE-END-TERM-EXPRESS-TUTORIAL-SHEETS--PYQ-SOLVED--6aa528bbd7479e875f3051ac',
             'Mechanics & Electromagnetism': 'https://www.skillsseekers.com/courses/Mechanics-End-Term-Express-Crash-Course-67c81c40eadd7267af53e1ad',
-            'Computational Thinking': 'https://www.skillsseekers.com/courses/Python-Mid-Sem-Hunt--Theory--Tutorial-Sheets-Solved---By--Pratham-Kocher-Copy-67373fde108e6312f95e2fe0',
-            'Linear Algebra & ODE': 'https://www.skillsseekers.com/courses/Linear-Algebra-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2025-69c506916b8037fc81a925f6',
-            'OOP (Java)': 'https://www.skillsseekers.com/s/store',
-            'Discrete Mathematics': 'https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad',
+            'Computational Thinking': 'https://www.skillsseekers.com/courses/Computational-Thinking--Programming-Python--End-Term-Express--Theory--Fully-Solved-Tutorials-6aa14fb0e357b92628dea76d',
+            'Python': 'https://www.skillsseekers.com/courses/Computational-Thinking--Programming-Python--End-Term-Express--Theory--Fully-Solved-Tutorials-6aa14fb0e357b92628dea76d',
+            'Linear Algebra & ODE': 'https://www.skillsseekers.com/courses/Digital-Design--Linear-Algebra--Discrete-Mathematics-Complete-End-Term-Courses-69e07c89d5bf1319ba104a81',
+            'OOP (Java)': 'https://www.skillsseekers.com/courses',
+            'Discrete Mathematics': 'https://www.skillsseekers.com/courses/Digital-Design--Linear-Algebra--Discrete-Mathematics-Complete-End-Term-Courses-69e07c89d5bf1319ba104a81',
             'Digital Design': 'https://www.skillsseekers.com/courses/Digital-Design--Lectures--Notes--Question-Banks--PYP--65f3c32854bc821a1192472f',
             'IMS': 'https://www.skillsseekers.com/courses/IMS-End-Sem-Course--Theory--Questions-Practice-67499a62a0101406538b095b',
-            'Data Structures (C++)': 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-End-Term-Express-Crash-Course-6905e20728326e69fb83de97',
+            'Data Structures (C++)': 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-Express-Crash-Course-6a84b55b3c9a5e1bd7515ef0',
+            'Data Structures': 'https://www.skillsseekers.com/courses/Data-Structures-using-Cpp-Express-Crash-Course-6a84b55b3c9a5e1bd7515ef0',
             'SML (Machine Learning)': 'https://www.skillsseekers.com/courses/Statistical-Machine-Learning-Mid-End-Term-Crash-Course-6a8422844b93a4aeead5c37e',
-            'Data Analysis using Python': 'https://www.skillsseekers.com/courses/Data-Analysis-Using-Python-End--Term-Express-Crash-Course-691213351826d90967997a6d',
+            'Data Analysis using Python': 'https://www.skillsseekers.com/courses/Data-Analysis-Using-Python-End--Term-Course-2026-6a8bd1747013957d7e8ec6ef',
+            'Data Analysis (Python)': 'https://www.skillsseekers.com/courses/Data-Analysis-Using-Python-End--Term-Course-2026-6a8bd1747013957d7e8ec6ef',
             'Probability & Statistics': 'https://www.skillsseekers.com/courses/Probability-and-Statistics-End-Term-Express-Crash-Course-68f24c05943a5543bdb86135',
             'Microprocessors & Computer Architecture': 'https://www.skillsseekers.com/courses/Microprocessors-and-Computer-Architecture-Mid-Term-Express-Crash-Course-69628f196254b83697fd78e7',
-            'Design & Analysis of Algorithms': 'https://www.skillsseekers.com/s/store',
+            'Microprocessors & CA': 'https://www.skillsseekers.com/courses/Microprocessors-and-Computer-Architecture-Mid-Term-Express-Crash-Course-69628f196254b83697fd78e7',
+            'Design & Analysis of Algorithms': 'https://www.skillsseekers.com/courses/Design-and-Analysis-of-Algorithms--FULL-SYLLABUS--For-Placement-Preparations-Very-Important---Full-Mid-Sem-End-Sem-6975cddfcbf54f7e05ec38ff',
+            'DAA (Algorithms)': 'https://www.skillsseekers.com/courses/Design-and-Analysis-of-Algorithms--FULL-SYLLABUS--For-Placement-Preparations-Very-Important---Full-Mid-Sem-End-Sem-6975cddfcbf54f7e05ec38ff',
+            'DAA': 'https://www.skillsseekers.com/courses/Design-and-Analysis-of-Algorithms--FULL-SYLLABUS--For-Placement-Preparations-Very-Important---Full-Mid-Sem-End-Sem-6975cddfcbf54f7e05ec38ff',
             'Computer Networks': 'https://www.skillsseekers.com/courses/Computer-Network-End-Sem-Course--THEORY--PRACTICE--PYQS-67fbad4d1712547038d3df19',
             'Operating Systems': 'https://www.skillsseekers.com/courses/Operating-Systems-Mid-Term-Express-Crash-Course-695d4f66949d112b79278602',
-            'Artificial Intelligence & ML': 'https://www.skillsseekers.com/courses/AI-and-ML-End-Sem-Sprint-69386305006ffc1a762fa256',
-            'Environment': 'https://www.skillsseekers.com/s/store',
+            'Artificial Intelligence & ML': 'https://www.skillsseekers.com/courses/Artificial-Intelligence-and-Machine-Learning-AI-ML-End-Term-Express-Crash-Course-6a95a23c75430a992a01d943',
+            'AI & ML': 'https://www.skillsseekers.com/courses/Artificial-Intelligence-and-Machine-Learning-AI-ML-End-Term-Express-Crash-Course-6a95a23c75430a992a01d943',
+            'CSET 312': 'https://www.skillsseekers.com/courses/CSET-312---AIML-End-SEM-Prep-69d7eae1c8ed5dbf5d44f309',
+            'Environment': 'https://www.skillsseekers.com/courses',
             'Automata / Theory of Computation': 'https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--End-Sem-Sprint--6912054225c39a250b05a0e2',
             'Automata': 'https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--End-Sem-Sprint--6912054225c39a250b05a0e2',
-            'Intelligent Model Design': 'https://www.skillsseekers.com/s/store',
-            'Natural Language Processing': 'https://www.skillsseekers.com/s/store',
-            'Software Project Management': 'https://www.skillsseekers.com/s/store',
-            'AI and Society': 'https://www.skillsseekers.com/s/store'
+            'Intelligent Model Design': 'https://www.skillsseekers.com/courses/Intelligent-Model-Design-using-AI-Mid--End-Term-Express-Crash-Course-6a842303a33bff187396bfde',
+            'Natural Language Processing': 'https://www.skillsseekers.com/courses',
+            'Software Project Management': 'https://www.skillsseekers.com/courses',
+            'AI and Society': 'https://www.skillsseekers.com/courses'
         };
 
-        const FALLBACK_URL = 'https://www.skillsseekers.com/s/store';
+        const FALLBACK_URL = 'https://www.skillsseekers.com/courses';
 
         function getCourseUrl(subjectName) {
             const key = subjectName.trim();
