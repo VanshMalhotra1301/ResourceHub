@@ -19,6 +19,13 @@
         return;
     }
 
+    // Validate that the parsed user object has the minimum required fields
+    if (!currentUser || typeof currentUser !== 'object' || !currentUser.email) {
+        sessionStorage.clear();
+        window.location.href = '/login';
+        return;
+    }
+
     window.currentUser = currentUser;
 
     // 2. Populate User Profile in Navbar
@@ -69,9 +76,10 @@
         window.location.href = '/login';
     };
 
-    // 4. Feature Tracking Telemetry
+    // 4. Feature Tracking Telemetry (with efficient LRU-style cooldown)
     const _trackSent = new Map();
     const _TRACK_COOLDOWN = 5000; // 5s cooldown per unique event
+    const _TRACK_MAX_ENTRIES = 500;
 
     window.trackFeatureUsage = async function (featureName, action) {
         if (!currentUser || !currentUser.id) return;
@@ -80,7 +88,26 @@
 
         const key = currentUser.id + ':' + featureName + ':' + action;
         const now = Date.now();
+
         if (_trackSent.has(key) && now - _trackSent.get(key) < _TRACK_COOLDOWN) return;
+
+        // LRU-style eviction: delete oldest entries when map grows too large
+        if (_trackSent.size >= _TRACK_MAX_ENTRIES) {
+            const cutoff = now - _TRACK_COOLDOWN * 2;
+            for (const [k, v] of _trackSent) {
+                if (v < cutoff) _trackSent.delete(k);
+            }
+            // If still too large, remove the oldest half
+            if (_trackSent.size >= _TRACK_MAX_ENTRIES) {
+                const entries = Array.from(_trackSent.entries());
+                entries.sort((a, b) => a[1] - b[1]);
+                const toRemove = Math.floor(entries.length / 2);
+                for (let i = 0; i < toRemove; i++) {
+                    _trackSent.delete(entries[i][0]);
+                }
+            }
+        }
+
         _trackSent.set(key, now);
 
         try {
@@ -118,4 +145,3 @@
         }
     });
 })();
-

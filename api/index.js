@@ -1,19 +1,68 @@
 const express = require('express');
 const path = require('path');
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ── Supabase Configuration (Singleton) ──────────────
-const SUPA_URL = process.env.SUPABASE_URL || 'https://bxgbijoqrhvnwzdchedr.supabase.co';
-const SUPA_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4Z2Jpam9xcmh2bnd6ZGNoZWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzQ1MjUsImV4cCI6MjA5MDgxMDUyNX0.vuxFdc6ps06v41YvpTe3igN8XgXpJsSoCh9zD3bdWiU';
+// ── Supabase Configuration (Env-Only — no hardcoded secrets) ──
+const SUPA_URL = process.env.SUPABASE_URL;
+const SUPA_KEY = process.env.SUPABASE_ANON_KEY;
 
-const supabase = createClient(SUPA_URL, SUPA_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false }
+if (!SUPA_URL || !SUPA_KEY) {
+    console.error('[FATAL] Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables.');
+    // Allow the server to start for static pages, but auth endpoints will fail gracefully
+}
+
+const supabase = (SUPA_URL && SUPA_KEY)
+    ? createClient(SUPA_URL, SUPA_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false }
+    })
+    : null;
+
+// ── Security Headers Middleware ────────────────────
+app.use((req, res, next) => {
+    // Request tracing ID
+    req.requestId = crypto.randomBytes(8).toString('hex');
+    res.setHeader('X-Request-Id', req.requestId);
+
+    // Security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+    // CORS — allow configured origins, Vercel deployments, same-host requests, and local dev
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
+        : [];
+
+    const origin = req.headers.origin;
+    const host = req.headers.host;
+    const isAllowedOrigin = origin && (
+        allowedOrigins.includes(origin) ||
+        (host && origin.replace(/^https?:\/\//, '') === host) ||
+        origin.endsWith('.vercel.app') ||
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1')
+    );
+
+    if (origin && isAllowedOrigin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+    next();
 });
 
-// ── Middleware ─────────────────────────────────────
+// ── Body Parsing Middleware ───────────────────────
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
@@ -34,6 +83,50 @@ function sanitizeString(str, maxLen = 200) {
     return str.trim().substring(0, maxLen);
 }
 
+// ── In-Memory Rate Limiter for Auth Endpoints ─────
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX_REQUESTS = 20; // max 20 auth attempts per IP per window
+
+function checkRateLimit(ip) {
+    const now = Date.now();
+    const entry = rateLimitMap.get(ip);
+
+    if (!entry || (now - entry.windowStart) > RATE_LIMIT_WINDOW_MS) {
+        rateLimitMap.set(ip, { windowStart: now, count: 1 });
+        return false; // not limited
+    }
+
+    entry.count++;
+    if (entry.count > RATE_LIMIT_MAX_REQUESTS) {
+        return true; // rate limited
+    }
+    return false;
+}
+
+// Periodic cleanup of stale rate limit entries (every 5 min)
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of rateLimitMap) {
+        if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS * 2) {
+            rateLimitMap.delete(ip);
+        }
+    }
+}, 5 * 60 * 1000).unref();
+
+// Rate limit middleware for auth routes
+function authRateLimit(req, res, next) {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || 'unknown';
+    if (checkRateLimit(ip)) {
+        console.warn(`[Rate Limit] Blocked ${ip} on ${req.path}`);
+        return res.status(429).json({
+            success: false,
+            error: 'Too many requests. Please try again later.'
+        });
+    }
+    next();
+}
+
 // ── In-Memory Throttle for Telemetry ──────────────
 const trackThrottle = new Map();
 const THROTTLE_MS = 5000;
@@ -43,20 +136,35 @@ function isThrottled(key) {
     const last = trackThrottle.get(key);
     if (last && now - last < THROTTLE_MS) return true;
     trackThrottle.set(key, now);
-    
-    // Periodically cleanup cache if large
+
+    // Efficient eviction when map gets large
     if (trackThrottle.size > 2000) {
+        const cutoff = now - THROTTLE_MS * 3;
         for (const [k, v] of trackThrottle) {
-            if (now - v > THROTTLE_MS * 3) trackThrottle.delete(k);
+            if (v < cutoff) trackThrottle.delete(k);
         }
     }
     return false;
+}
+
+// ── Supabase Guard Middleware ──────────────────────
+function requireSupabase(req, res, next) {
+    if (!supabase) {
+        return res.status(503).json({
+            success: false,
+            error: 'Database service is not configured. Please set SUPABASE_URL and SUPABASE_ANON_KEY.'
+        });
+    }
+    next();
 }
 
 // ── API ROUTES ─────────────────────────────────────
 
 // GET /api/health - Health check endpoint
 app.get('/api/health', async (req, res) => {
+    if (!supabase) {
+        return res.status(503).json({ status: 'unconfigured', message: 'Supabase credentials not set' });
+    }
     try {
         const { error } = await supabase.from('users_realtime').select('id').limit(1);
         if (error) {
@@ -69,7 +177,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // POST /api/signup
-app.post('/api/signup', async (req, res) => {
+app.post('/api/signup', authRateLimit, requireSupabase, async (req, res) => {
     const name = sanitizeString(req.body?.name, 100);
     const email = sanitizeString(req.body?.email, 254).toLowerCase();
     const password = req.body?.password;
@@ -83,6 +191,9 @@ app.post('/api/signup', async (req, res) => {
     if (typeof password !== 'string' || password.length < 6) {
         return res.status(400).json({ success: false, error: 'Password must be at least 6 characters.' });
     }
+    if (password.length > 128) {
+        return res.status(400).json({ success: false, error: 'Password must not exceed 128 characters.' });
+    }
 
     try {
         const { data, error } = await supabase.auth.signUp({
@@ -92,7 +203,7 @@ app.post('/api/signup', async (req, res) => {
         });
 
         if (error) {
-            console.error('[Signup Error]', error.message);
+            console.error(`[Signup Error] ${req.requestId}:`, error.message);
             return res.status(400).json({ success: false, error: error.message });
         }
 
@@ -106,12 +217,12 @@ app.post('/api/signup', async (req, res) => {
             }], { onConflict: 'id' });
 
             if (upsertErr) {
-                console.warn('[Signup] users_realtime upsert notice:', upsertErr.message);
+                console.warn(`[Signup] ${req.requestId} users_realtime upsert notice:`, upsertErr.message);
             }
         }
 
         const hasSession = !!(data?.session);
-        console.log(`[Signup OK] ${email} | Session: ${hasSession}`);
+        console.log(`[Signup OK] ${req.requestId} ${email} | Session: ${hasSession}`);
 
         return res.json({
             success: true,
@@ -127,13 +238,13 @@ app.post('/api/signup', async (req, res) => {
             requiresEmailConfirmation: !hasSession
         });
     } catch (err) {
-        console.error('[Signup Exception]', err.message);
+        console.error(`[Signup Exception] ${req.requestId}:`, err.message);
         return res.status(500).json({ success: false, error: 'Server error during signup. Please try again.' });
     }
 });
 
 // POST /api/login
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', authRateLimit, requireSupabase, async (req, res) => {
     const email = sanitizeString(req.body?.email, 254).toLowerCase();
     const password = req.body?.password;
 
@@ -145,7 +256,7 @@ app.post('/api/login', async (req, res) => {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
-            console.error('[Login Error]', error.message);
+            console.error(`[Login Error] ${req.requestId}:`, error.message);
             return res.status(401).json({ success: false, error: error.message });
         }
 
@@ -170,7 +281,7 @@ app.post('/api/login', async (req, res) => {
             userName = data.user.email.split('@')[0];
         }
 
-        console.log(`[Login OK] ${email} (${userName})`);
+        console.log(`[Login OK] ${req.requestId} ${email} (${userName})`);
         return res.json({
             success: true,
             user: {
@@ -184,7 +295,7 @@ app.post('/api/login', async (req, res) => {
             }
         });
     } catch (err) {
-        console.error('[Login Exception]', err.message);
+        console.error(`[Login Exception] ${req.requestId}:`, err.message);
         return res.status(500).json({ success: false, error: 'Server error during login. Please try again.' });
     }
 });
@@ -193,7 +304,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/logout', (req, res) => res.json({ success: true }));
 
 // POST /api/track (telemetry tracking)
-app.post('/api/track', async (req, res) => {
+app.post('/api/track', requireSupabase, async (req, res) => {
     const user_id = req.body?.user_id;
     const feature_name = sanitizeString(req.body?.feature_name, 100);
     const action = sanitizeString(req.body?.action, 200);
@@ -220,48 +331,103 @@ app.post('/api/track', async (req, res) => {
         }]);
 
         if (error) {
-            console.warn('[Track Notice]', error.message);
+            console.warn(`[Track Notice] ${req.requestId}:`, error.message);
             return res.json({ success: false, reason: error.message });
         }
 
         return res.json({ success: true });
     } catch (e) {
-        console.warn('[Track Exception]', e.message);
+        console.warn(`[Track Exception] ${req.requestId}:`, e.message);
         return res.json({ success: false });
     }
 });
 
-// ── PAGE ROUTES ────────────────────────────────────
+// ── PAGE ROUTES (Data-Driven) ──────────────────────
+const ROOT_DIR = path.join(__dirname, '..');
+const ALLOWED_EXTENSIONS = new Set(['.html', '.htm']);
+
+const PAGE_ROUTES = {
+    '/login':  'pages/auth/auth.html',
+    '/signup': 'pages/auth/signup.html',
+    '/home':   'index.html',
+    '/sem1':   'pages/semesters/sem1.html',
+    '/sem2':   'pages/semesters/sem2.html',
+    '/sem3':   'pages/semesters/sem3.html',
+    '/sem4':   'pages/semesters/sem4.html',
+    '/sem5':   'pages/semesters/sem5.html',
+    '/library':  'pages/library.html',
+    '/courses':  'pages/courses.html',
+    '/tools':    'pages/tools.html',
+    '/dsa':      'pages/dsa/visual-dsa.html',
+    '/dsa/visual-dsa.html': 'pages/dsa/visual-dsa.html',
+    '/visual-dsa.html':     'pages/dsa/visual-dsa.html',
+    '/os':       'pages/os/os-visual.html',
+    '/os/os-visual.html':   'pages/os/os-visual.html',
+    '/os-visual.html':      'pages/os/os-visual.html',
+    '/test':     'pages/auth/test_auth.html'
+};
+
+// Register all static page routes
+for (const [route, filePath] of Object.entries(PAGE_ROUTES)) {
+    app.get(route, (req, res) => {
+        res.sendFile(path.join(ROOT_DIR, filePath));
+    });
+}
+
+// Root redirect
 app.get('/', (req, res) => res.redirect('/login'));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'auth.html')));
-app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'signup.html')));
-app.get('/home', (req, res) => res.sendFile(path.join(__dirname, '..', 'index.html')));
-app.get('/sem1', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem1.html')));
-app.get('/sem2', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem2.html')));
-app.get('/sem3', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem3.html')));
-app.get('/sem4', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem4.html')));
-app.get('/sem5', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'semesters', 'sem5.html')));
-app.get('/library', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'library.html')));
-app.get('/courses', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'courses.html')));
-app.get('/tools', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'tools.html')));
-app.get('/dsa', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
-app.get('/dsa/visual-dsa.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
-app.get('/visual-dsa.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'visual-dsa.html')));
-app.get('/dsa/:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', req.params.file)));
-app.get('/dsa-:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'dsa', 'dsa-' + req.params.file)));
-app.get('/os', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
-app.get('/os/os-visual.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
-app.get('/os-visual.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-visual.html')));
-app.get('/os/:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', req.params.file)));
-app.get('/os-:file', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'os', 'os-' + req.params.file)));
-app.get('/test', (req, res) => res.sendFile(path.join(__dirname, '..', 'pages', 'auth', 'test_auth.html')));
+
+// ── Safe Dynamic File Routes (Path Traversal Protected) ──
+function serveSafeFile(baseDir) {
+    return (req, res, next) => {
+        const requestedFile = req.params.file;
+
+        // Block path traversal attempts
+        if (!requestedFile || requestedFile.includes('..') || requestedFile.includes('\0')) {
+            return res.status(400).type('text/plain').send('Invalid file path');
+        }
+
+        const ext = path.extname(requestedFile).toLowerCase();
+        if (!ALLOWED_EXTENSIONS.has(ext)) {
+            return res.status(403).type('text/plain').send('File type not allowed');
+        }
+
+        const resolvedPath = path.resolve(baseDir, requestedFile);
+
+        // Ensure resolved path stays within the base directory
+        if (!resolvedPath.startsWith(path.resolve(baseDir))) {
+            return res.status(403).type('text/plain').send('Access denied');
+        }
+
+        res.sendFile(resolvedPath, (err) => {
+            if (err) {
+                res.status(404).type('text/plain').send('File not found');
+            }
+        });
+    };
+}
+
+app.get('/dsa/:file', serveSafeFile(path.join(ROOT_DIR, 'pages', 'dsa')));
+app.get('/dsa-:file', (req, res) => {
+    const safeReq = { params: { file: 'dsa-' + req.params.file } };
+    serveSafeFile(path.join(ROOT_DIR, 'pages', 'dsa'))(safeReq, res);
+});
+app.get('/os/:file', serveSafeFile(path.join(ROOT_DIR, 'pages', 'os')));
+app.get('/os-:file', (req, res) => {
+    const safeReq = { params: { file: 'os-' + req.params.file } };
+    serveSafeFile(path.join(ROOT_DIR, 'pages', 'os'))(safeReq, res);
+});
 
 // ── Static Assets ──────────────────────────────────
-app.use(express.static(path.join(__dirname, '..'), { index: false }));
+app.use(express.static(ROOT_DIR, {
+    index: false,
+    dotfiles: 'deny',       // Block .env, .git, etc.
+    maxAge: '1d'             // Cache static assets for 1 day
+}));
 
-// ── Fallback Handler ───────────────────────────────
+// ── Global Error Handler ───────────────────────────
 app.use((req, res) => {
-    if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(req.path)) {
+    if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|webp|avif)$/i.test(req.path)) {
         return res.status(404).type('text/plain').send('Asset not found');
     }
     if (req.accepts('html')) {
@@ -270,11 +436,18 @@ app.use((req, res) => {
     return res.status(404).json({ error: 'Not found' });
 });
 
+// Uncaught error handler
+app.use((err, req, res, _next) => {
+    console.error(`[Unhandled Error] ${req.requestId || 'no-id'}:`, err.message);
+    res.status(500).json({ error: 'Internal server error' });
+});
+
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`\n=========================================`);
         console.log(`🚀 BU Resource Hub Server is running!`);
         console.log(`👉 http://localhost:${PORT}`);
+        console.log(`   Supabase: ${supabase ? '✅ Connected' : '⚠️  NOT CONFIGURED'}`);
         console.log(`=========================================\n`);
     });
 }

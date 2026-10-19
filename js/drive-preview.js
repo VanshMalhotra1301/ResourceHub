@@ -1,8 +1,17 @@
 /**
  * BU Resource Hub - Google Drive In-Site Preview & Course Promo Module
+ * XSS-safe rendering for all user-derived content
  */
 
 (function () {
+    // ── HTML Escape Helper ─────────────────────────
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
     // ===========================================
     // 1. DRIVE IN-SITE PREVIEW MODAL
     // ===========================================
@@ -23,10 +32,21 @@
             }
         });
 
+        // Validate that a string looks like a Drive file ID (alphanumeric + hyphens/underscores)
+        function isValidDriveId(id) {
+            return typeof id === 'string' && /^[a-zA-Z0-9_-]{10,100}$/.test(id);
+        }
+
         window.openDriveModal = function (fileId, label) {
+            if (!isValidDriveId(fileId)) {
+                console.warn('[Drive Preview] Invalid file ID:', fileId);
+                return;
+            }
+
+            // Use textContent (not innerHTML) for the label to prevent XSS
             if (title) title.textContent = label || 'Document';
-            if (openLink) openLink.href = 'https://drive.google.com/file/d/' + fileId + '/view';
-            if (downloadBtn) downloadBtn.href = 'https://drive.google.com/uc?export=download&id=' + fileId;
+            if (openLink) openLink.href = 'https://drive.google.com/file/d/' + encodeURIComponent(fileId) + '/view';
+            if (downloadBtn) downloadBtn.href = 'https://drive.google.com/uc?export=download&id=' + encodeURIComponent(fileId);
 
             if (spinner) spinner.classList.remove('hidden');
             iframe.src = 'about:blank';
@@ -35,11 +55,11 @@
             document.body.style.overflow = 'hidden';
 
             setTimeout(() => {
-                iframe.src = 'https://drive.google.com/file/d/' + fileId + '/preview';
+                iframe.src = 'https://drive.google.com/file/d/' + encodeURIComponent(fileId) + '/preview';
             }, 50);
 
             if (window.trackFeatureUsage) {
-                window.trackFeatureUsage('Drive Preview', 'Opened: ' + label);
+                window.trackFeatureUsage('Drive Preview', 'Opened: ' + (label || 'Unknown'));
             }
         };
 
@@ -69,6 +89,13 @@
         // Escape Key Listener
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && modal.classList.contains('open')) {
+                window.closeDriveModal();
+            }
+        });
+
+        // Click outside modal content to close
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
                 window.closeDriveModal();
             }
         });
@@ -132,6 +159,16 @@
             return FALLBACK_URL;
         }
 
+        // Validate URL to prevent javascript: injection
+        function isSafeUrl(url) {
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+            } catch (e) {
+                return false;
+            }
+        }
+
         const messages = [
             (subj) => `Ace ${subj}! Get the full crash course.`,
             (subj) => `PYQs + the ${subj} video course = guaranteed results.`,
@@ -151,23 +188,45 @@
             const shortName = key.length > 30 ? key.substring(0, 28) + '\u2026' : key;
             const courseUrl = getCourseUrl(key);
 
+            // Validate URL before rendering
+            if (!isSafeUrl(courseUrl)) return;
+
+            // Build tooltip using DOM API (XSS-safe)
             const tip = document.createElement('div');
             tip.className = 'course-promo-tip';
-            tip.innerHTML = `
-                <button class="promo-close" title="Dismiss">✕</button>
-                <div class="promo-icon"><i class="ph-fill ph-play-circle"></i></div>
-                <div class="promo-body">
-                    <p class="promo-text">${msgFn(shortName)}</p>
-                    <a class="promo-link" href="${courseUrl}" target="_blank" rel="noopener">
-                        View Course <i class="ph-bold ph-arrow-right"></i>
-                    </a>
-                </div>
-            `;
 
-            tip.querySelector('.promo-close').addEventListener('click', () => {
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'promo-close';
+            closeBtn.title = 'Dismiss';
+            closeBtn.textContent = '✕';
+            closeBtn.addEventListener('click', () => {
                 tip.classList.add('fade-out');
                 setTimeout(() => tip.remove(), 300);
             });
+
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'promo-icon';
+            iconDiv.innerHTML = '<i class="ph-fill ph-play-circle"></i>';
+
+            const body = document.createElement('div');
+            body.className = 'promo-body';
+
+            const text = document.createElement('p');
+            text.className = 'promo-text';
+            text.textContent = msgFn(shortName);
+
+            const link = document.createElement('a');
+            link.className = 'promo-link';
+            link.href = courseUrl;
+            link.target = '_blank';
+            link.rel = 'noopener';
+            link.innerHTML = 'View Course <i class="ph-bold ph-arrow-right"></i>';
+
+            body.appendChild(text);
+            body.appendChild(link);
+            tip.appendChild(closeBtn);
+            tip.appendChild(iconDiv);
+            tip.appendChild(body);
 
             document.body.appendChild(tip);
 
@@ -180,6 +239,14 @@
 
             tip.style.left = posX + 'px';
             tip.style.top = posY + 'px';
+
+            // Auto-dismiss after 8 seconds
+            setTimeout(() => {
+                if (tip.parentNode) {
+                    tip.classList.add('fade-out');
+                    setTimeout(() => tip.remove(), 300);
+                }
+            }, 8000);
         }
 
         document.addEventListener('click', function (e) {

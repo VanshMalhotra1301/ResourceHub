@@ -9,14 +9,26 @@
  * 5. Exception-safe, conflict-handled user sync trigger on auth.users
  * 6. Historical user reconciliation between auth.users and public.users_realtime
  * 7. Verification test suite
+ * 
+ * Required environment variables:
+ *   DATABASE_URL      - Postgres connection string (e.g. postgres://user:pass@host:5432/db)
+ *   SUPABASE_URL      - Supabase project URL
+ *   SUPABASE_ANON_KEY - Supabase anon/public API key
  */
+
 
 const { Client } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgres://postgres:Vansh%40ww22iixxzz@db.bxgbijoqrhvnwzdchedr.supabase.co:5432/postgres';
-const SUPA_URL = process.env.SUPABASE_URL || 'https://bxgbijoqrhvnwzdchedr.supabase.co';
-const SUPA_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4Z2Jpam9xcmh2bnd6ZGNoZWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzQ1MjUsImV4cCI6MjA5MDgxMDUyNX0.vuxFdc6ps06v41YvpTe3igN8XgXpJsSoCh9zD3bdWiU';
+const DATABASE_URL = process.env.DATABASE_URL;
+const SUPA_URL = process.env.SUPABASE_URL;
+const SUPA_KEY = process.env.SUPABASE_ANON_KEY;
+
+if (!DATABASE_URL || !SUPA_URL || !SUPA_KEY) {
+    console.error('❌ Missing required environment variables.');
+    console.error('   Set DATABASE_URL, SUPABASE_URL, and SUPABASE_ANON_KEY before running this script.');
+    process.exit(1);
+}
 
 async function setupDatabase() {
     const client = new Client({

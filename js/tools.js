@@ -4,6 +4,106 @@
  */
 
 (function () {
+    // ── HTML Escape Helper (XSS Protection) ────────
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    // ── Toast Notification (replaces alert()) ──────
+    function showToast(message, type = 'info', duration = 4000) {
+        // Remove existing toast
+        const existing = document.querySelector('.bu-toast');
+        if (existing) existing.remove();
+
+        const icons = {
+            success: '✅',
+            info: 'ℹ️',
+            warning: '⚠️',
+            error: '❌'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = `bu-toast bu-toast--${type}`;
+        toast.innerHTML = `
+            <span class="bu-toast__icon">${icons[type] || icons.info}</span>
+            <span class="bu-toast__msg">${escapeHtml(message)}</span>
+            <button class="bu-toast__close" aria-label="Close">&times;</button>
+        `;
+
+        // Inject toast styles if not already present
+        if (!document.getElementById('bu-toast-styles')) {
+            const style = document.createElement('style');
+            style.id = 'bu-toast-styles';
+            style.textContent = `
+                .bu-toast {
+                    position: fixed;
+                    bottom: 24px;
+                    right: 24px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 14px 20px;
+                    border-radius: 12px;
+                    background: rgba(24, 24, 27, 0.95);
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(99, 102, 241, 0.3);
+                    color: #e4e4e7;
+                    font-size: 14px;
+                    font-family: 'Inter', 'Outfit', sans-serif;
+                    z-index: 99999;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+                    animation: buToastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    max-width: 380px;
+                }
+                .bu-toast--success { border-color: rgba(34, 197, 94, 0.4); }
+                .bu-toast--warning { border-color: rgba(251, 191, 36, 0.4); }
+                .bu-toast--error   { border-color: rgba(239, 68, 68, 0.4); }
+                .bu-toast__icon { font-size: 18px; flex-shrink: 0; }
+                .bu-toast__msg { flex: 1; line-height: 1.4; }
+                .bu-toast__close {
+                    background: none; border: none; color: #71717a;
+                    cursor: pointer; font-size: 18px; padding: 0 0 0 8px;
+                    transition: color 0.2s;
+                }
+                .bu-toast__close:hover { color: #e4e4e7; }
+                .bu-toast--out { animation: buToastOut 0.3s ease-in forwards; }
+                @keyframes buToastIn {
+                    0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+                    100% { opacity: 1; transform: translateY(0) scale(1); }
+                }
+                @keyframes buToastOut {
+                    0% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(20px); }
+                }
+                @media (max-width: 480px) {
+                    .bu-toast { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        toast.querySelector('.bu-toast__close').addEventListener('click', () => {
+            toast.classList.add('bu-toast--out');
+            setTimeout(() => toast.remove(), 300);
+        });
+
+        document.body.appendChild(toast);
+
+        // Auto-dismiss
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.classList.add('bu-toast--out');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, duration);
+    }
+
+    // Expose globally for other modules
+    window.showToast = showToast;
+
     // ===========================================
     // 1. STUDY STREAK TRACKER
     // ===========================================
@@ -26,15 +126,25 @@
         const streakNumEl = document.getElementById('streak-num');
         if (streakNumEl) streakNumEl.textContent = streak;
 
+        // Reset daily pomodoro session count on new day
+        const lastPomoDay = localStorage.getItem('bu_pomo_day');
+        if (lastPomoDay !== today) {
+            localStorage.setItem('bu_pomo_sessions_today', '0');
+            localStorage.setItem('bu_pomo_day', today);
+        }
+
         // Milestone celebration
         if ([7, 14, 30, 50, 100].includes(streak) && lastVisit !== today) {
-            setTimeout(() => launchConfetti(), 800);
+            setTimeout(() => {
+                launchConfetti();
+                showToast(`🔥 ${streak}-day streak! You're on fire!`, 'success', 5000);
+            }, 800);
         }
     }
 
     window.showStreakInfo = function () {
         const streak = localStorage.getItem('bu_streak') || 0;
-        alert(`🔥 You're on a ${streak}-day study streak!\n\nVisit every day to keep your streak alive. Milestones at 7, 14, 30, 50, and 100 days!`);
+        showToast(`🔥 You're on a ${streak}-day study streak! Visit daily to keep it alive.`, 'info', 5000);
     };
 
     window.launchConfetti = function () {
@@ -64,10 +174,14 @@
         if (!dateInput) return;
         const dateVal = dateInput.value;
         const nameVal = nameInput ? nameInput.value || 'Exam' : 'Exam';
-        if (!dateVal) { alert('Please select a date.'); return; }
+        if (!dateVal) {
+            showToast('Please select a date first.', 'warning');
+            return;
+        }
         localStorage.setItem('bu_exam_date', dateVal);
         localStorage.setItem('bu_exam_name', nameVal);
         startCountdown(dateVal, nameVal);
+        showToast(`Countdown set for ${nameVal}!`, 'success');
     };
 
     function startCountdown(dateStr, name) {
@@ -188,8 +302,16 @@
                         const countEl = document.getElementById('pomo-session-count');
                         if (countEl) countEl.textContent = pomoSessions;
                     }
-                    new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA').play().catch(() => {});
-                    alert(pomoMode === 'work' ? '✅ Focus session complete! Take a break.' : '⏰ Break over! Time to focus.');
+                    // Play notification sound (non-blocking)
+                    try {
+                        new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA').play().catch(() => {});
+                    } catch (e) { /* silent */ }
+                    // Toast instead of blocking alert()
+                    if (pomoMode === 'work') {
+                        showToast('Focus session complete! Take a well-deserved break.', 'success', 6000);
+                    } else {
+                        showToast('Break over! Time to focus again.', 'info', 5000);
+                    }
                 }
             }, 1000);
         }
@@ -205,7 +327,7 @@
     };
 
     // ===========================================
-    // 5. STICKY NOTES
+    // 5. STICKY NOTES (XSS-Safe)
     // ===========================================
     window.loadNotes = function () {
         const notes = JSON.parse(localStorage.getItem('bu_notes') || '[]');
@@ -215,7 +337,21 @@
         notes.forEach((text, i) => {
             const div = document.createElement('div');
             div.className = 'sticky-note';
-            div.innerHTML = `<button class="sticky-note-del" onclick="deleteNote(${i})">✕</button><textarea onchange="saveNote(${i}, this.value)" placeholder="Type your note...">${text}</textarea>`;
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'sticky-note-del';
+            delBtn.textContent = '✕';
+            delBtn.addEventListener('click', () => window.deleteNote(i));
+
+            const textarea = document.createElement('textarea');
+            textarea.placeholder = 'Type your note...';
+            textarea.value = text; // Safe: .value doesn't execute HTML
+            textarea.addEventListener('change', function () {
+                window.saveNote(i, this.value);
+            });
+
+            div.appendChild(delBtn);
+            div.appendChild(textarea);
             container.appendChild(div);
         });
     };
@@ -241,7 +377,7 @@
     };
 
     // ===========================================
-    // 6. BOOKMARKS MANAGER
+    // 6. BOOKMARKS MANAGER (XSS-Safe + Export/Clear)
     // ===========================================
     window.loadBookmarks = function () {
         const bms = JSON.parse(localStorage.getItem('bu_bookmarks') || '[]');
@@ -251,15 +387,39 @@
             list.innerHTML = '<p class="text-sm text-zinc-600 text-center py-6">No bookmarks yet.<br>Save resources to access them quickly!</p>';
             return;
         }
-        list.innerHTML = bms.map((bm, i) => `
-            <div class="bookmark-item">
-                <div>
-                    <span>${bm.label}</span>
-                    <span class="bookmark-sub">${bm.subject}</span>
-                </div>
-                <a href="${bm.url}" target="_blank" title="Open">↗</a>
-                <button class="bookmark-del" onclick="deleteBookmark(${i})" title="Remove">✕</button>
-            </div>`).join('');
+
+        list.innerHTML = '';
+        bms.forEach((bm, i) => {
+            const item = document.createElement('div');
+            item.className = 'bookmark-item';
+
+            const info = document.createElement('div');
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = bm.label; // safe: textContent
+            const subSpan = document.createElement('span');
+            subSpan.className = 'bookmark-sub';
+            subSpan.textContent = bm.subject;
+            info.appendChild(labelSpan);
+            info.appendChild(subSpan);
+
+            const openLink = document.createElement('a');
+            openLink.href = bm.url;
+            openLink.target = '_blank';
+            openLink.rel = 'noopener';
+            openLink.title = 'Open';
+            openLink.textContent = '↗';
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'bookmark-del';
+            delBtn.title = 'Remove';
+            delBtn.textContent = '✕';
+            delBtn.addEventListener('click', () => window.deleteBookmark(i));
+
+            item.appendChild(info);
+            item.appendChild(openLink);
+            item.appendChild(delBtn);
+            list.appendChild(item);
+        });
     };
 
     window.saveBookmark = function (label, url, subject) {
@@ -282,6 +442,39 @@
         bms.splice(i, 1);
         localStorage.setItem('bu_bookmarks', JSON.stringify(bms));
         window.loadBookmarks();
+    };
+
+    // Export bookmarks as JSON file
+    window.exportBookmarks = function () {
+        const bms = JSON.parse(localStorage.getItem('bu_bookmarks') || '[]');
+        if (!bms.length) {
+            showToast('No bookmarks to export.', 'warning');
+            return;
+        }
+        const blob = new Blob([JSON.stringify(bms, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bu-bookmarks-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`Exported ${bms.length} bookmarks.`, 'success');
+    };
+
+    // Clear all bookmarks with confirmation
+    window.clearAllBookmarks = function () {
+        const bms = JSON.parse(localStorage.getItem('bu_bookmarks') || '[]');
+        if (!bms.length) {
+            showToast('No bookmarks to clear.', 'info');
+            return;
+        }
+        if (confirm(`Delete all ${bms.length} bookmarks? This cannot be undone.`)) {
+            localStorage.setItem('bu_bookmarks', '[]');
+            window.loadBookmarks();
+            showToast('All bookmarks cleared.', 'info');
+        }
     };
 
     window.attachBookmarkButtons = function () {
