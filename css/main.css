@@ -1,11 +1,20 @@
 /* =========================================================
    BU Resource Hub - Main Stylesheet (Base, Layout, Reset)
+   Premium Polish Edition
    ========================================================= */
 
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Smooth scroll for anchor links */
+html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
 }
 
 body {
@@ -15,6 +24,21 @@ body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+}
+
+/* Subtle noise texture overlay for premium depth */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    mix-blend-mode: overlay;
 }
 
 /* Background Canvas */
@@ -27,12 +51,22 @@ body {
     height: 100vh;
 }
 
-/* Glassmorphic Navbar */
+/* =========================================================
+   GLASSMORPHIC NAVBAR — Premium Refinement
+   ========================================================= */
 .glass-nav {
-    background: rgba(5, 5, 5, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(5, 5, 5, 0.72);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 255, 255, 0.03) inset;
+    transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+/* When scrolled — slightly more opaque */
+.glass-nav.scrolled {
+    background: rgba(5, 5, 5, 0.88);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.04) inset;
 }
 
 /* Scroll Progress Bar */
@@ -40,11 +74,12 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    height: 3px;
+    height: 2.5px;
     background: linear-gradient(90deg, #6366f1, #a855f7, #fbbf24);
     z-index: 9999;
     width: 0%;
-    transition: width 0.1s linear;
+    transition: width 0.08s linear;
+    border-radius: 0 2px 2px 0;
 }
 
 /* Back to Top Button */
@@ -53,9 +88,9 @@ body {
     bottom: 28px;
     right: 28px;
     z-index: 200;
-    background: rgba(99, 102, 241, 0.9);
+    background: rgba(99, 102, 241, 0.85);
     color: #fff;
-    border: none;
+    border: 1px solid rgba(129, 140, 248, 0.3);
     border-radius: 50%;
     width: 46px;
     height: 46px;
@@ -65,9 +100,9 @@ body {
     cursor: pointer;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.35), 0 0 0 0.5px rgba(129, 140, 248, 0.2) inset;
     font-size: 18px;
 }
 
@@ -78,7 +113,12 @@ body {
 
 #back-to-top:hover {
     background: rgba(99, 102, 241, 1);
-    transform: scale(1.1);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5), 0 0 0 0.5px rgba(129, 140, 248, 0.3) inset;
+}
+
+#back-to-top:active {
+    transform: scale(0.97);
 }
 
 /* Mobile Hamburger Menu */
@@ -91,6 +131,12 @@ body {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#hamburger:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
 #hamburger span {
@@ -99,7 +145,7 @@ body {
     height: 2px;
     background: #94a3b8;
     border-radius: 2px;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #mobile-menu {
@@ -108,11 +154,11 @@ body {
     inset: 0;
     z-index: 300;
     background: rgba(5, 5, 5, 0.97);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(24px);
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 24px;
+    gap: 22px;
 }
 
 #mobile-menu.open {
@@ -120,27 +166,43 @@ body {
 }
 
 #mobile-menu a {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: #94a3b8;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s ease, transform 0.2s ease, letter-spacing 0.2s ease;
     font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.01em;
 }
 
 #mobile-menu a:hover {
     color: #fff;
+    transform: translateX(4px);
+    letter-spacing: 0.02em;
 }
 
 #menu-close {
     position: absolute;
     top: 24px;
     right: 24px;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #71717a;
-    font-size: 28px;
+    font-size: 20px;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#menu-close:hover {
+    color: #fff;
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
 }
 
 @media (max-width: 1024px) {
@@ -157,7 +219,9 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-/* Custom Scrollbar */
+/* =========================================================
+   CUSTOM SCROLLBAR — Refined
+   ========================================================= */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -168,11 +232,33 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background: #3f3f46;
-    border-radius: 8px;
+    border-radius: 99px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #52525b;
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #3f3f46 #09090b;
+}
+
+/* =========================================================
+   ACCESSIBILITY: Focus Visible Outlines
+   ========================================================= */
+:focus-visible {
+    outline: 2px solid rgba(99, 102, 241, 0.7);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Remove focus ring for mouse users */
+:focus:not(:focus-visible) {
+    outline: none;
 }
 
 /* =========================================================
@@ -187,23 +273,24 @@ body {
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     min-width: 220px;
-    background: rgba(14, 14, 22, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    padding: 8px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+    background: rgba(12, 12, 20, 0.96);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 6px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 0 0.5px rgba(255, 255, 255, 0.04) inset;
     z-index: 100;
-    margin-top: 6px;
-    animation: dropIn 0.2s ease-out;
+    margin-top: 8px;
+    animation: dropIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes dropIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateX(-50%) translateY(-6px) scale(0.97); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }
 
 .nav-dropdown:hover .nav-dropdown-content,
@@ -215,24 +302,29 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 9px 14px;
+    padding: 10px 14px;
     color: #cbd5e1;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 13px;
     font-weight: 500;
-    transition: all 0.15s ease;
+    transition: all 0.18s ease;
 }
 
 .nav-dropdown-item:hover {
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(99, 102, 241, 0.12);
     color: #fff;
-    transform: translateX(4px);
+    transform: translateX(3px);
 }
 
 .nav-dropdown-item i {
     font-size: 16px;
     color: #818cf8;
+    transition: color 0.18s ease;
+}
+
+.nav-dropdown-item:hover i {
+    color: #a5b4fc;
 }
 
 /* Nav Active Link Indicator */
@@ -240,11 +332,12 @@ body {
     position: relative;
     padding: 8px 16px;
     border-radius: 9999px;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 500;
     color: #94a3b8;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all 0.22s ease;
+    letter-spacing: -0.005em;
 }
 
 .nav-link:hover {
@@ -254,9 +347,10 @@ body {
 
 .nav-link.active {
     color: #ffffff;
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
     font-weight: 600;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.08);
 }
 
 /* Breadcrumbs */
@@ -272,7 +366,7 @@ body {
 .breadcrumb a {
     color: #94a3b8;
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color 0.18s ease;
 }
 
 .breadcrumb a:hover {
@@ -284,3 +378,72 @@ body {
     font-weight: 600;
 }
 
+/* =========================================================
+   GLOBAL TRANSITION SMOOTHING
+   ========================================================= */
+a, button, input, select, textarea {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Selection highlight */
+::selection {
+    background: rgba(99, 102, 241, 0.35);
+    color: #fff;
+}
+
+/* =========================================================
+   STAT CARDS (Hero Section)
+   ========================================================= */
+.stat-card {
+    background: rgba(15, 15, 22, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 1.25rem;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.08);
+    background: rgba(18, 18, 28, 0.75);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+}
+
+/* =========================================================
+   FOOTER — Premium Polish
+   ========================================================= */
+footer {
+    position: relative;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.15), transparent);
+}

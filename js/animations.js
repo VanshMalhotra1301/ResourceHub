@@ -42,6 +42,13 @@
                     if (scrollTop > 400) btn.classList.add('visible');
                     else btn.classList.remove('visible');
                 }
+
+                // Premium: Navbar opacity shift on scroll
+                const navbar = document.getElementById('navbar');
+                if (navbar) {
+                    if (scrollTop > 20) navbar.classList.add('scrolled');
+                    else navbar.classList.remove('scrolled');
+                }
                 scrollTicking = false;
             });
             scrollTicking = true;
