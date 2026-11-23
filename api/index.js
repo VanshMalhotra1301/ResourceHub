@@ -2,6 +2,16 @@ const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const ChatbotNLP = require('../js/chatbot-nlp');
+const ChatbotKB = require('../js/chatbot-kb');
+
+let serverNlpEngine = null;
+try {
+    serverNlpEngine = new ChatbotNLP(ChatbotKB);
+    serverNlpEngine.initialize();
+} catch (e) {
+    console.error('[Chatbot NLP] Server initialization error:', e.message);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -339,6 +349,29 @@ app.post('/api/track', requireSupabase, async (req, res) => {
     } catch (e) {
         console.warn(`[Track Exception] ${req.requestId}:`, e.message);
         return res.json({ success: false });
+    }
+});
+
+// POST /api/chat - Custom NLP Chatbot Query Endpoint
+app.post('/api/chat', (req, res) => {
+    const message = sanitizeString(req.body?.message, 500);
+    if (!message) {
+        return res.status(400).json({ success: false, error: 'Query message is required.' });
+    }
+
+    if (!serverNlpEngine) {
+        return res.status(503).json({ success: false, error: 'Chatbot NLP engine unavailable.' });
+    }
+
+    try {
+        const response = serverNlpEngine.processQuery(message);
+        return res.json({
+            success: true,
+            response
+        });
+    } catch (err) {
+        console.error(`[Chat API Error] ${req.requestId}:`, err.message);
+        return res.status(500).json({ success: false, error: 'Failed to process query' });
     }
 });
 
