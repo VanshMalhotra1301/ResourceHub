@@ -2,14 +2,25 @@
   "platform": {
     "name": "Skills Seekers",
     "hubName": "BU Resource Hub",
-    "description": "The premier academic resource hub and mastercourse platform for Bennett University students. Access verified PYQs, video crash courses, interactive visual labs, and study tools across all semesters.",
+    "founder": "Pratham Kocher",
+    "founderMessage": "Teaching is my passion. I developed a platform specifically designed to assist college students in preparing for their semester exams and achieving good grades. Through high-quality, personalised education, I aim to address each student's unique needs and learning styles. By offering tailored resources and support, I strive to make a meaningful impact on their academic journey and help them reach their full potential.",
+    "motto": "Skills mein dum hai to .. manzil door nahi...",
+    "description": "The premier academic resource hub and mastercourse platform for engineering and Bennett University students. Access verified PYQs, video crash courses, interactive visual labs, and study tools across all semesters.",
     "year": 2026,
     "website": "https://www.skillsseekers.com",
     "store": "https://www.skillsseekers.com/s/store",
+    "youtube": "https://www.youtube.com/@skillsseekers",
     "whatsapp": "https://wa.me/919588598168",
     "whatsappNumber": "+91 9588598168",
-    "email": "vanshscholars2006@gmail.com",
-    "tagline": "Crafted for academic excellence."
+    "email": "skillsseekers16@gmail.com",
+    "backupEmail": "vanshscholars2006@gmail.com",
+    "tagline": "Crafted for academic excellence.",
+    "achievements": {
+      "learners": "25,000+ Happy Learners",
+      "youtubeViews": "180,000+ Views on YouTube",
+      "coursesCount": "24+ Comprehensive Crash Courses & Bundles",
+      "pyqPapers": "39+ Verified Exam Papers (Semesters 1 to 5)"
+    }
   },
   "routes": [
     {
@@ -78,7 +89,53 @@
       "description": "New student registration."
     }
   ],
+  "testimonials": [
+    {
+      "student": "Rahul Verma",
+      "program": "B.Tech 2nd Year Student",
+      "quote": "The IMS course by Pratham Kocher is a game-changer for college exam preparation. His teaching style makes even the toughest topics easy to grasp and master!"
+    },
+    {
+      "student": "Priya Sharma",
+      "program": "B.Tech Final Year Student",
+      "quote": "The college exam preparation modules were a game-changer for my semester finals. The focused curriculum and practice sets helped me master complex topics in record time."
+    },
+    {
+      "student": "Siddharth Manchanda",
+      "program": "IT 3rd Year Student",
+      "quote": "The courses on this platform were instrumental in helping me achieve excellent results in my college exams with minimal preparation time. A huge thank you to the Skills Seekers team!"
+    },
+    {
+      "student": "Amit Patel",
+      "program": "B.Tech CSE 3rd Year",
+      "quote": "The courses on this platform have always helped me excel and score well in college exams. I absolutely loved the Skills Seekers team's teaching style!"
+    },
+    {
+      "student": "Manya Bhatia",
+      "program": "BCA 4th Sem",
+      "quote": "I loved the teaching of Mr. Pratham Kocher, I took personal one to one classes from him for java programming and i scored A+ in my college exam, Thanks to him"
+    },
+    {
+      "student": "Ananya Singh",
+      "program": "B.Tech CSE 1st Year",
+      "quote": "Loved this platform for college exam preparation! I took the course of Digital Design and absolutely loved the content and notes!"
+    }
+  ],
   "team": [
+    {
+      "name": "Pratham Kocher",
+      "role": "Founder & Core Educator",
+      "subjects": [
+        "Computational Thinking & Programming (Python)",
+        "Digital Design",
+        "Information Management Systems (IMS)",
+        "Computer Networks",
+        "Automata Theory and Computability (TOC)",
+        "1-1 Live Mentorship & Placement Coaching",
+        "Java Programming"
+      ],
+      "bio": "Founder of Skills Seekers. Passionate educator who built the platform to empower college engineering students to excel in semester exams. Known for high-yield sprints, personal 1-to-1 coaching, and crystal-clear breakdowns of complex computer science subjects."
+    },
     {
       "name": "Vansh Malhotra",
       "role": "Lead Educator & Mentor",
@@ -91,20 +148,7 @@
         "Intelligent Model Design using AI",
         "Artificial Intelligence & Machine Learning (AI-ML Core)"
       ],
-      "bio": "Lead instructor at Skills Seekers known for high-yield exam sprints, deep intuitive conceptual breakdowns, and comprehensive end-term preparation for Bennett University students."
-    },
-    {
-      "name": "Pratham Kocher",
-      "role": "Lead Educator & 1-on-1 Mentor",
-      "subjects": [
-        "Computational Thinking & Programming (Python)",
-        "Digital Design",
-        "Information Management Systems (IMS)",
-        "Computer Networks",
-        "Automata Theory and Computability (TOC)",
-        "1-1 Live Mentorship & Placement Coaching"
-      ],
-      "bio": "Lead educator at Skills Seekers delivering popular sprints in Python, Digital Design, IMS, Computer Networks, and Automata, alongside tailored 1-on-1 doubt clearing and placement coaching."
+      "bio": "Lead educator at Skills Seekers renowned for high-yield exam sprints, deep intuitive conceptual breakdowns, solved tutorial sheets, and comprehensive end-term preparation for Bennett University students."
     },
     {
       "name": "Hrehaan Ahuja",
@@ -147,6 +191,29 @@
         "CSET 312 - AI/ML End SEM Prep"
       ],
       "bio": "Specialist in Bennett University CSET 312 curriculum, neural networks, supervised and unsupervised machine learning."
+    }
+  ],
+  "bundles": [
+    {
+      "title": "End-term Express Crash Course Bundle",
+      "subjects": [
+        "Microprocessors",
+        "Computer Architecture",
+        "Computer Networks",
+        "Operating Systems"
+      ],
+      "description": "Comprehensive all-in-one semester bundle covering Microprocessors & CA, Computer Networks, and Operating Systems with video sprints, tutorial sheets, and solved PYQs.",
+      "url": "https://www.skillsseekers.com/s/store"
+    },
+    {
+      "title": "(Digital Design + Linear Algebra + DMS) Complete End Term Package",
+      "subjects": [
+        "Digital Design",
+        "Linear Algebra & ODE",
+        "Discrete Mathematics (DMS)"
+      ],
+      "description": "Complete End Term Combo Package combining Digital Design, Linear Algebra, and Discrete Mathematics for full semester mastery.",
+      "url": "https://www.skillsseekers.com/courses/Digital-Design--Linear-Algebra--Discrete-Mathematics-Complete-End-Term-Courses-69e07c89d5bf1319ba104a81"
     }
   ],
   "courses": [
@@ -305,7 +372,7 @@
     },
     {
       "title": "Artificial Intelligence & Machine Learning (AI-ML) (Core) End Term Express Crash Course",
-      "educator": "Vansh Malhotra",
+      "educator": "Pratham Kocher",
       "discount": "31% OFF",
       "price": "₹549",
       "description": "Comprehensive BU syllabus crash course covering search strategies, supervised/unsupervised machine learning, deep neural nets, loss functions, and verified end-term question papers.",
@@ -1488,6 +1555,42 @@
   },
   "faq": [
     {
+      "question": "Who founded Skills Seekers?",
+      "answer": "Skills Seekers was founded by Pratham Kocher, whose passion for teaching inspired him to create a personalized, outcome-driven academic platform to help college engineering students excel in semester exams and master foundational concepts with high grades.",
+      "keywords": [
+        "who founded",
+        "founder",
+        "pratham kocher",
+        "who made skills seekers",
+        "creator",
+        "vision"
+      ]
+    },
+    {
+      "question": "What is the motto and vision of Skills Seekers?",
+      "answer": "Skills Seekers' guiding motto is 'Skills mein dum hai to .. manzil door nahi...'. The vision is to make engineering exam preparation structured, high-yield, and accessible through expert sprints, solved tutorial sheets, and verified PYQs.",
+      "keywords": [
+        "motto",
+        "slogan",
+        "vision",
+        "mission",
+        "skills mein dum"
+      ]
+    },
+    {
+      "question": "What are Skills Seekers' achievements and learner stats?",
+      "answer": "Skills Seekers has supported over 25,000+ happy learners, garnered 180,000+ views on its educational YouTube channel, and published 24+ semester crash courses and 39+ verified Bennett University question papers.",
+      "keywords": [
+        "stats",
+        "achievements",
+        "how many students",
+        "views",
+        "learners",
+        "youtube",
+        "numbers"
+      ]
+    },
+    {
       "question": "What is Skills Seekers and BU Resource Hub?",
       "answer": "Skills Seekers is an educational platform providing high-yield crash courses, solved tutorial sheets, verified PYQs, and 1-on-1 mentorship for university engineering students. BU Resource Hub is the dedicated academic resource portal tailored directly to Bennett University curriculum.",
       "keywords": [
@@ -1496,6 +1599,72 @@
         "skills seekers",
         "bu resource hub",
         "who are you"
+      ]
+    },
+    {
+      "question": "How do I sign up and create an account?",
+      "answer": "You can sign up directly by clicking 'Sign Up' in the navigation bar and filling in your details, or by logging in through the official store at skillsseekers.com.",
+      "keywords": [
+        "sign up",
+        "register",
+        "create account",
+        "how to login"
+      ]
+    },
+    {
+      "question": "What are the account and device limits?",
+      "answer": "Course access is strictly limited to the purchasing device only. The device cannot be changed later, and accounts will be automatically blocked if concurrent access is attempted from another device.",
+      "keywords": [
+        "account limit",
+        "device limit",
+        "multiple devices",
+        "sharing account",
+        "blocked"
+      ]
+    },
+    {
+      "question": "Can I cancel an order or get a refund?",
+      "answer": "Per Skills Seekers platform policy, order cancellation or refunds are not allowed once a purchase is completed. Please review course details carefully before enrolling.",
+      "keywords": [
+        "cancel order",
+        "cancellation",
+        "refund",
+        "return policy",
+        "money back"
+      ]
+    },
+    {
+      "question": "How do I contact customer support?",
+      "answer": "You can reach customer support at skillsseekers16@gmail.com, via WhatsApp at +91 9588598168, or at vanshscholars2006@gmail.com for academic contributions.",
+      "keywords": [
+        "customer support",
+        "email",
+        "whatsapp",
+        "helpline",
+        "contact"
+      ]
+    },
+    {
+      "question": "Is 1:1 personal coaching or mentorship available?",
+      "answer": "Yes! Dedicated 1:1 personal coaching is available with expert instructors like Pratham Kocher for personal doubt clearing, coding mastery (Java/Python/DSA), and exam sprint coaching. Contact Pratham Kocher via WhatsApp (+91 9588598168) or email to reserve your slot.",
+      "keywords": [
+        "1:1 coaching",
+        "personal mentorship",
+        "one to one",
+        "private class",
+        "live doubts"
+      ]
+    },
+    {
+      "question": "What do students say about Skills Seekers? (Testimonials)",
+      "answer": "Students have rated Skills Seekers exceptionally: Rahul Verma credited the IMS course for acing college finals, Manya Bhatia scored an A+ in Java after 1-to-1 mentorship with Pratham Kocher, Siddharth Manchanda praised the minimal preparation time needed, and Amit Patel loved the intuitive teaching style.",
+      "keywords": [
+        "testimonials",
+        "reviews",
+        "ratings",
+        "what students say",
+        "feedback",
+        "results"
       ]
     },
     {
@@ -1528,27 +1697,6 @@
         "grading system",
         "calculate gpa",
         "grade scale"
-      ]
-    },
-    {
-      "question": "What are 1-on-1 Live Classes?",
-      "answer": "Skills Seekers offers personalized 1-on-1 live classes and mentorship led by expert instructors like Pratham Kocher. These include doubt clearing, syllabus sprints, exam strategy, and placement coaching tailored to your individual pace.",
-      "keywords": [
-        "1-1 class",
-        "one to one",
-        "private coaching",
-        "personal mentorship",
-        "live doubt"
-      ]
-    },
-    {
-      "question": "Are the courses recorded or live?",
-      "answer": "Skills Seekers provides comprehensive video sprints, tutorial sheet solutions, and downloadable notes that you can watch at your own pace anytime, along with live 1-on-1 mentorship options.",
-      "keywords": [
-        "recorded",
-        "live classes",
-        "format",
-        "how to watch"
       ]
     }
   ]

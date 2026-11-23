@@ -1,13 +1,20 @@
 /**
- * Skills Seekers AI Chatbot Widget
+ * Skills Seekers AI Chatbot Widget (V2 - Enhanced)
  * Production-ready Vanilla JavaScript Assistant
- * Zero external dependencies except ChatbotNLP and CHATBOT_KB
+ * Features:
+ * - Natural Voice Speech Synthesis (Web Speech API)
+ * - Auto-readout toggle & individual message "Listen" controls
+ * - In-site Drive modal preview integration
+ * - Viewport-safe responsive layout & auto-scrolling
+ * - Session history persistence with clear conversation
+ * - Dynamic suggested prompt chips carousel
  */
 
 (function () {
     'use strict';
 
-    const STORAGE_KEY = 'ss_chatbot_history_v1';
+    const STORAGE_KEY = 'ss_chatbot_history_v2';
+    const VOICE_KEY = 'ss_chatbot_voice_v2';
 
     class SkillsSeekersChatbot {
         constructor() {
@@ -17,16 +24,16 @@
             this.nlpEngine = null;
             this.elements = {};
             this.hasOpenedBefore = localStorage.getItem('chatbot_opened') === 'true';
+            this.isVoiceEnabled = localStorage.getItem(VOICE_KEY) === 'true';
+            this.currentUtterance = null;
+            this.activeSpeakBtn = null;
         }
 
         init() {
             this.createDOM();
             this.attachEvents();
-
-            // Load session messages if any
             this.loadSessionHistory();
 
-            // Show Floating Action Button
             setTimeout(() => {
                 if (this.elements.fab) {
                     this.elements.fab.classList.remove('hidden');
@@ -64,6 +71,9 @@
                     <div class="chatbot-header-status"><span class="status-dot"></span> Online • Resource Assistant</div>
                 </div>
                 <div class="chatbot-header-actions">
+                    <button class="chatbot-voice-toggle-btn ${this.isVoiceEnabled ? 'active' : ''}" title="${this.isVoiceEnabled ? 'Voice Readout: ON' : 'Voice Readout: OFF'}" aria-label="Toggle Voice Readout">
+                        <i class="ph-bold ${this.isVoiceEnabled ? 'ph-speaker-high' : 'ph-speaker-slash'}"></i>
+                    </button>
                     <button class="chatbot-clear-btn" title="Clear conversation" aria-label="Clear chat"><i class="ph-bold ph-trash"></i></button>
                     <button class="chatbot-minimize-btn" title="Minimize" aria-label="Minimize chat"><i class="ph-bold ph-minus"></i></button>
                     <button class="chatbot-close-btn" title="Close" aria-label="Close chat"><i class="ph-bold ph-x"></i></button>
@@ -113,6 +123,7 @@
                 suggestions: suggestions,
                 input: inputArea.querySelector('.chatbot-input'),
                 sendBtn: inputArea.querySelector('.chatbot-send-btn'),
+                voiceToggleBtn: header.querySelector('.chatbot-voice-toggle-btn'),
                 clearBtn: header.querySelector('.chatbot-clear-btn'),
                 minimizeBtn: header.querySelector('.chatbot-minimize-btn'),
                 closeBtn: header.querySelector('.chatbot-close-btn')
@@ -120,18 +131,14 @@
         }
 
         attachEvents() {
-            // FAB open
             this.elements.fab.addEventListener('click', () => this.open());
-
-            // Header buttons
             this.elements.closeBtn.addEventListener('click', () => this.close());
             this.elements.minimizeBtn.addEventListener('click', () => this.close());
             this.elements.clearBtn.addEventListener('click', () => this.clearHistory());
+            this.elements.voiceToggleBtn.addEventListener('click', () => this.toggleVoiceMode());
 
-            // Message send
             this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
 
-            // Input handling & Auto-resize
             this.elements.input.addEventListener('input', () => {
                 const text = this.elements.input.value.trim();
                 this.elements.sendBtn.disabled = !text;
@@ -139,7 +146,6 @@
                 this.elements.input.style.height = Math.min(this.elements.input.scrollHeight, 80) + 'px';
             });
 
-            // Enter key to send
             this.elements.input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -149,14 +155,12 @@
                 }
             });
 
-            // Escape key to close
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && this.isOpen) {
                     this.close();
                 }
             });
 
-            // Mobile click outside to close
             document.addEventListener('click', (e) => {
                 if (this.isOpen && window.innerWidth <= 640) {
                     if (!this.elements.window.contains(e.target) && !this.elements.fab.contains(e.target)) {
@@ -184,7 +188,6 @@
                 this.initializeEngine();
             }
 
-            // Focus textarea after opening transition
             setTimeout(() => {
                 this.elements.input.focus();
                 this.scrollToBottom();
@@ -198,6 +201,7 @@
             this.elements.window.classList.add('closed');
             this.elements.fab.classList.remove('hidden');
             this.elements.fab.classList.add('no-pulse');
+            this.stopSpeaking();
         }
 
         initializeEngine() {
@@ -205,13 +209,12 @@
 
             try {
                 if (!window.ChatbotNLP || !window.CHATBOT_KB) {
-                    throw new Error("ChatbotNLP or CHATBOT_KB not loaded in global window");
+                    throw new Error("ChatbotNLP or CHATBOT_KB not loaded in window");
                 }
                 this.nlpEngine = new window.ChatbotNLP(window.CHATBOT_KB);
                 this.nlpEngine.initialize();
                 this.isInitialized = true;
 
-                // If messages are empty, show welcome screen
                 if (this.messages.length === 0) {
                     this.showWelcome();
                     this.showInitialSuggestions();
@@ -232,9 +235,9 @@
                 <ul>
                     <li>Verified PYQs for all semesters (1-5)</li>
                     <li>Skills Seekers crash courses & video sprints</li>
+                    <li>Top educators (Pratham Kocher, Vansh Malhotra, Hrehaan)</li>
                     <li>Academic study tools (CGPA, Pomodoro, Notes)</li>
                     <li>Visual DSA & OS virtual interactive labs</li>
-                    <li>Top educators & 1-on-1 live class mentorship</li>
                 </ul>
             `;
             this.elements.messages.appendChild(welcomeDiv);
@@ -243,11 +246,11 @@
         showInitialSuggestions() {
             const chips = [
                 'Show Semester 1 PYQs',
+                'Browse all educators',
                 'What courses are available?',
                 'How to calculate CGPA?',
-                'Tell me about Visual DSA Lab',
-                'Who are the top educators?',
-                'How to share PYQs?'
+                'Who built this platform?',
+                'What do students say? (Reviews)'
             ];
             this.showSuggestions(chips);
         }
@@ -274,19 +277,17 @@
                 this.initializeEngine();
             }
 
-            // Clear input & reset height
+            this.stopSpeaking();
+
             this.elements.input.value = '';
             this.elements.input.style.height = 'auto';
             this.elements.sendBtn.disabled = true;
 
-            // Render user bubble
             this.addUserMessage(text);
             this.saveMessage('user', text);
 
-            // Render animated typing indicator
             const typingEl = this.showTyping();
 
-            // Process query through NLP engine
             let response;
             try {
                 response = this.nlpEngine.processQuery(text);
@@ -294,6 +295,7 @@
                 console.error('[Chatbot] Query processing error:', e);
                 response = {
                     text: "I encountered an error processing your question. Please try asking in a different way.",
+                    speakText: "I encountered an error. Please try asking in a different way.",
                     links: [],
                     suggestedPrompts: ['Show Semester 1 PYQs', 'What courses are available?'],
                     confidence: 0,
@@ -301,18 +303,18 @@
                 };
             }
 
-            // Natural typing delay based on response length (300ms - 800ms)
-            const delay = Math.min(300 + (response.text?.length || 0) * 1.5, 800);
+            const delay = Math.min(250 + (response.text?.length || 0) * 1.2, 700);
             await new Promise(resolve => setTimeout(resolve, delay));
 
-            // Remove typing indicator
             typingEl.remove();
 
-            // Render bot response
-            this.addBotResponse(response);
-            this.saveMessage('bot', response.text, response.links, response.confidence, response.intent);
+            const botBubbleObj = this.addBotResponse(response);
+            this.saveMessage('bot', response.text, response.links, response.confidence, response.intent, response.speakText);
 
-            // Update suggestions carousel
+            if (this.isVoiceEnabled && response.speakText) {
+                this.speak(response.speakText, botBubbleObj?.speakBtn);
+            }
+
             if (response.suggestedPrompts && response.suggestedPrompts.length > 0) {
                 this.showSuggestions(response.suggestedPrompts);
             }
@@ -330,7 +332,7 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'chatbot-message-bubble';
-            bubble.textContent = text; // Safe textContent against XSS
+            bubble.textContent = text;
 
             msgDiv.appendChild(avatar);
             msgDiv.appendChild(bubble);
@@ -374,7 +376,7 @@
             bubble.innerHTML = this.formatBotText(response.text);
             contentWrapper.appendChild(bubble);
 
-            // Render resource cards if any
+            // Resource cards
             if (response.links && response.links.length > 0) {
                 response.links.forEach(link => {
                     const card = this.createResourceCard(link);
@@ -382,50 +384,69 @@
                 });
             }
 
-            // Confidence indicator for low/medium scores
+            // Action row: Confidence badge + Listen (TTS) button
+            const actionsRow = document.createElement('div');
+            actionsRow.className = 'chatbot-msg-actions';
+
+            // Speech Listen Button
+            const speechText = response.speakText || this.extractCleanText(response.text);
+            let speakBtn = null;
+            if (speechText && ('speechSynthesis' in window)) {
+                speakBtn = document.createElement('button');
+                speakBtn.className = 'chatbot-speak-btn';
+                speakBtn.setAttribute('title', 'Listen to answer');
+                speakBtn.setAttribute('aria-label', 'Read response aloud');
+                speakBtn.innerHTML = '<i class="ph-bold ph-speaker-high"></i> Listen';
+                speakBtn.addEventListener('click', () => {
+                    if (speakBtn.classList.contains('speaking')) {
+                        this.stopSpeaking();
+                    } else {
+                        this.speak(speechText, speakBtn);
+                    }
+                });
+                actionsRow.appendChild(speakBtn);
+            }
+
+            // Confidence indicator
             if (response.confidence < 0.75 && response.confidence >= 0.15) {
                 const confDiv = document.createElement('div');
                 confDiv.className = 'chatbot-confidence ' + (response.confidence >= 0.4 ? 'medium' : 'low');
                 confDiv.innerHTML = '<i class="ph-bold ph-info"></i> ' +
                     (response.confidence >= 0.4 ? 'Fairly confident answer' : 'Best match in knowledge base');
-                contentWrapper.appendChild(confDiv);
+                actionsRow.appendChild(confDiv);
+            }
+
+            if (actionsRow.children.length > 0) {
+                contentWrapper.appendChild(actionsRow);
             }
 
             msgDiv.appendChild(avatar);
             msgDiv.appendChild(contentWrapper);
             this.elements.messages.appendChild(msgDiv);
             this.scrollToBottom();
+
+            return { speakBtn };
         }
 
         formatBotText(text) {
             if (!text) return '';
 
-            // 1. Escape HTML for safety
             let safe = text
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
 
-            // 2. Bold: **text**
             safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-            // 3. Italic: *text*
             safe = safe.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-            // 4. Inline code: `text`
             safe = safe.replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.08);padding:2px 5px;border-radius:4px;font-size:11px;color:#c7d2fe;">$1</code>');
-
-            // 5. Links: [label](url)
             safe = safe.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#818cf8;text-decoration:underline;">$1</a>');
 
-            // 6. Bullet lists
             safe = safe.replace(/^[•\-]\s+(.+)$/gm, '<li>$1</li>');
             if (safe.includes('<li>')) {
                 safe = safe.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
                 safe = safe.replace(/<\/ul>\s*<ul>/g, '');
             }
 
-            // 7. Newlines
             safe = safe.replace(/\n/g, '<br>');
             safe = safe.replace(/<br><ul>/g, '<ul>');
             safe = safe.replace(/<\/ul><br>/g, '</ul>');
@@ -438,7 +459,6 @@
             card.className = 'chatbot-resource-card';
             card.href = link.url || '#';
 
-            // Check if this is a Google Drive link
             const isDriveUrl = link.url && link.url.includes('drive.google.com/file/d/');
             let driveFileId = null;
             if (isDriveUrl) {
@@ -447,7 +467,6 @@
             }
 
             if (isDriveUrl && driveFileId && typeof window.openDriveModal === 'function') {
-                // If in-site drive modal preview is available, wire it up!
                 card.target = '_self';
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -460,7 +479,6 @@
                 card.rel = 'noopener';
             }
 
-            // Determine Icon
             let iconClass = 'nav';
             let iconName = 'ph-arrow-right';
             if (link.type === 'pyq' || isDriveUrl) {
@@ -539,14 +557,97 @@
             });
         }
 
+        // ── Speech Synthesis (Voice Readout) ──────────
+        toggleVoiceMode() {
+            this.isVoiceEnabled = !this.isVoiceEnabled;
+            localStorage.setItem(VOICE_KEY, this.isVoiceEnabled ? 'true' : 'false');
+
+            const btn = this.elements.voiceToggleBtn;
+            if (this.isVoiceEnabled) {
+                btn.classList.add('active');
+                btn.title = 'Voice Readout: ON';
+                btn.innerHTML = '<i class="ph-bold ph-speaker-high"></i>';
+                this.speak("Voice readout enabled.");
+            } else {
+                btn.classList.remove('active');
+                btn.title = 'Voice Readout: OFF';
+                btn.innerHTML = '<i class="ph-bold ph-speaker-slash"></i>';
+                this.stopSpeaking();
+            }
+        }
+
+        speak(text, btnElement = null) {
+            if (!('speechSynthesis' in window) || !text) return;
+
+            this.stopSpeaking();
+
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 1.05;
+            utter.pitch = 1.0;
+            utter.lang = 'en-US';
+
+            // Find an English voice if available
+            const voices = window.speechSynthesis.getVoices();
+            const englishVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha')));
+            if (englishVoice) {
+                utter.voice = englishVoice;
+            }
+
+            if (btnElement) {
+                this.activeSpeakBtn = btnElement;
+                btnElement.classList.add('speaking');
+                btnElement.innerHTML = '<i class="ph-fill ph-speaker-simple-high"></i> Stop';
+            }
+
+            utter.onend = () => {
+                this.resetSpeakButton();
+            };
+
+            utter.onerror = () => {
+                this.resetSpeakButton();
+            };
+
+            this.currentUtterance = utter;
+            window.speechSynthesis.speak(utter);
+        }
+
+        stopSpeaking() {
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            this.resetSpeakButton();
+        }
+
+        resetSpeakButton() {
+            if (this.activeSpeakBtn) {
+                this.activeSpeakBtn.classList.remove('speaking');
+                this.activeSpeakBtn.innerHTML = '<i class="ph-bold ph-speaker-high"></i> Listen';
+                this.activeSpeakBtn = null;
+            }
+            this.currentUtterance = null;
+        }
+
+        extractCleanText(htmlOrMarkdown) {
+            if (!htmlOrMarkdown) return '';
+            return htmlOrMarkdown
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\*\*(.+?)\*\*/g, '$1')
+                .replace(/\*(.+?)\*/g, '$1')
+                .replace(/`([^`]+)`/g, '$1')
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+                .replace(/^[•\-]\s+/gm, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 220);
+        }
+
         // ── Session Storage Management ────────────────
-        saveMessage(role, text, links = [], confidence = 1, intent = '') {
-            this.messages.push({ role, text, links, confidence, intent });
+        saveMessage(role, text, links = [], confidence = 1, intent = '', speakText = '') {
+            this.messages.push({ role, text, links, confidence, intent, speakText });
             try {
-                // Keep last 30 messages in sessionStorage
                 const trimmed = this.messages.slice(-30);
                 sessionStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
-            } catch (e) { /* non-fatal quota ignore */ }
+            } catch (e) {}
         }
 
         loadSessionHistory() {
@@ -565,7 +666,8 @@
                                     text: msg.text,
                                     links: msg.links || [],
                                     confidence: msg.confidence || 1,
-                                    intent: msg.intent || ''
+                                    intent: msg.intent || '',
+                                    speakText: msg.speakText || ''
                                 });
                             }
                         });
@@ -579,6 +681,7 @@
         }
 
         clearHistory() {
+            this.stopSpeaking();
             this.messages = [];
             try {
                 sessionStorage.removeItem(STORAGE_KEY);
@@ -590,15 +693,13 @@
         }
     }
 
-    // ── Global Mount & Initialization ─────────────────
     function initChatbot() {
-        if (window.skillsSeekersChatbot) return; // prevent duplicate init
+        if (window.skillsSeekersChatbot) return;
 
         if (window.CHATBOT_KB && window.ChatbotNLP) {
             window.skillsSeekersChatbot = new SkillsSeekersChatbot();
             window.skillsSeekersChatbot.init();
         } else {
-            // If KB or NLP script is loading async, wait up to 2 seconds
             let attempts = 0;
             const checker = setInterval(() => {
                 attempts++;
@@ -606,7 +707,7 @@
                     clearInterval(checker);
                     window.skillsSeekersChatbot = new SkillsSeekersChatbot();
                     window.skillsSeekersChatbot.init();
-                } else if (attempts >= 20) {
+                } else if (attempts >= 25) {
                     clearInterval(checker);
                     console.warn('[Chatbot] Knowledge base or NLP engine not found after timeout.');
                 }

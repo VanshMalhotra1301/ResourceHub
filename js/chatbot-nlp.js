@@ -1,14 +1,17 @@
 /**
- * Skills Seekers AI Chatbot - NLP & Retrieval Engine
+ * Skills Seekers AI Chatbot - NLP & Retrieval Engine (V2 - Expanded)
  * High-performance, zero-dependency client/server NLP system.
  * Features:
- * - Preprocessing, Contraction Expansion, Tokenization, Stemming
- * - Synonym & Canonical Subject/Resource Mapping
- * - Intent Classification & Entity Extraction
- * - TF-IDF Vectorization & Cosine Similarity Scoring
- * - Session Context Tracking & Follow-up Resolution
- * - Grounded Response Generation with Clickable Resource Cards & Quick Prompts
- * - Strict Out-of-Domain Detection & Fallback Safeguards
+ * - Scraped live data integration from www.skillsseekers.com
+ * - Founder & Mission Info (Pratham Kocher)
+ * - Real Student Testimonials & Success Stories
+ * - Platform Achievements & YouTube stats (25K+ learners, 180K+ views)
+ * - Order policies, account device limits, and platform FAQs
+ * - Preprocessing, Tokenization, Domain Synonyms, and Morphological Stemming
+ * - Robust Intent Classifier & Zero-Fail Suggestion Chip matching
+ * - TF-IDF Vector Space Model & Cosine Similarity
+ * - Dialogue Manager with Session Context Tracking
+ * - Clean Speech Synthesis (TTS) Text Generation
  */
 
 (function () {
@@ -29,45 +32,29 @@
         'yours', 'yourself', 'yourselves'
     ]);
 
-    // Keep some critical query indicators that stopwords might strip
-    const PRESERVED_TOKENS = new Set(['who', 'how', 'what', 'where', 'why', 'which', '1', '2', '3', '4', '5']);
+    const PRESERVED_TOKENS = new Set(['1', '2', '3', '4', '5']);
 
     // ── 2. Contractions Map ───────────────────────────
     const CONTRACTIONS = {
-        "what's": "what is",
-        "who's": "who is",
-        "where's": "where is",
-        "how's": "how is",
-        "it's": "it is",
-        "that's": "that is",
-        "can't": "cannot",
-        "won't": "will not",
-        "i'm": "i am",
-        "i've": "i have",
-        "i'll": "i will",
-        "i'd": "i would",
-        "you're": "you are",
-        "we're": "we are",
-        "they're": "they are",
-        "there's": "there is",
-        "don't": "do not",
-        "doesn't": "does not",
-        "didn't": "did not",
-        "haven't": "have not",
-        "hasn't": "has not",
-        "shouldn't": "should not",
-        "wouldn't": "would not"
+        "what's": "what is", "who's": "who is", "where's": "where is", "how's": "how is",
+        "it's": "it is", "that's": "that is", "can't": "cannot", "won't": "will not",
+        "i'm": "i am", "i've": "i have", "i'll": "i will", "i'd": "i would",
+        "you're": "you are", "we're": "we are", "they're": "they are", "there's": "there is",
+        "don't": "do not", "doesn't": "does not", "didn't": "did not", "haven't": "have not",
+        "hasn't": "has not", "shouldn't": "should not", "wouldn't": "would not"
     };
 
-    // ── 3. Domain Synonyms Map ───────────────────────
+    // ── 3. Domain Synonyms Map ─────────────────────────
     const SYNONYM_MAP = {
         'pyq': 'pyq', 'pyqs': 'pyq', 'pyp': 'pyq', 'pyps': 'pyq', 'paper': 'pyq', 'papers': 'pyq',
         'midsem': 'midsem', 'midterms': 'midsem', 'midterm': 'midsem', 'endsem': 'endsem', 'endterms': 'endsem', 'endterm': 'endsem',
         'course': 'course', 'courses': 'course', 'sprint': 'course', 'sprints': 'course', 'mastercourse': 'course', 'mastercourses': 'course',
-        'tutorial': 'course', 'tutorials': 'course', 'lecture': 'course', 'lectures': 'course',
+        'bundle': 'course', 'bundles': 'course', 'tutorial': 'course', 'tutorials': 'course', 'lecture': 'course', 'lectures': 'course',
         'teacher': 'educator', 'teachers': 'educator', 'educator': 'educator', 'educators': 'educator', 'instructor': 'educator', 'faculty': 'educator', 'mentor': 'educator',
         'calculator': 'tool', 'pomodoro': 'tool', 'timer': 'tool', 'countdown': 'tool', 'scratchpad': 'tool',
-        'algorithm': 'daa', 'algorithms': 'daa', 'daaa': 'daa', 'scheduling': 'os'
+        'review': 'testimonial', 'reviews': 'testimonial', 'testimonial': 'testimonial', 'testimonials': 'testimonial',
+        'feedback': 'testimonial', 'ratings': 'testimonial', 'story': 'testimonial', 'stories': 'testimonial',
+        'algorithm': 'daa', 'algorithms': 'daa', 'daaa': 'daa', 'scheduling': 'os', 'pratham': 'founder'
     };
 
     // Canonical Subject Mapping
@@ -103,8 +90,8 @@
 
     // Educators List
     const EDUCATORS = [
+        { name: 'Pratham Kocher', aliases: ['pratham', 'kocher', 'pratham kocher', 'founder', 'creator'] },
         { name: 'Vansh Malhotra', aliases: ['vansh', 'malhotra', 'vansh malhotra'] },
-        { name: 'Pratham Kocher', aliases: ['pratham', 'kocher', 'pratham kocher'] },
         { name: 'Hrehaan Ahuja', aliases: ['hrehaan', 'ahuja', 'hrehaan ahuja'] },
         { name: 'Khushi Goyal', aliases: ['khushi', 'goyal', 'khushi goyal'] },
         { name: 'Samman Dev Dubey', aliases: ['samman', 'dubey', 'samman dev', 'samman dev dubey'] },
@@ -112,12 +99,11 @@
         { name: 'Vinayak Gupta', aliases: ['vinayak', 'gupta', 'vinayak gupta'] }
     ];
 
-    // ── 3. Lightweight Stemmer ─────────────────────────
+    // ── 4. Lightweight Stemmer ─────────────────────────
     function simpleStem(word) {
         if (word.length <= 3) return word;
         let w = word.toLowerCase();
         
-        // Suffix replacements
         if (w.endsWith('ies') && w.length > 4) return w.slice(0, -3) + 'y';
         if (w.endsWith('ing') && w.length > 5) return w.slice(0, -3);
         if (w.endsWith('edly') && w.length > 6) return w.slice(0, -4);
@@ -131,19 +117,38 @@
         return w;
     }
 
-    // ── 4. Main NLP Engine Class ───────────────────────
+    // Clean text helper for Speech Synthesis
+    function cleanForSpeech(text) {
+        if (!text) return '';
+        let clean = text
+            .replace(/\*\*(.+?)\*\*/g, '$1')
+            .replace(/\*(.+?)\*/g, '$1')
+            .replace(/`([^`]+)`/g, '$1')
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+            .replace(/^[•\-]\s+/gm, '')
+            .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        // Get first 1-2 sentences for a punchy voice readout
+        const sentences = clean.split(/(?<=[.?!])\s+/);
+        if (sentences.length > 1) {
+            return (sentences[0] + ' ' + sentences[1]).slice(0, 220);
+        }
+        return clean.slice(0, 220);
+    }
+
+    // ── 5. Main NLP Engine Class ───────────────────────
     class ChatbotNLP {
         constructor(kb) {
             this.kb = kb || (typeof window !== 'undefined' ? window.CHATBOT_KB : null);
             this.isReady = false;
             
-            // Indexed Corpus for TF-IDF
             this.documents = [];
-            this.vocab = new Map(); // term -> index
-            this.idf = [];          // term index -> idf score
-            this.docVectors = [];   // doc index -> sparse term weights
+            this.vocab = new Map();
+            this.idf = [];
+            this.docVectors = [];
             
-            // Session Context
             this.context = {
                 currentSemester: null,
                 currentSubject: null,
@@ -166,7 +171,6 @@
             this.isReady = true;
         }
 
-        // ── Preprocessing Pipeline ─────────────────────
         expandContractions(text) {
             let res = text.toLowerCase();
             for (const [cont, exp] of Object.entries(CONTRACTIONS)) {
@@ -177,19 +181,15 @@
 
         tokenize(text) {
             if (!text) return [];
-            // Expand contractions first
             const expanded = this.expandContractions(text);
-            
-            // Normalize punctuation, preserving alphanumerics and hyphens/pluses
             const cleaned = expanded
                 .replace(/[^a-z0-9\s\+\-\#]/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
                 
             const rawTokens = cleaned.split(' ').filter(Boolean);
-            
-            // Filter, map synonyms, and stem
             const tokens = [];
+
             for (const t of rawTokens) {
                 if (STOPWORDS.has(t) && !PRESERVED_TOKENS.has(t)) {
                     continue;
@@ -219,7 +219,6 @@
                 isTeacherQuery: false
             };
 
-            // Check if asking about teacher/instructor
             if (/\b(who teaches|who is the (teacher|instructor|educator)|taught by|mentor for|teacher of|faculty for)\b/i.test(rawLower)) {
                 entities.isTeacherQuery = true;
             }
@@ -307,69 +306,98 @@
                 return 'GREETING';
             }
 
-            // 2. Contribute / Upload PYQ (Priority check)
-            if (/(?:can\s+i\s+|how\s+to\s+)?(contribute|upload|share|submit|send)\b.*?\b(pyq|pyqs|paper|papers|exam|questions?)/i.test(lower) ||
+            // 2. Suggestion chip & Educator list queries (PRIORITY FIX)
+            if (/^(browse|show|view|list|see|tell me about|who are)?\s*(all\s*)?(educators|teachers|faculty|mentors|instructors)\b/i.test(lower) ||
+                lower === 'browse all educators' || lower === 'all educators' || lower === 'educators' || lower === 'teachers' || lower === 'faculty') {
+                return 'TEAM_INFO';
+            }
+
+            // 3. Founder / Who built this platform
+            if (/\b(who (built|made|created|founded)|who is the founder|about (the )?founder|pratham kocher|creator of|story behind|vision|motto|slogan)\b/i.test(lower) ||
+                lower.includes('who built this platform') || lower.includes('founder of skills seekers')) {
+                return 'FOUNDER_INFO';
+            }
+
+            // 4. Testimonials & Student Reviews
+            if (/\b(testimonials?|reviews?|feedback|ratings?|what (do|are) students say|success stories)\b/i.test(lower)) {
+                return 'TESTIMONIALS';
+            }
+
+            // 5. Achievements & Stats (YouTube views, 25K learners)
+            if (/\b(achievements?|how many (students|learners)|learners?|youtube views?|stats|statistics|milestones)\b/i.test(lower)) {
+                return 'STATS_ACHIEVEMENTS';
+            }
+
+            // 6. Platform policies & Account FAQs
+            if (/\b(refunds?|cancellations?|cancel order|account limit|device limit|multiple devices|blocked account|policies?|terms|how to sign up|sign up)\b/i.test(lower)) {
+                return 'POLICIES_FAQ';
+            }
+
+            // 7. Contribute / Upload PYQ
+            if (/(?:can\s+i\s+|how\s+to\s+)?\b(contribute|upload|share|submit|send)\b.*?\b(pyqs?|papers?|exams?|questions?)\b/i.test(lower) ||
                 lower.includes('share pyq') || lower.includes('share paper') || lower.includes('share exam') || lower.includes('upload pyq')) {
                 return 'CONTRIBUTE_PYQ';
             }
 
-            // 3. Platform / About
-            if (/(what is (skills seekers|bu resource hub)|about (skills seekers|bu resource hub)|who created|who made|vision|founder|purpose of this website)/i.test(lower)) {
+            // 8. Platform Overview / About
+            if (/\b(what is (skills seekers|bu resource hub)|about (skills seekers|bu resource hub)|purpose of this website|overview of platform)\b/i.test(lower)) {
                 return 'ABOUT_PLATFORM';
             }
 
-            // 4. Help / Capabilities
+            // 9. Help / Capabilities
             if (/^(help|what can you do|how to use|guide me|features|commands|options)\b/i.test(lower)) {
                 return 'HELP';
             }
 
-            // 5. Contact / Support
-            if (/(contact|support|whatsapp|email|reach out|talk to someone|phone number|helpline)/i.test(lower)) {
+            // 10. Contact / Support
+            if (/\b(contacts?|support|whatsapp|email|reach out|talk to someone|phone number|helpline)\b/i.test(lower)) {
                 return 'CONTACT';
             }
 
-            // 6. 1-1 Live Class / Mentorship
-            if (/(1-1|1\s*to\s*1|one\s*to\s*one|personal mentorship|private class|doubt clearing|placement coaching)/i.test(lower)) {
+            // 11. 1-1 Live Class / Mentorship
+            if (/\b(1-1|1\s*to\s*1|one\s*to\s*one|personal mentorship|private class|doubt clearing|placement coaching)\b/i.test(lower)) {
                 return 'LIVE_MENTORSHIP';
             }
 
-            // 7. Team / Educator info or "Who teaches <subject>"
-            if (entities.isTeacherQuery || entities.educator || /(who are the (teachers|educators|faculty|instructors)|team members|who teaches|faculty members|mentors)/i.test(lower)) {
+            // 12. Educator queries
+            if (entities.isTeacherQuery || entities.educator || /\b(who are the (teachers|educators|faculty|instructors)|team members?|who teaches|faculty members?|mentors?)\b/i.test(lower)) {
                 return 'TEAM_INFO';
             }
 
-            // 8. Study Tools
-            if (entities.tool || /(calculator|pomodoro|timer|countdown|scratchpad|bookmark|study tools|gpa|cgpa|sgpa)/i.test(lower)) {
+            // 13. Study Tools
+            if (entities.tool || /\b(calculators?|pomodoro|timer|countdown|scratchpad|bookmarks?|study tools|gpa|cgpa|sgpa|how to calculate cgpa)\b/i.test(lower)) {
                 return 'FIND_TOOL';
             }
 
-            // 9. Virtual Labs (DSA / OS)
-            if (entities.lab || /(visual dsa|visual os|virtual lab|algorithm visualizer|cpu scheduling simulation|paging simulation|gantt chart)/i.test(lower)) {
+            // 14. Virtual Labs (DSA / OS)
+            if (entities.lab || /\b(visual dsa|visual os|virtual labs?|algorithm visualizer|cpu scheduling simulation|paging simulation|gantt chart)\b/i.test(lower)) {
                 return 'VIRTUAL_LAB';
             }
 
-            // 10. Courses / Mastercourses
-            if (/(course|crash course|sprint|mastercourse|classes|video lectures|tutorial sheets|price|discount|how much|fee|cost)/i.test(lower)) {
+            // 15. Courses / Mastercourses & Bundles
+            if (/\b(courses?|crash courses?|sprints?|mastercourses?|bundles?|classes|video lectures|tutorial sheets|price|discount|how much|fee|cost)\b/i.test(lower) ||
+                lower.includes('what courses are available') || lower.includes('browse all crash courses')) {
                 return 'FIND_COURSE';
             }
 
-            // 11. PYQs / Question Papers
-            if (/(pyq|pyqs|previous year|past paper|question paper|exam paper|endsem paper|midsem paper|papers)/i.test(lower)) {
+            // 16. PYQs / Question Papers
+            if (/\b(pyqs?|previous year|past papers?|question papers?|exam papers?|endsem papers?|midsem papers?|papers)\b/i.test(lower) ||
+                lower.includes('show semester 1 pyqs') || lower.includes('show semester 3 pyqs')) {
                 return 'FIND_PYQ';
             }
 
-            // 12. Semester Overview
-            if (entities.semester && /(subjects|syllabus|what is in|overview|curriculum|what courses)/i.test(lower)) {
+            // 17. Semester Overview
+            if (entities.semester && /\b(subjects?|syllabus|what is in|overview|curriculum|what courses)\b/i.test(lower)) {
                 return 'SEMESTER_INFO';
             }
 
-            // 13. Subject Specific query
+            // 18. Subject Specific query
             if (entities.subject) {
                 return 'SPECIFIC_SUBJECT';
             }
 
-            // 14. Website Navigation
-            if (/(navigate|where is|how to go to|page|link to|take me to|open|go to)/i.test(lower)) {
+            // 19. Website Navigation
+            if (/\b(navigate|where is|how to go to|page|link to|take me to|open|go to)\b/i.test(lower)) {
                 return 'NAVIGATION';
             }
 
@@ -380,7 +408,61 @@
         buildCorpus() {
             this.documents = [];
 
-            // 1. Courses
+            // 1. Founder & Platform Story
+            const p = this.kb.platform;
+            if (p) {
+                this.documents.push({
+                    id: 'platform_founder',
+                    type: 'founder',
+                    title: `Founder of Skills Seekers: ${p.founder || 'Pratham Kocher'}`,
+                    subtitle: p.motto || 'Skills mein dum hai to .. manzil door nahi...',
+                    text: `Founder Pratham Kocher teaching passion platform assist college engineering students semester exams good grades ${p.founderMessage} ${p.motto} ${p.description}`,
+                    url: '/courses',
+                    data: p
+                });
+
+                this.documents.push({
+                    id: 'platform_achievements',
+                    type: 'stats',
+                    title: 'Skills Seekers Platform Achievements',
+                    subtitle: '25K+ Learners • 180K+ Views',
+                    text: `25000 25K happy learners 180000 180K views on youtube stats achievements engineering exam courses ${p.youtube}`,
+                    url: p.youtube,
+                    data: p.achievements
+                });
+            }
+
+            // 2. Bundles
+            if (this.kb.bundles) {
+                this.kb.bundles.forEach((b, idx) => {
+                    this.documents.push({
+                        id: `bundle_${idx}`,
+                        type: 'course',
+                        title: b.title,
+                        subtitle: 'Special Semester Bundle',
+                        text: `Course Bundle ${b.title} ${(b.subjects || []).join(' ')} ${b.description}`,
+                        url: b.url,
+                        data: b
+                    });
+                });
+            }
+
+            // 3. Testimonials
+            if (this.kb.testimonials) {
+                this.kb.testimonials.forEach((t, idx) => {
+                    this.documents.push({
+                        id: `testimony_${idx}`,
+                        type: 'testimonial',
+                        title: `Review by ${t.student} (${t.program})`,
+                        subtitle: 'Student Success Story',
+                        text: `Testimonial Review Feedback ${t.student} ${t.program} ${t.quote}`,
+                        url: '/courses',
+                        data: t
+                    });
+                });
+            }
+
+            // 4. Courses
             if (this.kb.courses) {
                 this.kb.courses.forEach((c, idx) => {
                     this.documents.push({
@@ -395,22 +477,22 @@
                 });
             }
 
-            // 2. Library Papers
+            // 5. Library Papers
             if (this.kb.library) {
-                this.kb.library.forEach((p, idx) => {
+                this.kb.library.forEach((item, idx) => {
                     this.documents.push({
                         id: `pyq_${idx}`,
                         type: 'pyq',
-                        title: p.title || `${p.subject} ${p.type} ${p.year}`,
-                        subtitle: `Semester ${p.semester} • ${p.type} ${p.year}`,
-                        text: `Semester ${p.semester} ${p.subject} ${p.type} ${p.year} previous year question paper pyq download view preview`,
-                        url: p.url,
-                        data: p
+                        title: item.title || `${item.subject} ${item.type} ${item.year}`,
+                        subtitle: `Semester ${item.semester} • ${item.type} ${item.year}`,
+                        text: `Semester ${item.semester} ${item.subject} ${item.type} ${item.year} previous year question paper pyq download view preview`,
+                        url: item.url,
+                        data: item
                     });
                 });
             }
 
-            // 3. Semester Subjects
+            // 6. Semester Subjects
             if (this.kb.semesters) {
                 for (const [semKey, subjects] of Object.entries(this.kb.semesters)) {
                     const semNum = semKey.replace('sem', '');
@@ -428,7 +510,7 @@
                 }
             }
 
-            // 4. Study Tools
+            // 7. Study Tools
             if (this.kb.tools) {
                 this.kb.tools.forEach((t) => {
                     this.documents.push({
@@ -443,7 +525,7 @@
                 });
             }
 
-            // 5. Visual Labs
+            // 8. Visual Labs
             if (this.kb.labs) {
                 if (this.kb.labs.dsa) {
                     const dsa = this.kb.labs.dsa;
@@ -475,7 +557,7 @@
                 }
             }
 
-            // 6. Team Members
+            // 9. Team Members
             if (this.kb.team) {
                 this.kb.team.forEach((m, idx) => {
                     this.documents.push({
@@ -490,7 +572,7 @@
                 });
             }
 
-            // 7. FAQs
+            // 10. FAQs
             if (this.kb.faq) {
                 this.kb.faq.forEach((f, idx) => {
                     this.documents.push({
@@ -505,7 +587,7 @@
                 });
             }
 
-            // 8. Navigation Routes
+            // 11. Navigation Routes
             if (this.kb.routes) {
                 this.kb.routes.forEach((r, idx) => {
                     this.documents.push({
@@ -528,7 +610,6 @@
             const docTermFreqs = [];
             const dfCounts = [];
 
-            // Step 1: Tokenize all docs and collect Term Frequencies
             for (let i = 0; i < N; i++) {
                 const doc = this.documents[i];
                 const tokens = this.tokenize(doc.text);
@@ -544,7 +625,6 @@
                     tf.set(termIdx, (tf.get(termIdx) || 0) + 1);
                 }
 
-                // Increment DF for each unique term in this document
                 for (const termIdx of tf.keys()) {
                     dfCounts[termIdx]++;
                 }
@@ -552,7 +632,6 @@
                 docTermFreqs.push(tf);
             }
 
-            // Step 2: Compute IDF for all vocabulary terms
             const V = this.vocab.size;
             this.idf = new Float32Array(V);
             for (let t = 0; t < V; t++) {
@@ -560,7 +639,6 @@
                 this.idf[t] = Math.log((1 + N) / (1 + df)) + 1.0;
             }
 
-            // Step 3: Compute unit-normalized TF-IDF vector for each document
             this.docVectors = [];
             for (let i = 0; i < N; i++) {
                 const tf = docTermFreqs[i];
@@ -574,7 +652,6 @@
                     sumSq += weight * weight;
                 }
 
-                // Normalize vector to unit length
                 const norm = Math.sqrt(sumSq) || 1.0;
                 for (const [termIdx, weight] of vec.entries()) {
                     vec.set(termIdx, weight / norm);
@@ -584,11 +661,9 @@
             }
         }
 
-        // ── Vector Cosine Similarity Search ───────────
-        search(tokens, topK = 5) {
+        search(tokens, topK = 6) {
             if (!tokens || tokens.length === 0) return [];
 
-            // Compute query vector
             const queryTF = new Map();
             for (const t of tokens) {
                 if (this.vocab.has(t)) {
@@ -613,7 +688,6 @@
                 queryVec.set(termIdx, weight / queryNorm);
             }
 
-            // Compute dot product with each document
             const scores = [];
             const N = this.documents.length;
 
@@ -645,9 +719,7 @@
             return scores.slice(0, topK);
         }
 
-        // ── Context Resolution & Follow-Up Handling ───
         resolveContext(entities, intent) {
-            // Only inherit context if this query is an explicit follow-up
             if (entities.isFollowUp) {
                 if (!entities.subject && this.context.currentSubject) {
                     entities.subject = this.context.currentSubject;
@@ -660,7 +732,6 @@
                 }
             }
 
-            // Update session context with newly extracted entities
             if (entities.semester) this.context.currentSemester = entities.semester;
             if (entities.subject) this.context.currentSubject = entities.subject;
             if (entities.educator) this.context.currentEducator = entities.educator;
@@ -669,7 +740,6 @@
             this.context.turnCount++;
         }
 
-        // ── Query Processing & Grounding Gate ─────────
         processQuery(rawQuery) {
             if (!this.isReady) {
                 this.initialize();
@@ -679,6 +749,7 @@
             if (!query) {
                 return {
                     text: "How can I help you? Ask me about PYQs, crash courses, study tools, educators, or labs!",
+                    speakText: "How can I help you? Ask me about previous year questions, crash courses, study tools, or virtual labs.",
                     links: [],
                     suggestedPrompts: ['Show Semester 1 PYQs', 'What courses are available?', 'Tell me about study tools'],
                     confidence: 1.0,
@@ -686,30 +757,29 @@
                 };
             }
 
-            // 1. Extract entities and detect intent
             const entities = this.extractEntities(query);
             const intent = this.detectIntent(query, entities);
             this.resolveContext(entities, intent);
 
-            // 2. Perform TF-IDF vector retrieval
             const tokens = this.tokenize(query);
             if (entities.subject) {
-                const subTokens = this.tokenize(entities.subject);
-                tokens.push(...subTokens);
+                tokens.push(...this.tokenize(entities.subject));
             }
             const rawSearchResults = this.search(tokens, 8);
 
-            // Grounding check:
-            // If raw search results are completely empty or top score is tiny, AND intent is not an explicit special intent (like GREETING, HELP, CONTRIBUTE_PYQ, CONTACT),
-            // then the query is outside the Skills Seekers knowledge base!
-            const isExplicitIntent = ['GREETING', 'HELP', 'CONTRIBUTE_PYQ', 'CONTACT', 'ABOUT_PLATFORM', 'LIVE_MENTORSHIP'].includes(intent);
+            const isExplicitIntent = [
+                'GREETING', 'HELP', 'CONTRIBUTE_PYQ', 'CONTACT', 'ABOUT_PLATFORM',
+                'FOUNDER_INFO', 'TESTIMONIALS', 'STATS_ACHIEVEMENTS', 'POLICIES_FAQ',
+                'LIVE_MENTORSHIP', 'TEAM_INFO'
+            ].includes(intent);
+
             const maxRawScore = rawSearchResults.length > 0 ? rawSearchResults[0].score : 0;
 
-            if (!isExplicitIntent && !entities.isFollowUp && maxRawScore < 0.15 && !entities.subject && !entities.semester && !entities.educator && !entities.tool && !entities.lab) {
+            if (!isExplicitIntent && !entities.isFollowUp && maxRawScore < 0.14 &&
+                !entities.subject && !entities.semester && !entities.educator && !entities.tool && !entities.lab) {
                 return this.generateFallbackResponse(query);
             }
 
-            // 3. Apply semantic & intent boosts only to legitimate matches
             const boostedResults = rawSearchResults.map(res => {
                 let boost = 0;
                 const doc = res.doc;
@@ -728,6 +798,8 @@
                 if (intent === 'FIND_TOOL' && doc.type === 'tool') boost += 0.35;
                 if (intent === 'VIRTUAL_LAB' && (doc.type === 'lab_dsa' || doc.type === 'lab_os')) boost += 0.35;
                 if (intent === 'TEAM_INFO' && doc.type === 'team') boost += 0.35;
+                if (intent === 'TESTIMONIALS' && doc.type === 'testimonial') boost += 0.45;
+                if (intent === 'FOUNDER_INFO' && doc.type === 'founder') boost += 0.45;
 
                 return {
                     doc: doc,
@@ -737,8 +809,9 @@
 
             boostedResults.sort((a, b) => b.score - a.score);
 
-            // 4. Generate grounded natural response
-            return this.generateResponse(query, intent, entities, boostedResults);
+            const response = this.generateResponse(query, intent, entities, boostedResults);
+            response.speakText = cleanForSpeech(response.text);
+            return response;
         }
 
         // ── Response Generation Dispatcher ────────────
@@ -749,6 +822,14 @@
             switch (intent) {
                 case 'GREETING':
                     return this.generateGreetingResponse();
+                case 'FOUNDER_INFO':
+                    return this.generateFounderResponse();
+                case 'TESTIMONIALS':
+                    return this.generateTestimonialsResponse();
+                case 'STATS_ACHIEVEMENTS':
+                    return this.generateStatsResponse();
+                case 'POLICIES_FAQ':
+                    return this.generatePoliciesResponse(query);
                 case 'ABOUT_PLATFORM':
                     return this.generateAboutResponse();
                 case 'HELP':
@@ -776,7 +857,7 @@
                 case 'SPECIFIC_SUBJECT':
                     return this.generateSubjectResponse(entities, rankedDocs);
                 default:
-                    if (confidence >= 0.35) {
+                    if (confidence >= 0.22) {
                         return this.generateBestMatchResponse(topMatch, rankedDocs, entities);
                     }
                     return this.generateFallbackResponse(query);
@@ -787,7 +868,14 @@
 
         generateGreetingResponse() {
             return {
-                text: "Hello! 👋 Welcome to **Skills Seekers BU Resource Hub**!\n\nI am your AI Resource Assistant. I can help you find:\n• **Previous Year Questions (PYQs)** with instant Drive previews\n• **Skills Seekers Mastercourses & Sprints** with high-yield tutorial solutions\n• **Academic Study Tools** (Pomodoro, CGPA Calculator, Countdown)\n• **Virtual Interactive Labs** (Visual DSA & Visual OS)\n• **Educator and course mentorship details**\n\nWhat would you like to explore today?",
+                text: "Hello! 👋 Welcome to **Skills Seekers BU Resource Hub**!\n\n" +
+                      "I am your AI Resource Assistant. Ask me about:\n" +
+                      "• **Previous Year Questions (PYQs)** with instant Drive previews\n" +
+                      "• **Skills Seekers Crash Courses & Sprints** with solved tutorial sheets\n" +
+                      "• **Top Educators** (Pratham Kocher, Vansh Malhotra, Hrehaan Ahuja)\n" +
+                      "• **Academic Study Tools** (Pomodoro timer, SGPA/CGPA Calculator)\n" +
+                      "• **Virtual Interactive Labs** (Visual DSA & Visual OS)\n\n" +
+                      "What would you like to explore today?",
                 links: [
                     { title: "Universal PYQ Library", subtitle: "39+ Verified Question Papers", url: "/library", type: "nav" },
                     { title: "Crash Courses Catalog", subtitle: "Up to 69% OFF Express Prep", url: "/courses", type: "course" },
@@ -795,12 +883,117 @@
                 ],
                 suggestedPrompts: [
                     "Show Semester 1 PYQs",
-                    "Browse all Crash Courses",
-                    "How to calculate CGPA?",
-                    "Tell me about Visual DSA Lab"
+                    "Browse all educators",
+                    "What courses are available?",
+                    "How to calculate CGPA?"
                 ],
                 confidence: 1.0,
                 intent: 'GREETING'
+            };
+        }
+
+        generateFounderResponse() {
+            const p = this.kb.platform;
+            return {
+                text: `🌟 **About the Founder: ${p.founder}**\n\n` +
+                      `Teaching is Pratham Kocher's passion. He developed **Skills Seekers** specifically to assist college engineering students in preparing for their semester exams and achieving good grades.\n\n` +
+                      `*"${p.founderMessage}"*\n\n` +
+                      `✨ **Guiding Motto:** *"${p.motto}"*\n` +
+                      `📈 **Platform Milestones:** Over **25,000+** learners and **180,000+** views on YouTube!`,
+                links: [
+                    { title: "Pratham Kocher Courses", subtitle: "Python, Digital Design, Networks, TOC", url: "/courses", type: "course" },
+                    { title: "1-on-1 Mentorship", subtitle: "Personalized Coaching", url: "/courses", type: "course" },
+                    { title: "Official Website", subtitle: "skillsseekers.com", url: p.website, type: "external" }
+                ],
+                suggestedPrompts: [
+                    "Browse all educators",
+                    "What do students say? (Reviews)",
+                    "Explore crash courses",
+                    "1-on-1 Live Classes"
+                ],
+                confidence: 0.98,
+                intent: 'FOUNDER_INFO'
+            };
+        }
+
+        generateTestimonialsResponse() {
+            const list = (this.kb.testimonials || []).map(t =>
+                `• **${t.student}** (${t.program}):\n  *"${t.quote}"*`
+            ).join('\n\n');
+
+            return {
+                text: `💬 **Success Stories from Our Learners:**\n\n` +
+                      `${list}\n\n` +
+                      `Over **25,000+ engineering students** rely on Skills Seekers mastercourses to ace their exams!`,
+                links: [
+                    { title: "Explore Best-Seller Courses", subtitle: "Join 25K+ learners", url: "/courses", type: "course" },
+                    { title: "Universal PYQ Library", subtitle: "Free Exam Papers", url: "/library", type: "nav" }
+                ],
+                suggestedPrompts: [
+                    "Who are the top educators?",
+                    "What courses are available?",
+                    "Tell me about 1:1 coaching",
+                    "Show Semester 3 PYQs"
+                ],
+                confidence: 0.98,
+                intent: 'TESTIMONIALS'
+            };
+        }
+
+        generateStatsResponse() {
+            const p = this.kb.platform;
+            return {
+                text: `🏆 **Skills Seekers Achievements & Milestones:**\n\n` +
+                      `• 👨‍🎓 **25,000+ Happy Learners** across engineering universities\n` +
+                      `• 📺 **180,000+ YouTube Views** on free educational lectures and tutorials\n` +
+                      `• 📚 **24+ High-Yield Crash Courses** and all-in-one semester bundles\n` +
+                      `• 📄 **39+ Verified Question Papers** in the BU Resource Hub Library\n\n` +
+                      `*"${p.motto}"*`,
+                links: [
+                    { title: "Skills Seekers YouTube Channel", subtitle: "180K+ Views", url: p.youtube, type: "external" },
+                    { title: "Course Store", subtitle: "skillsseekers.com/s/store", url: p.store, type: "external" }
+                ],
+                suggestedPrompts: [
+                    "Who is the founder?",
+                    "Browse all educators",
+                    "View course catalog"
+                ],
+                confidence: 0.98,
+                intent: 'STATS_ACHIEVEMENTS'
+            };
+        }
+
+        generatePoliciesResponse(query) {
+            const lower = query.toLowerCase();
+            let specific = "";
+
+            if (lower.includes('device') || lower.includes('limit') || lower.includes('account')) {
+                specific = "📱 **Account & Device Limits Policy:**\n" +
+                           "Your account is limited to the purchasing device only. The device cannot be changed later, and accounts will be automatically blocked if concurrent access is attempted from another device.\n\n";
+            } else if (lower.includes('cancel') || lower.includes('refund')) {
+                specific = "💳 **Order Cancellation & Refund Policy:**\n" +
+                           "Per Skills Seekers platform policy, order cancellation or refunds are not allowed once a purchase is completed. Please consider carefully and inspect course details before enrolling.\n\n";
+            }
+
+            return {
+                text: `${specific}` +
+                      `📋 **Skills Seekers Important Platform FAQs:**\n\n` +
+                      `• **Device Limit:** 1 account = 1 device only (auto-blocked on multi-device attempts).\n` +
+                      `• **Cancellations:** Orders cannot be cancelled or refunded after purchase.\n` +
+                      `• **Signing Up:** Click 'Sign Up' and register via email or Google account.\n` +
+                      `• **Support:** Reach customer service at **skillsseekers16@gmail.com** or WhatsApp at **+91 9588598168**.`,
+                links: [
+                    { title: "Student Support Email", subtitle: "skillsseekers16@gmail.com", url: "mailto:skillsseekers16@gmail.com", type: "external" },
+                    { title: "Chat on WhatsApp", subtitle: "+91 9588598168", url: this.kb.platform.whatsapp, type: "external" },
+                    { title: "Official Website", subtitle: "skillsseekers.com", url: this.kb.platform.website, type: "external" }
+                ],
+                suggestedPrompts: [
+                    "How to contact support?",
+                    "What courses are available?",
+                    "1-on-1 Personal Coaching"
+                ],
+                confidence: 0.95,
+                intent: 'POLICIES_FAQ'
             };
         }
 
@@ -808,25 +1001,25 @@
             const p = this.kb.platform;
             return {
                 text: `**${p.hubName}** is the premier academic platform tailored for Bennett University students, powered by **${p.name}**.\n\n` +
-                      `🎯 **Mission:** To empower students with verified exam papers, high-yield crash courses, solved tutorial sheets, and interactive simulations crafted for academic excellence.\n\n` +
-                      `✨ **What you can find here:**\n` +
-                      `• **39+ Verified PYQs** spanning Semester 1 through Semester 5\n` +
-                      `• **24+ Mastercourses** taught by top educators like Vansh Malhotra, Pratham Kocher, and Hrehaan Ahuja\n` +
-                      `• **Visual DSA & OS Labs** for interactive algorithmic and systems learning\n` +
-                      `• **Built-in productivity tools** (Pomodoro timer, SGPA/CGPA calculator, Exam countdown)\n\n` +
-                      `Visit the official store at [skillsseekers.com](${p.store}) for full course enrollment.`,
+                      `🎯 **Mission:** Founded by **${p.founder}**, Skills Seekers provides verified exam papers, high-yield crash courses, solved tutorial sheets, and interactive simulations.\n\n` +
+                      `✨ **Guiding Motto:** *"${p.motto}"*\n\n` +
+                      `📊 **Platform Scale:**\n` +
+                      `• Over **25,000+** learners\n` +
+                      `• **180,000+** YouTube video views\n` +
+                      `• **39+ Verified PYQs** for Semesters 1 to 5\n` +
+                      `• **24+ Mastercourses** taught by top educators like Pratham Kocher, Vansh Malhotra, and Hrehaan Ahuja.`,
                 links: [
                     { title: "Skills Seekers Store", subtitle: "Official Course Store", url: p.store, type: "external" },
                     { title: "Universal PYQ Library", subtitle: "Browse All Exam Papers", url: "/library", type: "nav" },
                     { title: "Academic Study Tools", subtitle: "CGPA, Pomodoro, Notes", url: "/tools", type: "tool" }
                 ],
                 suggestedPrompts: [
-                    "Who are the top educators?",
+                    "Browse all educators",
                     "What crash courses are available?",
-                    "Show me study tools",
-                    "How do I share PYQs?"
+                    "What do students say? (Reviews)",
+                    "How to calculate CGPA?"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'ABOUT_PLATFORM'
             };
         }
@@ -834,6 +1027,10 @@
         generateHelpResponse() {
             return {
                 text: "Here is everything you can ask me:\n\n" +
+                      "👨‍🏫 **Educators & Platform:**\n" +
+                      "• *\"Browse all educators\"*\n" +
+                      "• *\"Who founded Skills Seekers?\"*\n" +
+                      "• *\"What do students say? (Reviews)\"*\n\n" +
                       "📚 **PYQ Assistance:**\n" +
                       "• *\"Give me Semester 3 PYQs\"*\n" +
                       "• *\"Show me Operating Systems Endsem paper\"*\n" +
@@ -845,8 +1042,7 @@
                       "🛠️ **Study Tools & Labs:**\n" +
                       "• *\"How does the CGPA calculator work?\"*\n" +
                       "• *\"Take me to the Pomodoro Timer\"*\n" +
-                      "• *\"Open the Visual DSA Lab\"*\n" +
-                      "• *\"Explain CPU Scheduling in OS Lab\"*\n\n" +
+                      "• *\"Open the Visual DSA Lab\"*\n\n" +
                       "🤝 **Contributions & Support:**\n" +
                       "• *\"How can I upload a question paper?\"*\n" +
                       "• *\"Connect with WhatsApp support\"*",
@@ -856,12 +1052,12 @@
                     { title: "Visual DSA Lab", subtitle: "20+ Algorithm Visualizers", url: "/dsa", type: "tool" }
                 ],
                 suggestedPrompts: [
+                    "Browse all educators",
                     "Semester 1 subjects",
-                    "Who teaches DAA?",
-                    "Calculate my SGPA",
-                    "How to submit a question paper?"
+                    "Who founded Skills Seekers?",
+                    "Calculate my SGPA"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'HELP'
             };
         }
@@ -874,7 +1070,7 @@
                       "**How to share:**\n" +
                       "1. Take clear photos or scan your exam question paper into a PDF.\n" +
                       "2. Mention the **Semester**, **Subject Name**, and **Exam Type** (Midsem or Endsem).\n" +
-                      `3. Send it directly via **WhatsApp** to [${p.whatsappNumber}](${p.whatsapp}) or email **${p.email}**.\n\n` +
+                      `3. Send it directly via **WhatsApp** to [${p.whatsappNumber}](${p.whatsapp}) or email **${p.backupEmail}**.\n\n` +
                       "Your contribution will be verified and added to the Universal PYQ Library with credit!",
                 links: [
                     { title: "Share via WhatsApp", subtitle: p.whatsappNumber, url: p.whatsapp, type: "external" },
@@ -895,9 +1091,10 @@
             const p = this.kb.platform;
             return {
                 text: "📬 **Get in touch with the Skills Seekers Team:**\n\n" +
-                      `• 💬 **WhatsApp Direct:** [${p.whatsappNumber}](${p.whatsapp}) (Fastest response for paper submissions & course inquiries)\n` +
-                      `• ✉️ **Official Email:** [${p.email}](mailto:${p.email})\n` +
-                      `• 🌐 **Official Website & Store:** [skillsseekers.com](${p.website})\n\n` +
+                      `• 💬 **WhatsApp Direct:** [${p.whatsappNumber}](${p.whatsapp}) (Fastest response for course inquiries and paper submissions)\n` +
+                      `• ✉️ **Primary Email:** [${p.email}](mailto:${p.email})\n` +
+                      `• ✉️ **Academic Support:** [${p.backupEmail}](mailto:${p.backupEmail})\n` +
+                      `• 🌐 **Official Website:** [skillsseekers.com](${p.website})\n\n` +
                       "We are always happy to help with course enrollment, mentorship, doubt clearing, or adding new academic resources!",
                 links: [
                     { title: "Chat on WhatsApp", subtitle: p.whatsappNumber, url: p.whatsapp, type: "external" },
@@ -907,9 +1104,9 @@
                 suggestedPrompts: [
                     "What crash courses are available?",
                     "Tell me about 1-on-1 mentorship",
-                    "How to submit question papers?"
+                    "Who founded Skills Seekers?"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'CONTACT'
             };
         }
@@ -925,29 +1122,28 @@
 
             return {
                 text: "🎯 **Skills Seekers 1-on-1 Live Mentorship & Coaching**\n\n" +
-                      "Need tailored guidance, rapid exam revision, or placement preparation? Skills Seekers provides dedicated **1-to-1 Live Classes** with expert instructors like **Pratham Kocher**.\n\n" +
+                      "Need tailored guidance, rapid exam revision, or placement preparation? Skills Seekers provides dedicated **1-to-1 Live Classes** with founder and expert instructor **Pratham Kocher**.\n\n" +
                       "**Key Mentorship Features:**\n" +
                       "• Personalized 1-on-1 doubt clearing mapped to your syllabus\n" +
+                      "• Hands-on coding mastery (Java, Python, Data Structures)\n" +
                       "• Academic exam sprint coaching & strategy\n" +
-                      "• Placement coding & technical interview guidance\n" +
                       "• Flexible scheduling tailored to your exam timeline",
                 links: links.length > 0 ? links : [
                     { title: "Explore Store Mentorship", subtitle: "Skills Seekers Store", url: this.kb.platform.store, type: "course" }
                 ],
                 suggestedPrompts: [
                     "What courses does Pratham Kocher teach?",
-                    "Explore DAA Placement course",
-                    "Show me study tools"
+                    "Browse all educators",
+                    "Student reviews & testimonials"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'LIVE_MENTORSHIP'
             };
         }
 
         generateTeamResponse(entities, rankedDocs, query) {
-            // Case 1: "Who teaches <subject>?" (when subject is queried without an explicit educator)
+            // Case 1: "Who teaches <subject>?"
             if (entities.subject && !entities.educator) {
-                // Find matching course or educator
                 const matchingCourses = (this.kb.courses || []).filter(c =>
                     c.title.toLowerCase().includes(entities.subject.toLowerCase()) ||
                     c.description.toLowerCase().includes(entities.subject.toLowerCase())
@@ -974,13 +1170,13 @@
                             "Browse all educators",
                             "Universal PYQ Library"
                         ],
-                        confidence: 0.95,
+                        confidence: 0.98,
                         intent: 'TEAM_INFO'
                     };
                 }
             }
 
-            // Case 2: Specific educator queried ("Tell me about Vansh Malhotra")
+            // Case 2: Specific educator queried ("Tell me about Vansh Malhotra" or "Pratham Kocher")
             if (entities.educator) {
                 const member = (this.kb.team || []).find(m => m.name.toLowerCase() === entities.educator.toLowerCase());
                 const educatorCourses = (this.kb.courses || []).filter(c => c.educator.toLowerCase().includes(entities.educator.toLowerCase()));
@@ -1006,30 +1202,36 @@
                         "Show all crash courses",
                         "Universal PYQ Library"
                     ],
-                    confidence: 0.95,
+                    confidence: 0.98,
                     intent: 'TEAM_INFO'
                 };
             }
 
-            // Case 3: General team overview
-            const teamMembers = (this.kb.team || []).map(m => `• **${m.name}** (${m.role}): ${(m.subjects || []).slice(0, 3).join(', ')}`).join('\n');
+            // Case 3: "Browse all educators" (FIX FOR USER SCREENSHOT BUG)
+            const teamMembers = (this.kb.team || []).map(m =>
+                `• **${m.name}** (*${m.role}*):\n  ${(m.subjects || []).slice(0, 4).join(', ')}`
+            ).join('\n\n');
+
+            const topEducatorCourses = [
+                { title: "Pratham Kocher - Python Sprint & Live Classes", subtitle: "Founder & Core Educator", url: "/courses", type: "course" },
+                { title: "Vansh Malhotra - OS, SML & Microprocessors", subtitle: "Lead Educator & Mentor", url: "/courses", type: "course" },
+                { title: "Hrehaan Ahuja - DAA Full Syllabus", subtitle: "Core Algorithms Educator", url: "/courses", type: "course" },
+                { title: "Khushi Goyal - Engineering Calculus & ECE", subtitle: "End Term Express Sprints", url: "/courses", type: "course" }
+            ];
 
             return {
-                text: "🎓 **Skills Seekers Educators & Mentors:**\n\n" +
+                text: "🎓 **Top Skills Seekers Educators & Mentors:**\n\n" +
                       "Our courses and academic resources are created by experienced Bennett University top achievers and subject specialists:\n\n" +
                       teamMembers + "\n\n" +
-                      "Ask me about any educator to see their courses and specializations!",
-                links: [
-                    { title: "Browse Courses by Educators", subtitle: "24+ Mastercourses", url: "/courses", type: "course" },
-                    { title: "1-on-1 Live Class Mentorship", subtitle: "Personalized Coaching", url: "/courses", type: "course" }
-                ],
+                      "Click below to explore their courses or ask about any educator to see their full subject list!",
+                links: topEducatorCourses,
                 suggestedPrompts: [
-                    "Courses by Vansh Malhotra",
                     "Courses by Pratham Kocher",
+                    "Courses by Vansh Malhotra",
                     "Courses by Hrehaan Ahuja",
                     "Courses by Khushi Goyal"
                 ],
-                confidence: 0.95,
+                confidence: 1.0,
                 intent: 'TEAM_INFO'
             };
         }
@@ -1054,7 +1256,7 @@
                             "Exam countdown timer",
                             "Saved Bookmarks tool"
                         ],
-                        confidence: 0.95,
+                        confidence: 0.98,
                         intent: 'FIND_TOOL'
                     };
                 }
@@ -1062,7 +1264,7 @@
 
             return {
                 text: "🛠️ **Academic Study Tools on BU Resource Hub:**\n\n" +
-                      "• ⏱️ **Pomodoro Focus Timer:** 25-minute focus sprints with 5-minute restorative breaks, audio chime, and session streak counter.\n" +
+                      "• ⏱️ **Pomodoro Focus Timer:** 25-minute focus intervals with 5-minute restorative breaks, audio chime, and session streak counter.\n" +
                       "• 📊 **SGPA & CGPA Grade Calculator:** BU 10-point scale calculator (O=10, A+=9, A=8, B+=7, B=6, C=5, P=4, F=0) for semester SGPA and cumulative CGPA forecasting.\n" +
                       "• ⏳ **Exam Target Countdown:** Real-time countdown clock tracking days, hours, and minutes until exams.\n" +
                       "• 📝 **Study Scratchpad:** In-browser persistent markdown notepad for formulas and revision notes.\n" +
@@ -1078,7 +1280,7 @@
                     "Exam countdown",
                     "Show Semester 3 PYQs"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'FIND_TOOL'
             };
         }
@@ -1111,7 +1313,7 @@
                         "Show Dijkstra algorithm",
                         "DAA Crash Course"
                     ],
-                    confidence: 0.95,
+                    confidence: 0.98,
                     intent: 'VIRTUAL_LAB'
                 };
             }
@@ -1140,7 +1342,7 @@
                         "Banker's algorithm visualizer",
                         "Operating Systems Crash Course"
                     ],
-                    confidence: 0.95,
+                    confidence: 0.98,
                     intent: 'VIRTUAL_LAB'
                 };
             }
@@ -1159,7 +1361,7 @@
                     "Show CPU scheduling algorithms",
                     "DAA crash course"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'VIRTUAL_LAB'
             };
         }
@@ -1201,6 +1403,16 @@
                 type: 'course'
             }));
 
+            // Add bundle if available
+            if (this.kb.bundles && this.kb.bundles.length > 0 && links.length < 5) {
+                links.push({
+                    title: this.kb.bundles[0].title,
+                    subtitle: "All-in-One Semester Bundle",
+                    url: this.kb.bundles[0].url,
+                    type: 'course'
+                });
+            }
+
             const subjectMention = entities.subject ? `for **${entities.subject}**` : entities.semester ? `for **Semester ${entities.semester}**` : '';
 
             return {
@@ -1209,12 +1421,12 @@
                       `Here are the most relevant courses:`,
                 links: links,
                 suggestedPrompts: [
-                    "What courses does Vansh Malhotra teach?",
                     "What courses does Pratham Kocher teach?",
+                    "What courses does Vansh Malhotra teach?",
                     "Browse all courses in catalog",
                     "Show corresponding PYQs"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'FIND_COURSE'
             };
         }
@@ -1285,7 +1497,7 @@
                     entities.subject ? `Crash course for ${entities.subject}` : "Browse crash courses",
                     "How to share question papers?"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'FIND_PYQ'
             };
         }
@@ -1315,7 +1527,7 @@
                     sem < 5 ? `What about Semester ${sem + 1}?` : "Semester 1 resources",
                     "Universal PYQ Library"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'SEMESTER_INFO'
             };
         }
@@ -1379,7 +1591,7 @@
                     semNum ? `Semester ${semNum} subjects` : "Universal PYQ Library",
                     "Study Tools"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'SPECIFIC_SUBJECT'
             };
         }
@@ -1421,7 +1633,7 @@
                     "Take me to Study Tools",
                     "Open Visual DSA Lab"
                 ],
-                confidence: 0.95,
+                confidence: 0.98,
                 intent: 'NAVIGATION'
             };
         }
@@ -1469,32 +1681,49 @@
         }
 
         generateFallbackResponse(query) {
+            const lower = (query || '').toLowerCase();
+            let hint = "";
+            let suggestedPrompts = [
+                "Show Semester 1 PYQs",
+                "Browse all educators",
+                "What courses are available?",
+                "How to calculate CGPA?",
+                "Who built this platform?"
+            ];
+
+            if (lower.includes('pyq') || lower.includes('paper') || lower.includes('exam')) {
+                hint = "💡 If you are looking for specific exam papers, try specifying the subject name and semester (e.g., *'Show Semester 2 Maths PYQ'*).\n\n";
+                suggestedPrompts = ["Show Semester 1 PYQs", "Show Semester 3 PYQs", "Universal PYQ Library", "Contribute a question paper"];
+            } else if (lower.includes('course') || lower.includes('learn') || lower.includes('study') || lower.includes('video')) {
+                hint = "💡 Skills Seekers offers 24+ high-yield crash courses with solved tutorials. Try asking about a subject or instructor (e.g., *'Courses by Pratham Kocher'* or *'Operating Systems Sprint'*).\n\n";
+                suggestedPrompts = ["Browse all educators", "Explore crash courses", "1-on-1 Mentorship", "What do students say? (Reviews)"];
+            } else if (lower.includes('lab') || lower.includes('code') || lower.includes('visual')) {
+                hint = "💡 We feature interactive Virtual Labs for Visual DSA and Visual OS simulations.\n\n";
+                suggestedPrompts = ["Open Visual DSA Lab", "Open Visual OS Lab", "CPU Scheduling simulation", "Sorting algorithms"];
+            }
+
             return {
-                text: `I couldn't find an answer in the Skills Seekers knowledge base for "${query}".\n\n` +
+                text: `I couldn't find a direct match in the Skills Seekers knowledge base for "${query}".\n\n` +
+                      hint +
                       `As the Skills Seekers Resource Assistant, I specialize in academic resources for Bennett University:\n` +
                       `• **Previous Year Questions (PYQs)** for Semesters 1 through 5\n` +
-                      `• **Skills Seekers Mastercourses** & Crash Courses\n` +
-                      `• **Academic Study Tools** (Pomodoro, CGPA Calculator, Notes)\n` +
+                      `• **Skills Seekers Mastercourses** & Crash Course Sprints\n` +
+                      `• **Top Educators** (Pratham Kocher, Vansh Malhotra, Hrehaan Ahuja)\n` +
+                      `• **Academic Study Tools** (Pomodoro, CGPA Calculator, Scratchpad)\n` +
                       `• **Virtual Labs** (Visual DSA & Visual OS)\n\n` +
-                      `Try asking one of the suggestions below:`,
+                      `Try asking one of the suggestions below or reach out to student support:`,
                 links: [
                     { title: "Universal PYQ Library", subtitle: "Browse 39+ verified papers", url: "/library", type: "nav" },
                     { title: "Crash Courses Catalog", subtitle: "Explore 24+ courses", url: "/courses", type: "course" },
                     { title: "Ask on WhatsApp", subtitle: "Direct student support", url: this.kb.platform.whatsapp, type: "external" }
                 ],
-                suggestedPrompts: [
-                    "Show Semester 1 PYQs",
-                    "What crash courses are available?",
-                    "How to calculate CGPA?",
-                    "Who built this platform?"
-                ],
+                suggestedPrompts: suggestedPrompts,
                 confidence: 0.10,
                 intent: 'FALLBACK'
             };
         }
     }
 
-    // ── Export for Browser and Node.js ─────────────────
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = ChatbotNLP;
     }
