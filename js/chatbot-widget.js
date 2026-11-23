@@ -30,6 +30,7 @@
             this.currentUtterance = null;
             this.activeSpeakBtn = null;
             this.activeStreamInterval = null;
+            this.activeStreamTimeout = null;
         }
 
         init() {
@@ -320,6 +321,10 @@
             }
 
             this.stopSpeaking();
+            if (this.activeStreamTimeout) {
+                clearTimeout(this.activeStreamTimeout);
+                this.activeStreamTimeout = null;
+            }
             if (this.activeStreamInterval) {
                 clearInterval(this.activeStreamInterval);
                 this.activeStreamInterval = null;
@@ -366,35 +371,77 @@
         }
 
         typewriterStream(bubbleElement, fullText, onComplete) {
+            if (this.activeStreamTimeout) {
+                clearTimeout(this.activeStreamTimeout);
+                this.activeStreamTimeout = null;
+            }
             if (this.activeStreamInterval) {
                 clearInterval(this.activeStreamInterval);
                 this.activeStreamInterval = null;
             }
 
-            // Word and whitespace tokens for smooth, steady GPT streaming
+            // Word, punctuation, and whitespace tokens
             const tokens = fullText.split(/(\s+|\n)/);
             let currentIndex = 0;
             let currentText = '';
+            let isFinished = false;
 
             bubbleElement.innerHTML = '<span class="chatbot-stream-cursor"></span>';
 
-            // Constant, soothing speed: ~20ms per token
-            const streamSpeed = 20;
+            const finishStream = () => {
+                if (isFinished) return;
+                isFinished = true;
+                if (this.activeStreamTimeout) {
+                    clearTimeout(this.activeStreamTimeout);
+                    this.activeStreamTimeout = null;
+                }
+                bubbleElement.innerHTML = this.formatBotText(fullText);
+                bubbleElement.style.cursor = 'default';
+                bubbleElement.onclick = null;
+                this.scrollToBottom();
+                if (onComplete) onComplete();
+            };
 
-            this.activeStreamInterval = setInterval(() => {
+            // Allow click on bubble to show full text immediately if desired
+            bubbleElement.style.cursor = 'pointer';
+            bubbleElement.setAttribute('title', 'Click to show full message immediately');
+            bubbleElement.onclick = (e) => {
+                e.stopPropagation();
+                finishStream();
+            };
+
+            const tick = () => {
+                if (isFinished) return;
+
                 if (currentIndex < tokens.length) {
-                    currentText += tokens[currentIndex];
+                    const token = tokens[currentIndex];
+                    currentText += token;
                     currentIndex++;
+
                     bubbleElement.innerHTML = this.formatBotText(currentText) + '<span class="chatbot-stream-cursor"></span>';
                     this.scrollToBottom();
+
+                    // Comfortable, soothing pace so user can smoothly read while text appears
+                    let delay = 75; // Standard word delay (~10-12 words/sec)
+                    if (/^\s+$/.test(token)) {
+                        delay = 18; // Short whitespace delay
+                    } else if (/[.!?](\s+|$)/.test(token) || token.includes('\n')) {
+                        delay = 240; // Natural breathing pause at end of sentence
+                    } else if (/[,;:–—](\s+|$)/.test(token)) {
+                        delay = 140; // Minor pause at clauses
+                    } else if (token.length <= 3) {
+                        delay = 50; // Short words (is, to, a, in)
+                    } else if (token.length >= 8) {
+                        delay = 95; // Longer words (Calculus, Semester)
+                    }
+
+                    this.activeStreamTimeout = setTimeout(tick, delay);
                 } else {
-                    clearInterval(this.activeStreamInterval);
-                    this.activeStreamInterval = null;
-                    bubbleElement.innerHTML = this.formatBotText(fullText);
-                    this.scrollToBottom();
-                    if (onComplete) onComplete();
+                    finishStream();
                 }
-            }, streamSpeed);
+            };
+
+            tick();
         }
 
         addUserMessage(text) {
@@ -772,6 +819,10 @@
 
         clearHistory() {
             this.stopSpeaking();
+            if (this.activeStreamTimeout) {
+                clearTimeout(this.activeStreamTimeout);
+                this.activeStreamTimeout = null;
+            }
             if (this.activeStreamInterval) {
                 clearInterval(this.activeStreamInterval);
                 this.activeStreamInterval = null;
