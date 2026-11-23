@@ -15,6 +15,7 @@
 
     const STORAGE_KEY = 'ss_chatbot_history_v2';
     const VOICE_KEY = 'ss_chatbot_voice_v2';
+    const CALLOUT_KEY = 'ss_chatbot_callout_dismissed_v2';
 
     class SkillsSeekersChatbot {
         constructor() {
@@ -25,8 +26,10 @@
             this.elements = {};
             this.hasOpenedBefore = localStorage.getItem('chatbot_opened') === 'true';
             this.isVoiceEnabled = localStorage.getItem(VOICE_KEY) === 'true';
+            this.isCalloutDismissed = sessionStorage.getItem(CALLOUT_KEY) === 'true';
             this.currentUtterance = null;
             this.activeSpeakBtn = null;
+            this.activeStreamInterval = null;
         }
 
         init() {
@@ -37,6 +40,9 @@
             setTimeout(() => {
                 if (this.elements.fab) {
                     this.elements.fab.classList.remove('hidden');
+                }
+                if (this.elements.callout && !this.isCalloutDismissed && !this.isOpen) {
+                    this.elements.callout.classList.remove('dismissed');
                 }
             }, 1000);
         }
@@ -54,6 +60,20 @@
                 badge.className = 'chatbot-fab-badge';
                 fab.appendChild(badge);
             }
+
+            // 1.5 Floating Launcher Callout Pill
+            const callout = document.createElement('div');
+            callout.className = 'chatbot-launcher-callout' + (this.isCalloutDismissed ? ' dismissed' : '');
+            callout.id = 'chatbot-launcher-callout';
+            callout.setAttribute('title', 'Click to open Skills Seekers Chatbox');
+            callout.innerHTML = `
+                <div class="chatbot-callout-icon">✨</div>
+                <div class="chatbot-callout-body">
+                    <div class="chatbot-callout-title">Chat with Skills Seekers Chatbox</div>
+                    <div class="chatbot-callout-desc">Find quick doubts and fast searches</div>
+                </div>
+                <button class="chatbot-callout-close" title="Dismiss">&times;</button>
+            `;
 
             // 2. Chat Window Container
             const win = document.createElement('div');
@@ -111,11 +131,13 @@
             win.appendChild(powered);
 
             // Mount to DOM
+            document.body.appendChild(callout);
             document.body.appendChild(fab);
             document.body.appendChild(win);
 
             // Cache element references
             this.elements = {
+                callout: callout,
                 fab: fab,
                 window: win,
                 header: header,
@@ -136,6 +158,19 @@
             this.elements.minimizeBtn.addEventListener('click', () => this.close());
             this.elements.clearBtn.addEventListener('click', () => this.clearHistory());
             this.elements.voiceToggleBtn.addEventListener('click', () => this.toggleVoiceMode());
+
+            if (this.elements.callout) {
+                this.elements.callout.addEventListener('click', (e) => {
+                    if (e.target.closest('.chatbot-callout-close')) {
+                        e.stopPropagation();
+                        this.elements.callout.classList.add('dismissed');
+                        this.isCalloutDismissed = true;
+                        sessionStorage.setItem(CALLOUT_KEY, 'true');
+                    } else {
+                        this.open();
+                    }
+                });
+            }
 
             this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
 
@@ -176,6 +211,9 @@
             this.elements.window.classList.remove('closed');
             this.elements.window.classList.add('open');
             this.elements.fab.classList.add('hidden');
+            if (this.elements.callout) {
+                this.elements.callout.classList.add('dismissed');
+            }
 
             if (!this.hasOpenedBefore) {
                 localStorage.setItem('chatbot_opened', 'true');
@@ -201,6 +239,9 @@
             this.elements.window.classList.add('closed');
             this.elements.fab.classList.remove('hidden');
             this.elements.fab.classList.add('no-pulse');
+            if (!this.isCalloutDismissed && this.elements.callout) {
+                this.elements.callout.classList.remove('dismissed');
+            }
             this.stopSpeaking();
         }
 
@@ -226,21 +267,22 @@
         }
 
         showWelcome() {
-            const welcomeDiv = document.createElement('div');
-            welcomeDiv.className = 'chatbot-welcome';
-            welcomeDiv.innerHTML = `
-                <span class="chatbot-welcome-emoji">👋</span>
-                <h3>Skills Seekers AI Resource Assistant</h3>
-                <p>Welcome! Ask me anything about Bennett University academic resources:</p>
-                <ul>
-                    <li>Verified PYQs for all semesters (1-5)</li>
-                    <li>Skills Seekers crash courses & video sprints</li>
-                    <li>Top educators (Pratham Kocher, Vansh Malhotra, Hrehaan)</li>
-                    <li>Academic study tools (CGPA, Pomodoro, Notes)</li>
-                    <li>Visual DSA & OS virtual interactive labs</li>
-                </ul>
+            const heroDiv = document.createElement('div');
+            heroDiv.className = 'chatbot-hero-card';
+            heroDiv.innerHTML = `
+                <div class="chatbot-hero-glow"></div>
+                <div class="chatbot-hero-badge"><span class="status-dot"></span> AI Resource Assistant</div>
+                <h3 class="chatbot-hero-heading">Chat with Skills Seekers Chatbox</h3>
+                <p class="chatbot-hero-sub">Find quick doubts, instant PYQ solutions, course sprints & fast searches across Bennett University.</p>
+                <div class="chatbot-hero-tags">
+                    <span class="chatbot-hero-tag"><i class="ph-bold ph-lightning"></i> Quick Doubts</span>
+                    <span class="chatbot-hero-tag"><i class="ph-bold ph-magnifying-glass"></i> Fast Searches</span>
+                    <span class="chatbot-hero-tag"><i class="ph-bold ph-file-pdf"></i> Verified PYQs</span>
+                    <span class="chatbot-hero-tag"><i class="ph-bold ph-graduation-cap"></i> Courses</span>
+                    <span class="chatbot-hero-tag"><i class="ph-bold ph-speaker-high"></i> Voice Audio</span>
+                </div>
             `;
-            this.elements.messages.appendChild(welcomeDiv);
+            this.elements.messages.appendChild(heroDiv);
         }
 
         showInitialSuggestions() {
@@ -278,6 +320,10 @@
             }
 
             this.stopSpeaking();
+            if (this.activeStreamInterval) {
+                clearInterval(this.activeStreamInterval);
+                this.activeStreamInterval = null;
+            }
 
             this.elements.input.value = '';
             this.elements.input.style.height = 'auto';
@@ -303,23 +349,52 @@
                 };
             }
 
-            const delay = Math.min(250 + (response.text?.length || 0) * 1.2, 700);
+            const delay = Math.min(200 + (response.text?.length || 0) * 0.8, 550);
             await new Promise(resolve => setTimeout(resolve, delay));
 
             typingEl.remove();
 
-            const botBubbleObj = this.addBotResponse(response);
+            // Render live streaming bot response with ChatGPT typewriter effect
+            this.addBotResponse(response, true);
             this.saveMessage('bot', response.text, response.links, response.confidence, response.intent, response.speakText);
-
-            if (this.isVoiceEnabled && response.speakText) {
-                this.speak(response.speakText, botBubbleObj?.speakBtn);
-            }
 
             if (response.suggestedPrompts && response.suggestedPrompts.length > 0) {
                 this.showSuggestions(response.suggestedPrompts);
             }
 
             this.scrollToBottom();
+        }
+
+        typewriterStream(bubbleElement, fullText, onComplete) {
+            if (this.activeStreamInterval) {
+                clearInterval(this.activeStreamInterval);
+                this.activeStreamInterval = null;
+            }
+
+            // Word and whitespace tokens for smooth, steady GPT streaming
+            const tokens = fullText.split(/(\s+|\n)/);
+            let currentIndex = 0;
+            let currentText = '';
+
+            bubbleElement.innerHTML = '<span class="chatbot-stream-cursor"></span>';
+
+            // Constant, soothing speed: ~20ms per token
+            const streamSpeed = 20;
+
+            this.activeStreamInterval = setInterval(() => {
+                if (currentIndex < tokens.length) {
+                    currentText += tokens[currentIndex];
+                    currentIndex++;
+                    bubbleElement.innerHTML = this.formatBotText(currentText) + '<span class="chatbot-stream-cursor"></span>';
+                    this.scrollToBottom();
+                } else {
+                    clearInterval(this.activeStreamInterval);
+                    this.activeStreamInterval = null;
+                    bubbleElement.innerHTML = this.formatBotText(fullText);
+                    this.scrollToBottom();
+                    if (onComplete) onComplete();
+                }
+            }, streamSpeed);
         }
 
         addUserMessage(text) {
@@ -358,7 +433,7 @@
             this.scrollToBottom();
         }
 
-        addBotResponse(response) {
+        addBotResponse(response, isStreaming = true) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chatbot-message bot';
 
@@ -373,59 +448,74 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'chatbot-message-bubble';
-            bubble.innerHTML = this.formatBotText(response.text);
             contentWrapper.appendChild(bubble);
-
-            // Resource cards
-            if (response.links && response.links.length > 0) {
-                response.links.forEach(link => {
-                    const card = this.createResourceCard(link);
-                    contentWrapper.appendChild(card);
-                });
-            }
-
-            // Action row: Confidence badge + Listen (TTS) button
-            const actionsRow = document.createElement('div');
-            actionsRow.className = 'chatbot-msg-actions';
-
-            // Speech Listen Button
-            const speechText = response.speakText || this.extractCleanText(response.text);
-            let speakBtn = null;
-            if (speechText && ('speechSynthesis' in window)) {
-                speakBtn = document.createElement('button');
-                speakBtn.className = 'chatbot-speak-btn';
-                speakBtn.setAttribute('title', 'Listen to answer');
-                speakBtn.setAttribute('aria-label', 'Read response aloud');
-                speakBtn.innerHTML = '<i class="ph-bold ph-speaker-high"></i> Listen';
-                speakBtn.addEventListener('click', () => {
-                    if (speakBtn.classList.contains('speaking')) {
-                        this.stopSpeaking();
-                    } else {
-                        this.speak(speechText, speakBtn);
-                    }
-                });
-                actionsRow.appendChild(speakBtn);
-            }
-
-            // Confidence indicator
-            if (response.confidence < 0.75 && response.confidence >= 0.15) {
-                const confDiv = document.createElement('div');
-                confDiv.className = 'chatbot-confidence ' + (response.confidence >= 0.4 ? 'medium' : 'low');
-                confDiv.innerHTML = '<i class="ph-bold ph-info"></i> ' +
-                    (response.confidence >= 0.4 ? 'Fairly confident answer' : 'Best match in knowledge base');
-                actionsRow.appendChild(confDiv);
-            }
-
-            if (actionsRow.children.length > 0) {
-                contentWrapper.appendChild(actionsRow);
-            }
 
             msgDiv.appendChild(avatar);
             msgDiv.appendChild(contentWrapper);
             this.elements.messages.appendChild(msgDiv);
             this.scrollToBottom();
 
-            return { speakBtn };
+            const renderPostMessageItems = () => {
+                // Resource cards
+                if (response.links && response.links.length > 0) {
+                    response.links.forEach(link => {
+                        const card = this.createResourceCard(link);
+                        contentWrapper.appendChild(card);
+                    });
+                }
+
+                // Action row: Confidence badge + Listen (TTS) button
+                const actionsRow = document.createElement('div');
+                actionsRow.className = 'chatbot-msg-actions';
+
+                // Speech Listen Button
+                const speechText = response.speakText || this.extractCleanText(response.text);
+                let speakBtn = null;
+                if (speechText && ('speechSynthesis' in window)) {
+                    speakBtn = document.createElement('button');
+                    speakBtn.className = 'chatbot-speak-btn';
+                    speakBtn.setAttribute('title', 'Listen to answer');
+                    speakBtn.setAttribute('aria-label', 'Read response aloud');
+                    speakBtn.innerHTML = '<i class="ph-bold ph-speaker-high"></i> Listen';
+                    speakBtn.addEventListener('click', () => {
+                        if (speakBtn.classList.contains('speaking')) {
+                            this.stopSpeaking();
+                        } else {
+                            this.speak(speechText, speakBtn);
+                        }
+                    });
+                    actionsRow.appendChild(speakBtn);
+                }
+
+                // Confidence indicator
+                if (response.confidence < 0.75 && response.confidence >= 0.15) {
+                    const confDiv = document.createElement('div');
+                    confDiv.className = 'chatbot-confidence ' + (response.confidence >= 0.4 ? 'medium' : 'low');
+                    confDiv.innerHTML = '<i class="ph-bold ph-info"></i> ' +
+                        (response.confidence >= 0.4 ? 'Fairly confident answer' : 'Best match in knowledge base');
+                    actionsRow.appendChild(confDiv);
+                }
+
+                if (actionsRow.children.length > 0) {
+                    contentWrapper.appendChild(actionsRow);
+                }
+
+                this.scrollToBottom();
+
+                // Trigger voice readout if enabled
+                if (this.isVoiceEnabled && response.speakText) {
+                    this.speak(response.speakText, speakBtn);
+                }
+            };
+
+            if (isStreaming) {
+                this.typewriterStream(bubble, response.text, renderPostMessageItems);
+            } else {
+                bubble.innerHTML = this.formatBotText(response.text);
+                renderPostMessageItems();
+            }
+
+            return msgDiv;
         }
 
         formatBotText(text) {
@@ -668,7 +758,7 @@
                                     confidence: msg.confidence || 1,
                                     intent: msg.intent || '',
                                     speakText: msg.speakText || ''
-                                });
+                                }, false);
                             }
                         });
                         this.showInitialSuggestions();
@@ -682,6 +772,10 @@
 
         clearHistory() {
             this.stopSpeaking();
+            if (this.activeStreamInterval) {
+                clearInterval(this.activeStreamInterval);
+                this.activeStreamInterval = null;
+            }
             this.messages = [];
             try {
                 sessionStorage.removeItem(STORAGE_KEY);

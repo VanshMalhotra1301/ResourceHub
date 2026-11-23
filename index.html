@@ -184,7 +184,7 @@
             </p>
 
             <!-- Quick Jump Search Bar with 3D Tilt -->
-            <div class="max-w-2xl mx-auto mb-14">
+            <div class="max-w-2xl mx-auto mb-10">
                 <form action="/library" method="GET" class="relative flex items-center bg-zinc-900/90 border border-zinc-700/60 rounded-2xl p-2 shadow-2xl focus-within:border-indigo-500/70 focus-within:shadow-[0_0_40px_rgba(99,102,241,0.15)] transition-all duration-300 backdrop-blur-xl hover:border-zinc-600/80">
                     <div class="pl-4 text-slate-400">
                         <i class="ph-bold ph-magnifying-glass text-xl"></i>
@@ -194,6 +194,28 @@
                         <span>Search</span> <i class="ph-bold ph-arrow-right"></i>
                     </button>
                 </form>
+            </div>
+
+            <!-- Chat with Skills Seekers Chatbox - Quick Access Banner -->
+            <div class="max-w-2xl mx-auto -mt-4 mb-14">
+                <div onclick="if(window.skillsSeekersChatbot){window.skillsSeekersChatbot.open();}" class="cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-950/50 via-purple-950/40 to-zinc-900/80 border border-indigo-500/30 p-4 sm:p-5 shadow-2xl hover:border-indigo-400/60 hover:shadow-[0_0_40px_rgba(99,102,241,0.25)] transition-all duration-300 backdrop-blur-xl flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform shrink-0">
+                            <i class="ph-fill ph-chat-circle-dots text-2xl"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-indigo-300 transition-colors">Chat with Skills Seekers Chatbox</h3>
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">AI Active</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">Find quick doubts and fast searches across Bennett University PYQs, courses & tools.</p>
+                        </div>
+                    </div>
+                    <div class="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600/25 border border-indigo-500/35 text-indigo-300 text-xs font-semibold group-hover:bg-indigo-600/40 group-hover:text-white transition-all shrink-0">
+                        <span>Ask AI</span>
+                        <i class="ph-bold ph-arrow-right text-[11px]"></i>
+                    </div>
+                </div>
             </div>
 
             <!-- Platform Live Stats -->
