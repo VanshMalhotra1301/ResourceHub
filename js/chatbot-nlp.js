@@ -54,39 +54,160 @@
         'calculator': 'tool', 'pomodoro': 'tool', 'timer': 'tool', 'countdown': 'tool', 'scratchpad': 'tool',
         'review': 'testimonial', 'reviews': 'testimonial', 'testimonial': 'testimonial', 'testimonials': 'testimonial',
         'feedback': 'testimonial', 'ratings': 'testimonial', 'story': 'testimonial', 'stories': 'testimonial',
-        'algorithm': 'daa', 'algorithms': 'daa', 'daaa': 'daa', 'scheduling': 'os', 'pratham': 'founder'
+        'algorithm': 'daa', 'algorithms': 'daa', 'daaa': 'daa', 'scheduling': 'os', 'pratham': 'founder',
+        'ims': 'dbms', 'database': 'dbms', 'databases': 'dbms', 'rdbms': 'dbms',
+        'mpca': 'microprocessor', 'mca': 'microprocessor', 'microprocessors': 'microprocessor',
+        'pns': 'probability', 'toc': 'automata', 'flats': 'automata', 'sml': 'sml',
+        'imd': 'intelligent', 'ivp': 'image', 'spm': 'spm', 'evs': 'environment',
+        'dms': 'discrete', 'oop': 'java', 'oops': 'java', 'ece': 'electronics', 'ephy': 'mechanics'
     };
 
-    // Canonical Subject Mapping
+    // Canonical Subject Mapping (Complete coverage of all Semesters 1-5 subjects & aliases)
     const CANONICAL_SUBJECTS = {
-        'Engineering Calculus': ['engineering calculus', 'calculus', 'calc', 'engg calc', 'cset 101 math', 'math 1', 'maths 1', 'differential calculus', 'integral'],
-        'Electronics': ['electronics', 'ece', 'basic electronics', 'electronic circuits', 'semiconductors'],
-        'Mechanics & Electromagnetism': ['mechanics & electromagnetism', 'mechanics', 'electromagnetism', 'physics', 'ephy', 'em', 'electro', 'magnetic'],
-        'Computational Thinking': ['computational thinking', 'computational thinking & programming', 'python', 'python programming', 'ct', 'coding in python'],
-        'Digital Design': ['digital design', 'dd', 'logic design', 'logic gates', 'k-map', 'flip flop', 'sequential circuits'],
-        'Linear Algebra & ODE': ['linear algebra & ode', 'linear algebra', 'ode', 'differential equations', 'matrices', 'matrix', 'eigenvalues'],
-        'OOP (Java)': ['oop (java)', 'oop', 'java', 'object oriented', 'object oriented programming'],
-        'Discrete Mathematics': ['discrete mathematics', 'discrete math', 'dms', 'discrete structures', 'graph theory'],
-        'Environment': ['environment', 'environmental studies', 'evs', 'environmental science'],
-        'Data Structures (C++)': ['data structures (c++)', 'data structures', 'dsa', 'data structures in c++', 'cpp dsa', 'trees', 'linked list'],
-        'Statistical Machine Learning (SML)': ['statistical machine learning (sml)', 'statistical machine learning', 'sml', 'machine learning sml', 'regression'],
-        'Probability & Statistics': ['probability & statistics', 'probability and statistics', 'pns', 'stats', 'probability'],
-        'Data Analysis (Python)': ['data analysis (python)', 'data analysis using python', 'data analysis', 'pandas', 'numpy'],
-        'DBMS': ['dbms', 'database management system', 'database', 'sql', 'rdbms'],
-        'Microprocessors & CA': ['microprocessors & ca', 'microprocessors & computer architecture', 'microprocessors', 'microprocessor', 'computer architecture', '8086'],
-        'DAA (Algorithms)': ['daa (algorithms)', 'daa', 'daaa', 'algorithms', 'algorithm', 'design and analysis of algorithms', 'algorithms prep', 'algorithm design'],
-        'Operating Systems': ['operating systems', 'operating system', 'os', 'cpu scheduling', 'process management'],
-        'Computer Networks': ['computer networks', 'computer network', 'cn', 'networking', 'tcp/ip', 'osi model'],
-        'AI & ML': ['ai & ml', 'ai-ml', 'artificial intelligence & machine learning', 'ai/ml', 'cset 312', 'cset312'],
-        'Intelligent Model Design': ['intelligent model design', 'intelligent model design using ai', 'imd'],
-        'Automata / Theory of Computation': ['automata / theory of computation', 'automata', 'theory of computation', 'toc', 'automata theory', 'flats', 'turing machine'],
-        'Natural Language Processing': ['natural language processing', 'nlp', 'text mining', 'language models'],
-        'Image Video Processing': ['image video processing', 'image processing', 'ivp', 'computer vision'],
-        'Software Project Management': ['software project management', 'spm', 'project management'],
-        'AI and Society': ['ai and society', 'ai & society', 'ethics in ai'],
-        'Agile Software Development': ['agile software development', 'agile', 'scrum'],
-        'MLOps': ['mlops', 'machine learning operations', 'model deployment']
+        'Data Analysis (Python)': ['data analysis (python)', 'data analysis using python', 'data analysis with python', 'data analysis python', 'data analysis', 'dap', 'eda', 'pandas', 'numpy', 'matplotlib'],
+        'Engineering Calculus': ['engineering calculus', 'engg calculus', 'engg calc', 'calculus', 'calc', 'cset 101 math', 'math 1', 'maths 1', 'multivariable calculus', 'differential calculus', 'partial differentiation', 'multiple integrals'],
+        'Electronics': ['electronics', 'basic electronics', 'electronic circuits', 'ece', 'semiconductors', 'bjt', 'mosfet', 'op-amp', 'diode'],
+        'Mechanics & Electromagnetism': ['mechanics & electromagnetism', 'mechanics and electromagnetism', 'mechanics', 'electromagnetism', 'ephy', 'physics', 'mech', 'maxwell equations', 'rotational dynamics'],
+        'Digital Design': ['digital design', 'digital logic', 'logic design', 'dd', 'logic gates', 'k-map', 'kmap', 'flip flop', 'flip-flops', 'sequential circuits', 'boolean algebra'],
+        'Linear Algebra & ODE': ['linear algebra & ode', 'linear algebra and ode', 'linear algebra', 'la & ode', 'linalg', 'ode', 'differential equations', 'eigenvalues', 'vector spaces'],
+        'Discrete Mathematics': ['discrete mathematics', 'discrete math', 'discrete maths', 'discrete structures', 'dms', 'dm', 'graph theory', 'propositional logic', 'recurrence relations'],
+        'Environment': ['environment', 'environmental studies', 'environmental science', 'evs', 'ecology', 'biodiversity'],
+        'Data Structures (C++)': ['data structures (c++)', 'data structures using c++', 'data structures in c++', 'data structures', 'data structure', 'dsa', 'cpp dsa', 'c++', 'cpp', 'linked list', 'avl trees', 'binary trees'],
+        'Statistical Machine Learning (SML)': ['statistical machine learning (sml)', 'statistical machine learning', 'sml (machine learning)', 'sml', 'machine learning sml', 'regression models', 'pca'],
+        'Probability & Statistics': ['probability & statistics', 'probability and statistics', 'prob & stats', 'prob and stats', 'probability & stat', 'pns', 'p&s', 'probability', 'hypothesis testing', 'bayes theorem', 'chi-square'],
+        'DBMS': ['dbms', 'database management system', 'database management systems', 'database', 'databases', 'rdbms', 'sql', 'ims', 'information management system', 'information management systems', 'er diagram', 'er diagrams', 'normalization', 'bcnf'],
+        'Microprocessors & CA': ['microprocessors & ca', 'microprocessors & computer architecture', 'microprocessors and computer architecture', 'microprocessors', 'microprocessor', 'mpca', 'mca', 'computer architecture', '8086', 'assembly programming'],
+        'DAA (Algorithms)': ['daa (algorithms)', 'design & analysis of algorithms', 'design and analysis of algorithms', 'algorithm design', 'algorithms prep', 'daa', 'daaa', 'algorithms', 'algorithm', 'np-completeness', 'dynamic programming'],
+        'Operating Systems': ['operating systems', 'operating system', 'os', 'cpu scheduling', 'process synchronization', 'process management', 'deadlocks', 'deadlock', 'semaphores', 'paging'],
+        'Computer Networks': ['computer networks', 'computer network', 'cn', 'networking', 'networks', 'tcp/ip', 'osi model', 'ip subnetting', 'routing algorithms'],
+        'Intelligent Model Design': ['intelligent model design', 'intelligent model design using ai', 'intelligent model design imd', 'imd', 'hyperparameter optimization', 'model compression'],
+        'AI and Society': ['ai and society', 'ai & society', 'ai and society ai ethics', 'ai ethics', 'ethics in ai', 'algorithmic fairness'],
+        'AI & ML': ['ai & ml', 'ai-ml', 'ai/ml', 'aiml', 'ai ml', 'ai & machine learning', 'artificial intelligence & ml', 'artificial intelligence & machine learning', 'artificial intelligence and machine learning', 'artificial intelligence', 'cset 312', 'cset312'],
+        'Automata / Theory of Computation': ['automata / theory of computation', 'automata theory of computation toc', 'automata theory and computability', 'theory of computation', 'automata theory', 'automata', 'toc', 'computability', 'flats', 'turing machine', 'pushdown automata', 'pumping lemma'],
+        'Natural Language Processing': ['natural language processing', 'natural language processing nlp', 'nlp', 'text mining', 'word2vec', 'glove', 'language models'],
+        'Image Video Processing': ['image video processing', 'image video processing ivp', 'image & video processing', 'image and video processing', 'image processing', 'video processing', 'ivp', 'computer vision', 'opencv'],
+        'Software Project Management': ['software project management', 'software project management spm', 'spm', 'project management', 'cocomo', 'pert', 'cpm'],
+        'Agile Software Development': ['agile software development', 'agile software development scrum kanban', 'agile', 'scrum', 'kanban', 'user stories', 'tdd'],
+        'MLOps': ['mlops', 'mlops machine learning operations', 'ml ops', 'machine learning operations', 'mlflow', 'dvc', 'model registry'],
+        'Computational Thinking': ['computational thinking', 'computational thinking & programming', 'ctp', 'ct', 'python', 'python programming', 'coding in python'],
+        'OOP (Java)': ['oop (java)', 'oop java', 'object oriented programming', 'object oriented', 'oops', 'oop', 'java', 'java programming']
     };
+
+    function buildAliasMatcher(alias) {
+        const escaped = alias.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+        const prefix = /^[a-z0-9]/i.test(alias) ? '\\b' : '(?:^|[\\s,(&/-])';
+        const suffix = /[a-z0-9]$/i.test(alias) ? '\\b' : '(?=$|[\\s,).&/!?-])';
+        return new RegExp(prefix + escaped + suffix, 'i');
+    }
+
+    // Sorted globally by alias length descending so specific names win over short tokens
+    const ALIAS_ENTRIES = [];
+    for (const [canonical, aliases] of Object.entries(CANONICAL_SUBJECTS)) {
+        for (const alias of aliases) {
+            ALIAS_ENTRIES.push({
+                canonical,
+                alias,
+                regex: buildAliasMatcher(alias)
+            });
+        }
+    }
+    ALIAS_ENTRIES.sort((a, b) => b.alias.length - a.alias.length);
+
+    // Single-word tokens eligible for typo-tolerant Levenshtein matching
+    const FUZZY_SUBJECT_TOKENS = [
+        { token: 'calculus', canonical: 'Engineering Calculus' },
+        { token: 'calculas', canonical: 'Engineering Calculus' },
+        { token: 'electronics', canonical: 'Electronics' },
+        { token: 'mechanics', canonical: 'Mechanics & Electromagnetism' },
+        { token: 'electromagnetism', canonical: 'Mechanics & Electromagnetism' },
+        { token: 'physics', canonical: 'Mechanics & Electromagnetism' },
+        { token: 'computational', canonical: 'Computational Thinking' },
+        { token: 'python', canonical: 'Computational Thinking' },
+        { token: 'digital', canonical: 'Digital Design' },
+        { token: 'linear', canonical: 'Linear Algebra & ODE' },
+        { token: 'algebra', canonical: 'Linear Algebra & ODE' },
+        { token: 'discrete', canonical: 'Discrete Mathematics' },
+        { token: 'environment', canonical: 'Environment' },
+        { token: 'environmental', canonical: 'Environment' },
+        { token: 'structures', canonical: 'Data Structures (C++)' },
+        { token: 'statistical', canonical: 'Statistical Machine Learning (SML)' },
+        { token: 'probability', canonical: 'Probability & Statistics' },
+        { token: 'statistics', canonical: 'Probability & Statistics' },
+        { token: 'database', canonical: 'DBMS' },
+        { token: 'databases', canonical: 'DBMS' },
+        { token: 'microprocessor', canonical: 'Microprocessors & CA' },
+        { token: 'microprocessors', canonical: 'Microprocessors & CA' },
+        { token: 'architecture', canonical: 'Microprocessors & CA' },
+        { token: 'algorithms', canonical: 'DAA (Algorithms)' },
+        { token: 'algorithm', canonical: 'DAA (Algorithms)' },
+        { token: 'operating', canonical: 'Operating Systems' },
+        { token: 'networks', canonical: 'Computer Networks' },
+        { token: 'networking', canonical: 'Computer Networks' },
+        { token: 'intelligent', canonical: 'Intelligent Model Design' },
+        { token: 'automata', canonical: 'Automata / Theory of Computation' },
+        { token: 'computability', canonical: 'Automata / Theory of Computation' },
+        { token: 'language', canonical: 'Natural Language Processing' },
+        { token: 'management', canonical: 'Software Project Management' },
+        { token: 'agile', canonical: 'Agile Software Development' },
+        { token: 'scrum', canonical: 'Agile Software Development' },
+        { token: 'mlops', canonical: 'MLOps' }
+    ];
+
+    function levenshtein(a, b) {
+        const m = a.length, n = b.length;
+        if (Math.abs(m - n) > 2) return 99;
+        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+        for (let i = 0; i <= m; i++) dp[i][0] = i;
+        for (let j = 0; j <= n; j++) dp[0][j] = j;
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+            }
+        }
+        return dp[m][n];
+    }
+
+    function resolveSubjectName(text) {
+        if (!text) return null;
+        const lower = text.toLowerCase();
+        if (CANONICAL_SUBJECTS[text]) return text;
+
+        // Guard against meta queries about the chatbot's own NLP engine
+        const isMetaNLP = /\b(chatbot nlp|nlp engine|nlp retrieval|your nlp)\b/i.test(lower);
+
+        for (const entry of ALIAS_ENTRIES) {
+            if (isMetaNLP && entry.canonical === 'Natural Language Processing' && entry.alias === 'nlp') {
+                continue;
+            }
+            if (entry.regex.test(lower)) {
+                return entry.canonical;
+            }
+        }
+        return null;
+    }
+
+    function resolveFuzzySubject(text) {
+        if (!text) return null;
+        const words = text.toLowerCase()
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .split(/\s+/)
+            .filter(w => w.length >= 5 && !STOPWORDS.has(w) && !['paper', 'papers', 'midsem', 'endsem', 'course', 'courses', 'semester', 'question', 'questions'].includes(w));
+
+        let bestMatch = null;
+        let bestDist = 3;
+        for (const w of words) {
+            for (const f of FUZZY_SUBJECT_TOKENS) {
+                const dist = levenshtein(w, f.token);
+                const maxAllowed = f.token.length >= 7 ? 2 : 1;
+                if (dist <= maxAllowed && dist < bestDist) {
+                    bestDist = dist;
+                    bestMatch = f.canonical;
+                }
+            }
+        }
+        return bestMatch;
+    }
 
     // Educators List
     const EDUCATORS = [
@@ -216,43 +337,41 @@
                 tool: null,
                 lab: null,
                 isFollowUp: false,
-                isTeacherQuery: false
+                isTeacherQuery: false,
+                isAllPYQQuery: false
             };
 
             if (/\b(who teaches|who is the (teacher|instructor|educator)|taught by|mentor for|teacher of|faculty for)\b/i.test(rawLower)) {
                 entities.isTeacherQuery = true;
             }
 
+            if (/\b(all|every|complete|list of|list all|which subjects|available)\b.*\b(pyqs?|papers?|question papers?)\b|\b(pyqs?|papers?)\b.*\b(list|all|every|directory|subjects)\b/i.test(rawLower)) {
+                entities.isAllPYQQuery = true;
+            }
+
             // 1. Semester matching
-            const semMatch = rawLower.match(/(?:sem(?:ester)?|term)\s*([1-5])\b|\b([1-5])(?:st|nd|rd|th)?\s*sem(?:ester)?\b|\bsem([1-5])\b/);
+            const semMatch = rawLower.match(/(?:sem(?:ester)?)\s*([1-5])\b|\b([1-5])(?:st|nd|rd|th)?\s*sem(?:ester)?\b|\bsem([1-5])\b/);
             if (semMatch) {
                 entities.semester = parseInt(semMatch[1] || semMatch[2] || semMatch[3], 10);
             }
 
-            // 2. Exam Type (Midsem vs Endsem)
-            if (rawLower.includes('midsem') || rawLower.includes('mid sem') || rawLower.includes('mid-sem') || rawLower.includes('mid term') || rawLower.includes('midterm')) {
+            // 2. Exam Type (Midsem vs Endsem / Make-up)
+            if (/\b(mid[\s-]?sem|mid[\s-]?terms?)\b/i.test(rawLower)) {
                 entities.examType = 'Midsem';
-            } else if (rawLower.includes('endsem') || rawLower.includes('end sem') || rawLower.includes('end-sem') || rawLower.includes('end term') || rawLower.includes('endterm')) {
+            } else if (/\b(make[\s-]?up)\b/i.test(rawLower)) {
+                entities.examType = 'Make-up';
+            } else if (/\b(end[\s-]?sem|end[\s-]?terms?)\b/i.test(rawLower)) {
                 entities.examType = 'Endsem';
             }
 
-            // 3. Year detection
-            const yearMatch = rawLower.match(/\b(202[3-6])\b/);
+            // 3. Year detection (supports 2022 through 2026)
+            const yearMatch = rawLower.match(/\b(202[2-6])\b/);
             if (yearMatch) {
                 entities.year = yearMatch[1];
             }
 
-            // 4. Subject matching
-            for (const [canonicalName, aliases] of Object.entries(CANONICAL_SUBJECTS)) {
-                for (const alias of aliases) {
-                    const regex = new RegExp('\\b' + alias.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + '\\b', 'i');
-                    if (regex.test(rawLower)) {
-                        entities.subject = canonicalName;
-                        break;
-                    }
-                }
-                if (entities.subject) break;
-            }
+            // 4. Subject matching (longest-alias-first + typo-tolerant fuzzy fallback)
+            entities.subject = resolveSubjectName(query) || resolveFuzzySubject(query);
 
             // 5. Educator matching
             for (const ed of EDUCATORS) {
@@ -266,7 +385,7 @@
             }
 
             // 6. Tools matching
-            if (rawLower.includes('pomodoro') || rawLower.includes('timer') || rawLower.includes('focus clock')) {
+            if (rawLower.includes('pomodoro') || rawLower.includes('focus clock') || (rawLower.includes('timer') && !rawLower.includes('exam'))) {
                 entities.tool = 'pomodoro';
             } else if (rawLower.includes('cgpa') || rawLower.includes('sgpa') || rawLower.includes('gpa') || rawLower.includes('grade calculator')) {
                 entities.tool = 'cgpa';
@@ -274,14 +393,14 @@
                 entities.tool = 'countdown';
             } else if (rawLower.includes('scratchpad') || rawLower.includes('quick notes') || rawLower.includes('notepad')) {
                 entities.tool = 'scratchpad';
-            } else if (rawLower.includes('bookmark') || rawLower.includes('bookmarks') || rawLower.includes('saved')) {
+            } else if (rawLower.includes('bookmark') || rawLower.includes('bookmarks')) {
                 entities.tool = 'bookmarks';
             }
 
             // 7. Lab matching
-            if (rawLower.includes('dsa lab') || rawLower.includes('data structure lab') || rawLower.includes('sorting visual') || rawLower.includes('algorithm lab')) {
+            if (/\b(dsa lab|data structure lab|sorting visual|algorithm lab|visual dsa)\b/i.test(rawLower)) {
                 entities.lab = 'dsa';
-            } else if (rawLower.includes('os lab') || rawLower.includes('operating system lab') || rawLower.includes('gantt') || rawLower.includes('cpu scheduling')) {
+            } else if (/\b(os lab|operating system lab|gantt chart|visual os)\b/i.test(rawLower)) {
                 entities.lab = 'os';
             }
 
@@ -307,7 +426,7 @@
             }
 
             // 2. Suggestion chip & Educator list queries (PRIORITY FIX)
-            if (/^(browse|show|view|list|see|tell me about|who are)?\s*(all\s*)?(educators|teachers|faculty|mentors|instructors)\b/i.test(lower) ||
+            if (/^(browse|show|view|list|see|tell me about|who are|meet)?\s*(all\s*)?(educators|teachers|faculty|mentors|instructors)\b/i.test(lower) ||
                 lower === 'browse all educators' || lower === 'all educators' || lower === 'educators' || lower === 'teachers' || lower === 'faculty') {
                 return 'TEAM_INFO';
             }
@@ -323,13 +442,14 @@
                 return 'TESTIMONIALS';
             }
 
-            // 5. Achievements & Stats (YouTube views, 25K learners)
-            if (/\b(achievements?|how many (students|learners)|learners?|youtube views?|stats|statistics|milestones)\b/i.test(lower)) {
+            // 5. Achievements & Stats (guard against Probability & Statistics!)
+            if (!entities.subject && !/\b(pyqs?|papers?|exams?|midsem|endsem|course|syllabus|probability)\b/i.test(lower) &&
+                /\b(achievements?|how many (students|learners)|learners?|youtube views?|stats|statistics|milestones)\b/i.test(lower)) {
                 return 'STATS_ACHIEVEMENTS';
             }
 
-            // 6. Platform policies & Account FAQs
-            if (/\b(refunds?|cancellations?|cancel order|account limit|device limit|multiple devices|blocked account|policies?|terms|how to sign up|sign up)\b/i.test(lower)) {
+            // 6. Platform policies & Account FAQs (guard against Calculus 'limits' & 'end term')
+            if (/\b(refunds?|cancellations?|cancel order|account limit|device limit|multiple devices|blocked account|platform polic(?:y|ies)|privacy policy|terms (?:and|&) conditions|how to sign up|sign up)\b/i.test(lower)) {
                 return 'POLICIES_FAQ';
             }
 
@@ -374,24 +494,35 @@
                 return 'VIRTUAL_LAB';
             }
 
-            // 15. Courses / Mastercourses & Bundles
-            if (/\b(courses?|crash courses?|sprints?|mastercourses?|bundles?|classes|video lectures|tutorial sheets|price|discount|how much|fee|cost)\b/i.test(lower) ||
-                lower.includes('what courses are available') || lower.includes('browse all crash courses')) {
+            // 15. Explicit Course Queries (takes priority over PYQ only when course/sprint/price keywords appear without explicit PYQ-only intent)
+            const hasPYQSignal = /\b(pyqs?|pyps?|previous year|past papers?|question papers?|exam papers?|midsem|endsem|end[\s-]?term paper|mid[\s-]?term paper|make[\s-]?up|papers?)\b/i.test(lower) ||
+                entities.isAllPYQQuery ||
+                Boolean(entities.subject && (entities.examType || entities.year)) ||
+                lower.includes('show semester 1 pyqs') || lower.includes('show semester 3 pyqs');
+
+            const hasCourseSignal = /\b(courses?|crash courses?|sprints?|mastercourses?|bundles?|classes|video lectures|tutorial sheets|price|discount|how much|fee|cost|enroll)\b/i.test(lower) ||
+                lower.includes('what courses are available') || lower.includes('browse all crash courses');
+
+            if (hasCourseSignal && !/\b(pyqs?|question papers?|past papers?)\b/i.test(lower)) {
                 return 'FIND_COURSE';
             }
 
             // 16. PYQs / Question Papers
-            if (/\b(pyqs?|previous year|past papers?|question papers?|exam papers?|endsem papers?|midsem papers?|papers)\b/i.test(lower) ||
-                lower.includes('show semester 1 pyqs') || lower.includes('show semester 3 pyqs')) {
+            if (hasPYQSignal) {
                 return 'FIND_PYQ';
             }
 
+            // 16b. Courses fallback when neither matched above
+            if (hasCourseSignal) {
+                return 'FIND_COURSE';
+            }
+
             // 17. Semester Overview
-            if (entities.semester && /\b(subjects?|syllabus|what is in|overview|curriculum|what courses)\b/i.test(lower)) {
+            if (entities.semester && (/\b(subjects?|syllabus|what is in|overview|curriculum|what courses)\b/i.test(lower) || /^(sem(?:ester)?\s*[1-5])$/i.test(lower))) {
                 return 'SEMESTER_INFO';
             }
 
-            // 18. Subject Specific query
+            // 18. Subject Specific query (e.g. just typing "DBMS", "Operating Systems", "TOC", "SML")
             if (entities.subject) {
                 return 'SPECIFIC_SUBJECT';
             }
@@ -465,27 +596,30 @@
             // 4. Courses
             if (this.kb.courses) {
                 this.kb.courses.forEach((c, idx) => {
+                    const subjAliases = (c.subjects || []).flatMap(s => CANONICAL_SUBJECTS[s] || [s]).join(' ');
                     this.documents.push({
                         id: `course_${idx}`,
                         type: 'course',
                         title: c.title,
                         subtitle: `${c.educator} • ${c.discount || 'Special Offer'}`,
-                        text: `${c.title} ${c.educator} ${c.description} ${c.discount} ${c.price} ${c.fullText || ''}`,
+                        text: `${c.title} ${c.canonicalSubject || ''} ${subjAliases} ${c.educator} ${c.description} ${c.discount} ${c.price} ${c.fullText || ''}`,
                         url: c.url,
                         data: c
                     });
                 });
             }
 
-            // 5. Library Papers
+            // 5. Library Papers (Complete Semesters 1-5 + Library PDFs)
             if (this.kb.library) {
                 this.kb.library.forEach((item, idx) => {
+                    const aliases = (CANONICAL_SUBJECTS[item.subject] || [item.subject]).join(' ');
+                    const semList = (item.semesters || [item.semester]).map(s => `Semester ${s}`).join(' ');
                     this.documents.push({
                         id: `pyq_${idx}`,
                         type: 'pyq',
                         title: item.title || `${item.subject} ${item.type} ${item.year}`,
-                        subtitle: `Semester ${item.semester} • ${item.type} ${item.year}`,
-                        text: `Semester ${item.semester} ${item.subject} ${item.type} ${item.year} previous year question paper pyq download view preview`,
+                        subtitle: `Semester ${item.semester} • ${item.paperTitle || `${item.type} ${item.year}`}`,
+                        text: `${semList} ${item.subject} ${item.displaySubject || ''} ${aliases} ${item.type} ${item.paperTitle || ''} ${item.year} previous year question paper pyq download view preview`,
                         url: item.url,
                         data: item
                     });
@@ -497,12 +631,14 @@
                 for (const [semKey, subjects] of Object.entries(this.kb.semesters)) {
                     const semNum = semKey.replace('sem', '');
                     subjects.forEach((s, idx) => {
+                        const canon = s.canonicalSubject || s.name;
+                        const aliases = (CANONICAL_SUBJECTS[canon] || [s.name]).join(' ');
                         this.documents.push({
                             id: `subject_${semNum}_${idx}`,
                             type: 'subject',
                             title: `${s.name} (Semester ${semNum})`,
-                            subtitle: `Semester ${semNum} ${s.code ? '• ' + s.code : ''}`,
-                            text: `Semester ${semNum} ${s.name} ${s.code} subject notes syllabus question papers pyqs`,
+                            subtitle: `Semester ${semNum}${s.credits ? ' • ' + s.credits : ''}${s.code ? ' • ' + s.code : ''}`,
+                            text: `Semester ${semNum} ${s.name} ${canon} ${aliases} ${s.code || ''} ${s.description || ''} subject notes syllabus question papers pyqs`,
                             url: `/sem${semNum}`,
                             data: { ...s, semester: semNum }
                         });
@@ -814,6 +950,96 @@
             return response;
         }
 
+        // ── Shared Canonical KB Lookup Helpers ─────────
+        findSubjectEntries(canonicalSubject, semesterFilter = null) {
+            const results = [];
+            for (const [semKey, subs] of Object.entries(this.kb.semesters || {})) {
+                const sNum = parseInt(semKey.replace('sem', ''), 10);
+                if (semesterFilter && sNum !== semesterFilter) continue;
+                for (const s of subs) {
+                    const canon = s.canonicalSubject || resolveSubjectName(s.name) || s.name;
+                    if (canon === canonicalSubject) {
+                        results.push({ ...s, semester: sNum, canonicalSubject: canon });
+                    }
+                }
+            }
+            return results;
+        }
+
+        findPapers({ subject = null, semester = null, examType = null, year = null } = {}) {
+            let papers = this.kb.library || [];
+
+            if (subject) {
+                papers = papers.filter(p => {
+                    const pCanon = CANONICAL_SUBJECTS[p.subject] ? p.subject : (resolveSubjectName(p.subject) || resolveSubjectName(p.displaySubject));
+                    return pCanon === subject;
+                });
+            }
+
+            if (semester) {
+                papers = papers.filter(p =>
+                    p.semester === semester || (Array.isArray(p.semesters) && p.semesters.includes(semester))
+                );
+            }
+
+            if (examType) {
+                const target = examType.toLowerCase();
+                papers = papers.filter(p => {
+                    const pType = (p.type || '').toLowerCase();
+                    const pTitle = (p.paperTitle || p.title || '').toLowerCase();
+                    if (target === 'make-up') {
+                        return pType.includes('make') || pTitle.includes('make');
+                    }
+                    if (target === 'endsem') {
+                        return pType.includes('end') || pTitle.includes('end');
+                    }
+                    return pType.includes(target) || pTitle.includes(target);
+                });
+            }
+
+            if (year) {
+                papers = papers.filter(p => p.year === year || (p.paperTitle && p.paperTitle.includes(year)));
+            }
+
+            return papers;
+        }
+
+        findCourses(canonicalSubject = null, semesterFilter = null) {
+            let matches = [];
+            const allCourses = this.kb.courses || [];
+
+            if (canonicalSubject) {
+                matches = allCourses.filter(c => {
+                    if (c.canonicalSubject === canonicalSubject) return true;
+                    if (Array.isArray(c.subjects) && c.subjects.includes(canonicalSubject)) return true;
+                    const resolved = resolveSubjectName(c.title + ' ' + c.description);
+                    return resolved === canonicalSubject;
+                });
+
+                // Include bundles covering this subject if not already included
+                for (const b of (this.kb.bundles || [])) {
+                    const covers = (b.subjects || []).some(s => (CANONICAL_SUBJECTS[s] ? s : resolveSubjectName(s)) === canonicalSubject);
+                    if (covers && !matches.some(m => m.url === b.url)) {
+                        matches.push({
+                            title: b.title,
+                            educator: 'Skills Seekers Faculty',
+                            discount: 'Combo Bundle',
+                            description: b.description,
+                            url: b.url
+                        });
+                    }
+                }
+            } else if (semesterFilter) {
+                matches = allCourses.filter(c => Array.isArray(c.semesters) && c.semesters.includes(semesterFilter));
+                if (matches.length === 0) {
+                    const semSubjects = (this.kb.semesters?.[`sem${semesterFilter}`] || []).map(s => s.canonicalSubject || s.name);
+                    matches = allCourses.filter(c => (c.subjects || []).some(sub => semSubjects.includes(sub)));
+                }
+            }
+
+            return matches;
+        }
+
         // ── Response Generation Dispatcher ────────────
         generateResponse(query, intent, entities, rankedDocs) {
             const topMatch = rankedDocs[0];
@@ -849,7 +1075,7 @@
                 case 'FIND_COURSE':
                     return this.generateCourseResponse(entities, rankedDocs);
                 case 'FIND_PYQ':
-                    return this.generatePYQResponse(entities, rankedDocs);
+                    return this.generatePYQResponse(entities, rankedDocs, query);
                 case 'SEMESTER_INFO':
                     return this.generateSemesterResponse(entities);
                 case 'NAVIGATION':
@@ -877,7 +1103,7 @@
                       "• **Virtual Interactive Labs** (Visual DSA & Visual OS)\n\n" +
                       "What would you like to explore today?",
                 links: [
-                    { title: "Universal PYQ Library", subtitle: "39+ Verified Question Papers", url: "/library", type: "nav" },
+                    { title: "Universal PYQ Library", subtitle: `${(this.kb.library || []).length}+ Verified Question Papers`, url: "/library", type: "nav" },
                     { title: "Crash Courses Catalog", subtitle: "Up to 69% OFF Express Prep", url: "/courses", type: "course" },
                     { title: "Academic Study Tools", subtitle: "Pomodoro & CGPA Calculator", url: "/tools", type: "tool" }
                 ],
@@ -942,12 +1168,14 @@
 
         generateStatsResponse() {
             const p = this.kb.platform;
+            const pyqCount = (this.kb.library || []).length;
+            const courseCount = (this.kb.courses || []).length;
             return {
                 text: `🏆 **Skills Seekers Achievements & Milestones:**\n\n` +
                       `• 👨‍🎓 **25,000+ Happy Learners** across engineering universities\n` +
                       `• 📺 **180,000+ YouTube Views** on free educational lectures and tutorials\n` +
-                      `• 📚 **24+ High-Yield Crash Courses** and all-in-one semester bundles\n` +
-                      `• 📄 **39+ Verified Question Papers** in the BU Resource Hub Library\n\n` +
+                      `• 📚 **${courseCount}+ High-Yield Crash Courses** and all-in-one semester bundles\n` +
+                      `• 📄 **${pyqCount} Verified Question Papers** across all 5 semesters in BU Resource Hub\n\n` +
                       `*"${p.motto}"*`,
                 links: [
                     { title: "Skills Seekers YouTube Channel", subtitle: "180K+ Views", url: p.youtube, type: "external" },
@@ -1006,8 +1234,8 @@
                       `📊 **Platform Scale:**\n` +
                       `• Over **25,000+** learners\n` +
                       `• **180,000+** YouTube video views\n` +
-                      `• **39+ Verified PYQs** for Semesters 1 to 5\n` +
-                      `• **24+ Mastercourses** taught by top educators like Pratham Kocher, Vansh Malhotra, and Hrehaan Ahuja.`,
+                      `• **${(this.kb.library || []).length} Verified PYQs** for Semesters 1 to 5\n` +
+                      `• **${(this.kb.courses || []).length}+ Mastercourses** taught by top educators like Pratham Kocher, Vansh Malhotra, and Hrehaan Ahuja.`,
                 links: [
                     { title: "Skills Seekers Store", subtitle: "Official Course Store", url: p.store, type: "external" },
                     { title: "Universal PYQ Library", subtitle: "Browse All Exam Papers", url: "/library", type: "nav" },
@@ -1047,7 +1275,7 @@
                       "• *\"How can I upload a question paper?\"*\n" +
                       "• *\"Connect with WhatsApp support\"*",
                 links: [
-                    { title: "Universal PYQ Library", subtitle: "39+ Papers", url: "/library", type: "nav" },
+                    { title: "Universal PYQ Library", subtitle: `${(this.kb.library || []).length} Verified Papers`, url: "/library", type: "nav" },
                     { title: "Course Catalog", subtitle: "Crash Courses & Sprints", url: "/courses", type: "course" },
                     { title: "Visual DSA Lab", subtitle: "20+ Algorithm Visualizers", url: "/dsa", type: "tool" }
                 ],
@@ -1144,15 +1372,12 @@
         generateTeamResponse(entities, rankedDocs, query) {
             // Case 1: "Who teaches <subject>?"
             if (entities.subject && !entities.educator) {
-                const matchingCourses = (this.kb.courses || []).filter(c =>
-                    c.title.toLowerCase().includes(entities.subject.toLowerCase()) ||
-                    c.description.toLowerCase().includes(entities.subject.toLowerCase())
-                );
+                const matchingCourses = this.findCourses(entities.subject);
 
                 if (matchingCourses.length > 0) {
                     const topCourse = matchingCourses[0];
                     const educatorName = topCourse.educator;
-                    const links = matchingCourses.slice(0, 3).map(c => ({
+                    const links = matchingCourses.slice(0, 4).map(c => ({
                         title: c.title,
                         subtitle: `${c.educator} • ${c.discount || 'Available'}`,
                         url: c.url,
@@ -1161,7 +1386,7 @@
 
                     return {
                         text: `👨‍🏫 **${entities.subject}** is taught by **${educatorName}** at Skills Seekers!\n\n` +
-                              `In the **${topCourse.title}**, ${educatorName} provides complete video sprints, fully solved tutorial sheets, and high-yield previous year question solutions.\n\n` +
+                              `In **${topCourse.title}**, ${educatorName} provides complete video sprints, fully solved tutorial sheets, and high-yield previous year question solutions.\n\n` +
                               `Here is the course link:`,
                         links: links,
                         suggestedPrompts: [
@@ -1370,20 +1595,13 @@
             let matchedCourses = [];
 
             if (entities.subject) {
-                matchedCourses = (this.kb.courses || []).filter(c =>
-                    c.title.toLowerCase().includes(entities.subject.toLowerCase()) ||
-                    c.description.toLowerCase().includes(entities.subject.toLowerCase()) ||
-                    (c.fullText && c.fullText.toLowerCase().includes(entities.subject.toLowerCase()))
-                );
+                matchedCourses = this.findCourses(entities.subject);
             } else if (entities.educator) {
                 matchedCourses = (this.kb.courses || []).filter(c =>
                     c.educator.toLowerCase().includes(entities.educator.toLowerCase())
                 );
             } else if (entities.semester) {
-                const semSubjects = (this.kb.semesters?.[`sem${entities.semester}`] || []).map(s => s.name.toLowerCase());
-                matchedCourses = (this.kb.courses || []).filter(c =>
-                    semSubjects.some(sub => c.title.toLowerCase().includes(sub) || c.description.toLowerCase().includes(sub))
-                );
+                matchedCourses = this.findCourses(null, entities.semester);
             }
 
             if (matchedCourses.length === 0) {
@@ -1398,13 +1616,13 @@
 
             const links = matchedCourses.slice(0, 5).map(c => ({
                 title: c.title,
-                subtitle: `${c.educator} • ${c.discount || 'Special Discount'}`,
+                subtitle: `${c.educator} • ${c.discount || 'Special Offer'}${c.price ? ' • ' + c.price : ''}`,
                 url: c.url,
                 type: 'course'
             }));
 
-            // Add bundle if available
-            if (this.kb.bundles && this.kb.bundles.length > 0 && links.length < 5) {
+            // Add bundle if relevant and not already present
+            if (this.kb.bundles && this.kb.bundles.length > 0 && links.length < 5 && !entities.subject) {
                 links.push({
                     title: this.kb.bundles[0].title,
                     subtitle: "All-in-One Semester Bundle",
@@ -1416,88 +1634,231 @@
             const subjectMention = entities.subject ? `for **${entities.subject}**` : entities.semester ? `for **Semester ${entities.semester}**` : '';
 
             return {
-                text: `🎓 **Skills Seekers Mastercourses & Crash Courses ${subjectMention}**\n\n` +
+                text: `🎓 **Skills Seekers Mastercourses & Crash Courses**${subjectMention ? ' ' + subjectMention : ''}\n\n` +
                       `Fast-track your exam prep with high-yield video sprints, fully solved tutorial sheets, and step-by-step past paper walkthroughs directly aligned to the Bennett University syllabus.\n\n` +
                       `Here are the most relevant courses:`,
                 links: links,
                 suggestedPrompts: [
+                    entities.subject ? `Show ${entities.subject} PYQs` : "Show Semester 3 PYQs",
                     "What courses does Pratham Kocher teach?",
                     "What courses does Vansh Malhotra teach?",
-                    "Browse all courses in catalog",
-                    "Show corresponding PYQs"
+                    "Browse all courses in catalog"
                 ],
                 confidence: 0.98,
                 intent: 'FIND_COURSE'
             };
         }
 
-        generatePYQResponse(entities, rankedDocs) {
+        generatePYQResponse(entities, rankedDocs, query) {
+            const totalLibCount = (this.kb.library || []).length;
+
+            // Case 1: Full PYQ Directory overview ("all pyqs", "which subjects have pyqs", etc.)
+            if (entities.isAllPYQQuery && !entities.subject && !entities.semester) {
+                const semLines = [];
+                for (let s = 1; s <= 5; s++) {
+                    const subs = this.kb.semesters?.[`sem${s}`] || [];
+                    const subSummary = subs.map(sub => {
+                        const cnt = (sub.papers || []).length;
+                        return cnt > 0 ? `${sub.name} (${cnt})` : `${sub.name} (Coming Soon)`;
+                    }).join(', ');
+                    semLines.push(`• **Semester ${s}:** ${subSummary}`);
+                }
+
+                return {
+                    text: `📚 **Complete Bennett University PYQ Directory (${totalLibCount} Verified Papers)**\n\n` +
+                          semLines.join('\n') + `\n\n` +
+                          `Ask me for any specific subject (e.g., *"DBMS pyq"*, *"DAA pyq"*, *"SML pyq"*, *"Calculus midsem 2024"*) to get instant Drive preview links!`,
+                    links: [
+                        { title: "Universal PYQ Library", subtitle: `Browse all ${totalLibCount} verified PDFs`, url: "/library", type: "nav" },
+                        { title: "Semester 1 Papers", subtitle: "Calculus, ECE, Physics, Python, DD", url: "/sem1", type: "nav" },
+                        { title: "Semester 3 Papers", subtitle: "DSA, SML, DBMS, Prob & Stat, MPCA", url: "/sem3", type: "nav" },
+                        { title: "Semester 4 Papers", subtitle: "DAA, OS, Networks, AI & ML", url: "/sem4", type: "nav" }
+                    ],
+                    suggestedPrompts: [
+                        "DBMS PYQ",
+                        "DAA PYQ",
+                        "Operating Systems PYQ",
+                        "Show Semester 5 PYQs"
+                    ],
+                    confidence: 0.98,
+                    intent: 'FIND_PYQ'
+                };
+            }
+
+            // Case 2: Subject-specific or Semester-specific PYQ lookup using unified helper
             let matchedPapers = [];
+            let note = '';
 
-            if (entities.semester && entities.subject) {
-                matchedPapers = (this.kb.library || []).filter(p =>
-                    p.semester === entities.semester &&
-                    p.subject.toLowerCase().includes(entities.subject.toLowerCase())
-                );
-            } else if (entities.subject) {
-                matchedPapers = (this.kb.library || []).filter(p =>
-                    p.subject.toLowerCase().includes(entities.subject.toLowerCase())
-                );
+            if (entities.subject) {
+                matchedPapers = this.findPapers({
+                    subject: entities.subject,
+                    semester: entities.semester,
+                    examType: entities.examType,
+                    year: entities.year
+                });
+
+                // Smart relaxation if exact combination (e.g., Sem 2 Digital Design, DBMS Midsem, specific year) had 0 hits
+                if (matchedPapers.length === 0 && (entities.semester || entities.examType || entities.year)) {
+                    const allForSubject = this.findPapers({ subject: entities.subject });
+                    if (allForSubject.length > 0) {
+                        matchedPapers = allForSubject;
+                        const filtersAsked = [
+                            entities.semester ? `Semester ${entities.semester}` : null,
+                            entities.examType || null,
+                            entities.year || null
+                        ].filter(Boolean).join(' ');
+                        note = `*(No exact **${filtersAsked}** paper uploaded yet — showing all **${allForSubject.length}** available papers for **${entities.subject}**.)*\n\n`;
+                    }
+                }
             } else if (entities.semester) {
-                matchedPapers = (this.kb.library || []).filter(p =>
-                    p.semester === entities.semester
-                );
+                matchedPapers = this.findPapers({
+                    semester: entities.semester,
+                    examType: entities.examType,
+                    year: entities.year
+                });
+                if (matchedPapers.length === 0 && (entities.examType || entities.year)) {
+                    matchedPapers = this.findPapers({ semester: entities.semester });
+                }
+            } else {
+                // Only examType or year (e.g., "midsem 2025 papers") or free-text PYQ query
+                if (entities.examType || entities.year) {
+                    matchedPapers = this.findPapers({ examType: entities.examType, year: entities.year });
+                }
+                if (matchedPapers.length === 0) {
+                    matchedPapers = rankedDocs
+                        .filter(r => r.doc.type === 'pyq')
+                        .map(r => r.doc.data);
+                }
             }
 
-            if (entities.examType && matchedPapers.length > 0) {
-                const typeFiltered = matchedPapers.filter(p => p.type.toLowerCase().includes(entities.examType.toLowerCase()));
-                if (typeFiltered.length > 0) matchedPapers = typeFiltered;
-            }
+            // Deduplicate and gather subject/course metadata
+            const seenUrls = new Set();
+            matchedPapers = matchedPapers.filter(p => {
+                if (!p.url || seenUrls.has(p.url)) return false;
+                seenUrls.add(p.url);
+                return true;
+            });
 
-            if (matchedPapers.length === 0) {
-                matchedPapers = rankedDocs
-                    .filter(r => r.doc.type === 'pyq')
-                    .map(r => r.doc.data);
+            const subjectEntries = entities.subject ? this.findSubjectEntries(entities.subject, entities.semester) : [];
+            const fallbackEntries = (entities.subject && subjectEntries.length === 0) ? this.findSubjectEntries(entities.subject) : [];
+            const activeSubjectInfo = subjectEntries[0] || fallbackEntries[0] || null;
+            const relatedCourses = entities.subject ? this.findCourses(entities.subject) : [];
+
+            // Case 3: Recognized syllabus subject with Coming Soon PYQ status (0 PDFs uploaded yet)
+            if (matchedPapers.length === 0 && entities.subject && activeSubjectInfo) {
+                const links = [];
+                if (relatedCourses.length > 0) {
+                    links.push({
+                        title: relatedCourses[0].title,
+                        subtitle: `${relatedCourses[0].educator} • Crash Course`,
+                        url: relatedCourses[0].url,
+                        type: 'course'
+                    });
+                }
+                links.push({
+                    title: `Semester ${activeSubjectInfo.semester} Hub`,
+                    subtitle: `${activeSubjectInfo.name} Syllabus & Status`,
+                    url: `/sem${activeSubjectInfo.semester}`,
+                    type: 'nav'
+                });
+                links.push({
+                    title: `Share ${entities.subject} PYQ on WhatsApp`,
+                    subtitle: "Help fellow students (+91 9588598168)",
+                    url: this.kb.platform.whatsapp,
+                    type: 'external'
+                });
+
+                return {
+                    text: `⏳ **${activeSubjectInfo.name}** (Semester ${activeSubjectInfo.semester}${activeSubjectInfo.credits ? ' • ' + activeSubjectInfo.credits : ''})\n\n` +
+                          `${activeSubjectInfo.description ? `**Topics Covered:** ${activeSubjectInfo.description}\n\n` : ''}` +
+                          `Question papers (PYQs) for **${activeSubjectInfo.name}** are currently marked **Coming Soon** — no verified PDFs have been uploaded yet.\n\n` +
+                          `If you have any past Midsem or Endsem papers for this subject, please share them via WhatsApp or the Semester ${activeSubjectInfo.semester} page!`,
+                    links: links,
+                    suggestedPrompts: [
+                        `Semester ${activeSubjectInfo.semester} subjects`,
+                        "Show all available PYQs",
+                        "How to upload a question paper?",
+                        "Universal PYQ Library"
+                    ],
+                    confidence: 0.95,
+                    intent: 'FIND_PYQ'
+                };
             }
 
             if (matchedPapers.length === 0) {
                 const semText = entities.semester ? ` for Semester ${entities.semester}` : '';
                 return {
-                    text: `I couldn't find specific individual papers${semText} matching that exact query, but all verified question papers are organized in the **Universal PYQ Library**.\n\n` +
+                    text: `I couldn't find specific individual papers${semText} matching that exact query, but all **${totalLibCount}** verified question papers across Semesters 1–5 are organized in the **Universal PYQ Library**.\n\n` +
                           `You can filter by semester, subject, and exam type with 1-click preview:`,
                     links: [
-                        { title: "Universal PYQ Library", subtitle: "Browse 39+ Papers", url: "/library", type: "nav" },
+                        { title: "Universal PYQ Library", subtitle: `Browse ${totalLibCount} Verified Papers`, url: "/library", type: "nav" },
                         { title: entities.semester ? `Semester ${entities.semester} Page` : "Home Dashboard", subtitle: "Subject Papers", url: entities.semester ? `/sem${entities.semester}` : "/home", type: "nav" }
                     ],
                     suggestedPrompts: [
+                        "All subject PYQs list",
+                        "DBMS PYQ",
                         "Show Semester 1 PYQs",
-                        "Show Semester 3 PYQs",
                         "How to upload a question paper?"
                     ],
-                    confidence: 0.70,
+                    confidence: 0.75,
                     intent: 'FIND_PYQ'
                 };
             }
 
-            const links = matchedPapers.slice(0, 6).map(p => ({
-                title: p.title || `${p.subject} ${p.type} ${p.year}`,
-                subtitle: `Sem ${p.semester} • ${p.type} ${p.year} • Google Drive PDF`,
+            // Build concise bullet list of papers found (up to 8 papers shown)
+            const displayPapers = matchedPapers.slice(0, 8);
+            const paperBullets = displayPapers.map(p =>
+                `• **${p.paperTitle || `${p.type} ${p.year}`}** (Sem ${p.semester}${p.year ? ` • ${p.year}` : ''})`
+            ).join('\n');
+
+            const links = displayPapers.map(p => ({
+                title: p.title || `${p.subject} — ${p.paperTitle || `${p.type} ${p.year}`}`,
+                subtitle: `Sem ${p.semester} • ${p.paperTitle || `${p.type} ${p.year}`} • Drive PDF`,
                 url: p.url,
                 type: 'pyq'
             }));
 
-            const targetDesc = entities.subject ? `for **${entities.subject}**` : entities.semester ? `for **Semester ${entities.semester}**` : '';
+            // Append course or semester page shortcut right after paper cards
+            if (entities.subject && relatedCourses.length > 0 && links.length < 10) {
+                links.push({
+                    title: relatedCourses[0].title,
+                    subtitle: `Crash Course • ${relatedCourses[0].educator}`,
+                    url: relatedCourses[0].url,
+                    type: 'course'
+                });
+            }
+            const primarySem = entities.semester || activeSubjectInfo?.semester || matchedPapers[0]?.semester;
+            if (primarySem && links.length < 10) {
+                links.push({
+                    title: `Semester 0${primarySem} Page`,
+                    subtitle: "View syllabus & all subject PYQs",
+                    url: `/sem${primarySem}`,
+                    type: 'nav'
+                });
+            }
+
+            const semBadge = activeSubjectInfo ? ` • Semester ${activeSubjectInfo.semester}${activeSubjectInfo.credits ? ' (' + activeSubjectInfo.credits + ')' : ''}` : '';
+            const targetDesc = entities.subject
+                ? `for **${entities.subject}**${semBadge}`
+                : entities.semester
+                    ? `for **Semester ${entities.semester}**`
+                    : (entities.examType || entities.year ? `(${[entities.examType, entities.year].filter(Boolean).join(' ')})` : '');
 
             return {
-                text: `📄 **Verified Question Papers (PYQs) ${targetDesc}:**\n\n` +
-                      `Found **${matchedPapers.length}** verified papers with direct Google Drive preview links. Click any card below to view or download:`,
+                text: `📄 **Verified Question Papers (PYQs)**${targetDesc ? ' ' + targetDesc : ''}:\n\n` +
+                      note +
+                      `${activeSubjectInfo?.description ? `*Topics: ${activeSubjectInfo.description}*\n\n` : ''}` +
+                      `Found **${matchedPapers.length}** verified paper${matchedPapers.length > 1 ? 's' : ''} with direct Google Drive previews:\n` +
+                      paperBullets + `\n\n` +
+                      `Click any card below to preview or download:`,
                 links: links,
                 suggestedPrompts: [
-                    "View all papers in PYQ Library",
                     entities.subject ? `Crash course for ${entities.subject}` : "Browse crash courses",
+                    entities.subject ? `Who teaches ${entities.subject}?` : "All subject PYQs list",
+                    "View all papers in PYQ Library",
                     "How to share question papers?"
                 ],
-                confidence: 0.98,
+                confidence: 0.99,
                 intent: 'FIND_PYQ'
             };
         }
@@ -1508,14 +1869,15 @@
 
             const subjectList = subjects.map(s => {
                 const paperCount = (s.papers || []).length;
-                return `• **${s.name}** ${s.code ? `(${s.code})` : ''}: ${paperCount} verified PYQs`;
+                const statusStr = paperCount > 0 ? `${paperCount} verified PYQ${paperCount > 1 ? 's' : ''}` : 'Coming Soon';
+                return `• **${s.name}**${s.credits ? ` (${s.credits})` : ''}: ${statusStr}`;
             }).join('\n');
 
             return {
                 text: `📚 **Semester 0${sem} Resources & Subjects:**\n\n` +
-                      `Here are the core subjects and question papers available for Semester ${sem}:\n\n` +
+                      `Here are all subjects and PYQs available for Semester ${sem}:\n\n` +
                       subjectList + "\n\n" +
-                      `You can view all question papers, tutorial sheets, and crash courses on the Semester ${sem} page.`,
+                      `Ask me for any subject's PYQs (e.g., *"${subjects[0]?.name || 'Calculus'} pyq"*) or open the Semester ${sem} hub below:`,
                 links: [
                     { title: `Semester 0${sem} Hub`, subtitle: `Full Subject List & Papers`, url: `/sem${sem}`, type: "nav" },
                     { title: "Universal PYQ Library", subtitle: "Filter by Semester " + sem, url: "/library", type: "nav" },
@@ -1523,9 +1885,9 @@
                 ],
                 suggestedPrompts: [
                     `Show Semester ${sem} PYQs`,
-                    `Courses for Semester ${sem}`,
+                    subjects[0] ? `${subjects[0].name} PYQ` : `Courses for Semester ${sem}`,
                     sem < 5 ? `What about Semester ${sem + 1}?` : "Semester 1 resources",
-                    "Universal PYQ Library"
+                    "All subject PYQs list"
                 ],
                 confidence: 0.98,
                 intent: 'SEMESTER_INFO'
@@ -1534,24 +1896,25 @@
 
         generateSubjectResponse(entities, rankedDocs) {
             const subject = entities.subject;
-            const libraryPapers = (this.kb.library || []).filter(p => p.subject.toLowerCase() === subject.toLowerCase());
-            const courses = (this.kb.courses || []).filter(c =>
-                c.title.toLowerCase().includes(subject.toLowerCase()) ||
-                c.description.toLowerCase().includes(subject.toLowerCase()) ||
-                (c.fullText && c.fullText.toLowerCase().includes(subject.toLowerCase()))
-            );
+            const subjectEntries = this.findSubjectEntries(subject, entities.semester);
+            const fallbackEntries = subjectEntries.length === 0 ? this.findSubjectEntries(subject) : [];
+            const info = subjectEntries[0] || fallbackEntries[0] || null;
 
-            let semNum = entities.semester;
-            if (!semNum) {
-                for (const [sKey, subs] of Object.entries(this.kb.semesters || {})) {
-                    if (subs.some(s => s.name.toLowerCase() === subject.toLowerCase())) {
-                        semNum = parseInt(sKey.replace('sem', ''), 10);
-                        break;
-                    }
-                }
-            }
+            const libraryPapers = this.findPapers({ subject, semester: entities.semester });
+            const allPapers = libraryPapers.length > 0 ? libraryPapers : this.findPapers({ subject });
+            const courses = this.findCourses(subject);
+            const semNum = entities.semester || info?.semester || allPapers[0]?.semester;
 
             const links = [];
+            allPapers.slice(0, 6).forEach(p => {
+                links.push({
+                    title: p.title || `${subject} — ${p.paperTitle || `${p.type} ${p.year}`}`,
+                    subtitle: `Sem ${p.semester} • ${p.paperTitle || `${p.type} ${p.year}`} • Drive PDF`,
+                    url: p.url,
+                    type: 'pyq'
+                });
+            });
+
             if (courses.length > 0) {
                 links.push({
                     title: courses[0].title,
@@ -1560,15 +1923,6 @@
                     type: 'course'
                 });
             }
-
-            libraryPapers.slice(0, 3).forEach(p => {
-                links.push({
-                    title: p.title || `${p.subject} ${p.type} ${p.year}`,
-                    subtitle: `Sem ${p.semester} • ${p.type} ${p.year} (Drive Preview)`,
-                    url: p.url,
-                    type: 'pyq'
-                });
-            });
 
             if (semNum) {
                 links.push({
@@ -1579,29 +1933,35 @@
                 });
             }
 
+            const pyqSummary = allPapers.length > 0
+                ? `**${allPapers.length}** verified paper${allPapers.length > 1 ? 's' : ''} (${allPapers.slice(0, 4).map(p => p.paperTitle || `${p.type} ${p.year}`).join(', ')}${allPapers.length > 4 ? ', ...' : ''})`
+                : `Coming Soon (no PDFs uploaded yet — feel free to share yours!)`;
+
             return {
-                text: `📖 **${subject}** ${semNum ? `(Semester ${semNum})` : ''}\n\n` +
-                      `• **Verified PYQs:** ${libraryPapers.length} previous year papers available with 1-click preview.\n` +
-                      `• **Crash Courses:** ${courses.length > 0 ? `Available by ${courses[0].educator} (${courses[0].discount || 'Discounted'})` : 'Check Skills Seekers Store for tutorials'}.\n\n` +
-                      `Here are the top resources for ${subject}:`,
+                text: `📖 **${info?.name || subject}** ${semNum ? `(Semester ${semNum}${info?.credits ? ' • ' + info.credits : ''})` : ''}\n\n` +
+                      `${info?.description ? `**Syllabus Topics:** ${info.description}\n\n` : ''}` +
+                      `• **Verified PYQs:** ${pyqSummary}\n` +
+                      `• **Crash Courses:** ${courses.length > 0 ? `Available by **${courses[0].educator}** (${courses[0].discount || 'Special Offer'})` : 'Check Skills Seekers Store for tutorials'}\n\n` +
+                      `Here are all resources for **${subject}**:`,
                 links: links,
                 suggestedPrompts: [
                     `Show all ${subject} PYQs`,
                     `Crash course for ${subject}`,
-                    semNum ? `Semester ${semNum} subjects` : "Universal PYQ Library",
-                    "Study Tools"
+                    `Who teaches ${subject}?`,
+                    semNum ? `Semester ${semNum} subjects` : "Universal PYQ Library"
                 ],
-                confidence: 0.98,
+                confidence: 0.99,
                 intent: 'SPECIFIC_SUBJECT'
             };
         }
 
         generateNavigationResponse(entities, rankedDocs, query) {
             const lower = (query || '').toLowerCase();
+            const totalLibCount = (this.kb.library || []).length;
             let target = { title: "Dashboard / Home", url: "/home", subtitle: "Main Platform Hub" };
 
             if (lower.includes('library') || lower.includes('pyq') || lower.includes('past paper')) {
-                target = { title: "Universal PYQ Library", url: "/library", subtitle: "39+ Verified Exam Papers" };
+                target = { title: "Universal PYQ Library", url: "/library", subtitle: `${totalLibCount} Verified Exam Papers` };
             } else if (lower.includes('course') || lower.includes('catalog') || lower.includes('store')) {
                 target = { title: "Course Catalog", url: "/courses", subtitle: "Crash Courses & Sprints" };
             } else if (lower.includes('tool') || lower.includes('calculator') || lower.includes('pomodoro') || lower.includes('cgpa')) {
@@ -1682,6 +2042,8 @@
 
         generateFallbackResponse(query) {
             const lower = (query || '').toLowerCase();
+            const totalPapers = (this.kb.library || []).length;
+            const totalCourses = (this.kb.courses || []).length;
             let hint = "";
             let suggestedPrompts = [
                 "Show Semester 1 PYQs",
@@ -1695,7 +2057,7 @@
                 hint = "💡 If you are looking for specific exam papers, try specifying the subject name and semester (e.g., *'Show Semester 2 Maths PYQ'*).\n\n";
                 suggestedPrompts = ["Show Semester 1 PYQs", "Show Semester 3 PYQs", "Universal PYQ Library", "Contribute a question paper"];
             } else if (lower.includes('course') || lower.includes('learn') || lower.includes('study') || lower.includes('video')) {
-                hint = "💡 Skills Seekers offers 24+ high-yield crash courses with solved tutorials. Try asking about a subject or instructor (e.g., *'Courses by Pratham Kocher'* or *'Operating Systems Sprint'*).\n\n";
+                hint = `💡 Skills Seekers offers ${totalCourses} high-yield crash courses with solved tutorials. Try asking about a subject or instructor (e.g., *'Courses by Pratham Kocher'* or *'Operating Systems Sprint'*).\n\n`;
                 suggestedPrompts = ["Browse all educators", "Explore crash courses", "1-on-1 Mentorship", "What do students say? (Reviews)"];
             } else if (lower.includes('lab') || lower.includes('code') || lower.includes('visual')) {
                 hint = "💡 We feature interactive Virtual Labs for Visual DSA and Visual OS simulations.\n\n";
@@ -1713,8 +2075,8 @@
                       `• **Virtual Labs** (Visual DSA & Visual OS)\n\n` +
                       `Try asking one of the suggestions below or reach out to student support:`,
                 links: [
-                    { title: "Universal PYQ Library", subtitle: "Browse 39+ verified papers", url: "/library", type: "nav" },
-                    { title: "Crash Courses Catalog", subtitle: "Explore 24+ courses", url: "/courses", type: "course" },
+                    { title: "Universal PYQ Library", subtitle: `Browse ${totalPapers} verified papers`, url: "/library", type: "nav" },
+                    { title: "Crash Courses Catalog", subtitle: `Explore ${totalCourses} courses`, url: "/courses", type: "course" },
                     { title: "Ask on WhatsApp", subtitle: "Direct student support", url: this.kb.platform.whatsapp, type: "external" }
                 ],
                 suggestedPrompts: suggestedPrompts,

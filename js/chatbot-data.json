@@ -18,8 +18,8 @@
     "achievements": {
       "learners": "25,000+ Happy Learners",
       "youtubeViews": "180,000+ Views on YouTube",
-      "coursesCount": "24+ Comprehensive Crash Courses & Bundles",
-      "pyqPapers": "39+ Verified Exam Papers (Semesters 1 to 5)"
+      "coursesCount": "26 Comprehensive Crash Courses & Bundles",
+      "pyqPapers": "70 Verified Exam Papers (Semesters 1 to 5)"
     }
   },
   "routes": [
@@ -31,7 +31,7 @@
     {
       "path": "/library",
       "name": "Universal PYQ Library",
-      "description": "Complete collection of 39+ verified Previous Year Questions with filters for semester, subject, and exam type."
+      "description": "Complete collection of verified Previous Year Questions across Semesters 1 to 5 with filters for semester, subject, and exam type."
     },
     {
       "path": "/courses",
@@ -61,17 +61,17 @@
     {
       "path": "/sem2",
       "name": "Semester 2 Resources",
-      "description": "Linear Algebra & ODE, OOP (Java), Discrete Mathematics, Environmental Studies."
+      "description": "Linear Algebra & ODE, OOP (Java), Discrete Mathematics, Environmental Studies, Digital Design."
     },
     {
       "path": "/sem3",
       "name": "Semester 3 Resources",
-      "description": "Data Structures (C++), Statistical Machine Learning (SML), Probability & Statistics, Data Analysis (Python), DBMS, Microprocessors & CA."
+      "description": "Data Structures (C++), Statistical Machine Learning (SML), Probability & Statistics, Data Analysis (Python), DBMS (IMS), Microprocessors & CA."
     },
     {
       "path": "/sem4",
       "name": "Semester 4 Resources",
-      "description": "Design and Analysis of Algorithms (DAA), Operating Systems, Computer Networks, Artificial Intelligence & Machine Learning (AI-ML)."
+      "description": "Design and Analysis of Algorithms (DAA), Operating Systems, Computer Networks, Artificial Intelligence & Machine Learning (AI-ML), Microprocessors."
     },
     {
       "path": "/sem5",
@@ -128,11 +128,12 @@
       "subjects": [
         "Computational Thinking & Programming (Python)",
         "Digital Design",
-        "Information Management Systems (IMS)",
+        "DBMS / Information Management Systems (IMS)",
         "Computer Networks",
         "Automata Theory and Computability (TOC)",
+        "AI & ML (Core)",
         "1-1 Live Mentorship & Placement Coaching",
-        "Java Programming"
+        "OOP (Java)"
       ],
       "bio": "Founder of Skills Seekers. Passionate educator who built the platform to empower college engineering students to excel in semester exams. Known for high-yield sprints, personal 1-to-1 coaching, and crystal-clear breakdowns of complex computer science subjects."
     },
@@ -143,10 +144,10 @@
         "Mechanics & Electromagnetism",
         "Statistical Machine Learning (SML)",
         "Probability & Statistics",
-        "Microprocessors & Computer Architecture",
-        "Operating Systems",
-        "Intelligent Model Design using AI",
-        "Artificial Intelligence & Machine Learning (AI-ML Core)"
+        "Microprocessors & Computer Architecture (MPCA)",
+        "Operating Systems (OS)",
+        "Intelligent Model Design (IMD)",
+        "AI & ML (Core)"
       ],
       "bio": "Lead educator at Skills Seekers renowned for high-yield exam sprints, deep intuitive conceptual breakdowns, solved tutorial sheets, and comprehensive end-term preparation for Bennett University students."
     },
@@ -164,7 +165,7 @@
       "role": "Educator",
       "subjects": [
         "Engineering Calculus END TERM EXPRESS",
-        "ECE END TERM EXPRESS (Tutorial Sheets + Solved PYQs)"
+        "Electronics (ECE) END TERM EXPRESS (Tutorial Sheets + Solved PYQs)"
       ],
       "bio": "Author of highly regarded Engineering Calculus and Electronics crash courses directly aligned to the Bennett University end-term exam format."
     },
@@ -172,7 +173,7 @@
       "name": "Samman Dev Dubey",
       "role": "Educator",
       "subjects": [
-        "Data Structures using C++ Mid + End-Term Express Crash Course"
+        "Data Structures (C++) Mid + End-Term Express Crash Course"
       ],
       "bio": "Specialist in C++ data structures, complexity analysis, and hands-on algorithm implementation."
     },
@@ -197,8 +198,7 @@
     {
       "title": "End-term Express Crash Course Bundle",
       "subjects": [
-        "Microprocessors",
-        "Computer Architecture",
+        "Microprocessors & CA",
         "Computer Networks",
         "Operating Systems"
       ],
@@ -210,7 +210,7 @@
       "subjects": [
         "Digital Design",
         "Linear Algebra & ODE",
-        "Discrete Mathematics (DMS)"
+        "Discrete Mathematics"
       ],
       "description": "Complete End Term Combo Package combining Digital Design, Linear Algebra, and Discrete Mathematics for full semester mastery.",
       "url": "https://www.skillsseekers.com/courses/Digital-Design--Linear-Algebra--Discrete-Mathematics-Complete-End-Term-Courses-69e07c89d5bf1319ba104a81"
@@ -219,6 +219,14 @@
   "courses": [
     {
       "title": "Engineering Calculus END TERM EXPRESS",
+      "canonicalSubject": "Engineering Calculus",
+      "subjects": [
+        "Engineering Calculus"
+      ],
+      "semesters": [
+        1
+      ],
+      "isPackage": false,
       "educator": "Khushi Goyal",
       "discount": "39% OFF",
       "price": "₹549",
@@ -228,6 +236,14 @@
     },
     {
       "title": "ECE END TERM EXPRESS (TUTORIAL SHEETS + PYQ SOLVED)",
+      "canonicalSubject": "Electronics",
+      "subjects": [
+        "Electronics"
+      ],
+      "semesters": [
+        1
+      ],
+      "isPackage": false,
       "educator": "Khushi Goyal",
       "discount": "35% OFF",
       "price": "₹549",
@@ -237,6 +253,14 @@
     },
     {
       "title": "Computational Thinking & Programming (Python) — End Term Express | Theory + Fully Solved Tutorials",
+      "canonicalSubject": "Computational Thinking",
+      "subjects": [
+        "Computational Thinking"
+      ],
+      "semesters": [
+        1
+      ],
+      "isPackage": false,
       "educator": "Hrehaan Ahuja",
       "discount": "50% OFF",
       "price": "₹549",
@@ -246,6 +270,14 @@
     },
     {
       "title": "Python Mid + End-Sem Sprint (Theory + Solved Tutorial Sheets) || By Pratham Kocher",
+      "canonicalSubject": "Computational Thinking",
+      "subjects": [
+        "Computational Thinking"
+      ],
+      "semesters": [
+        1
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "60% OFF",
       "price": "₹399",
@@ -255,6 +287,14 @@
     },
     {
       "title": "Mechanics & Electromagnetism End-Term Express Crash Course",
+      "canonicalSubject": "Mechanics & Electromagnetism",
+      "subjects": [
+        "Mechanics & Electromagnetism"
+      ],
+      "semesters": [
+        1
+      ],
+      "isPackage": false,
       "educator": "Vansh Malhotra",
       "discount": "31% OFF",
       "price": "₹549",
@@ -264,6 +304,14 @@
     },
     {
       "title": "Digital Design (Lectures + Notes + Question Banks + PYP) (Mid + End Term)",
+      "canonicalSubject": "Digital Design",
+      "subjects": [
+        "Digital Design"
+      ],
+      "semesters": [
+        1
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "45% OFF",
       "price": "₹549",
@@ -273,6 +321,16 @@
     },
     {
       "title": "(Digital Design + Linear Algebra + DMS) Complete End Term Package",
+      "canonicalSubject": "Combo Bundle",
+      "subjects": [
+        "Digital Design",
+        "Linear Algebra & ODE",
+        "Discrete Mathematics"
+      ],
+      "semesters": [
+        2
+      ],
+      "isPackage": true,
       "educator": "Skills Seekers Faculty",
       "discount": "12% OFF",
       "price": "₹1149",
@@ -282,6 +340,14 @@
     },
     {
       "title": "Data Structures using C++ Mid + End-Term Express Crash Course",
+      "canonicalSubject": "Data Structures (C++)",
+      "subjects": [
+        "Data Structures (C++)"
+      ],
+      "semesters": [
+        3
+      ],
+      "isPackage": false,
       "educator": "Samman Dev Dubey",
       "discount": "27% OFF",
       "price": "₹549",
@@ -291,6 +357,14 @@
     },
     {
       "title": "Statistical Machine Learning (Mid + End) Term Express Crash Course",
+      "canonicalSubject": "Statistical Machine Learning (SML)",
+      "subjects": [
+        "Statistical Machine Learning (SML)"
+      ],
+      "semesters": [
+        3
+      ],
+      "isPackage": false,
       "educator": "Vansh Malhotra",
       "discount": "8% OFF",
       "price": "₹549",
@@ -300,6 +374,14 @@
     },
     {
       "title": "Probability & Statistics End-Term Express Crash Course",
+      "canonicalSubject": "Probability & Statistics",
+      "subjects": [
+        "Probability & Statistics"
+      ],
+      "semesters": [
+        3
+      ],
+      "isPackage": false,
       "educator": "Vansh Malhotra",
       "discount": "31% OFF",
       "price": "₹549",
@@ -309,6 +391,14 @@
     },
     {
       "title": "Data Analysis Using Python End -Term Course 2026",
+      "canonicalSubject": "Data Analysis (Python)",
+      "subjects": [
+        "Data Analysis (Python)"
+      ],
+      "semesters": [
+        3
+      ],
+      "isPackage": false,
       "educator": "Pranay Wadhwa",
       "discount": "50% OFF",
       "price": "₹499",
@@ -318,6 +408,14 @@
     },
     {
       "title": "IMS END-Sem Course (Theory + Questions Practice + PYQs)",
+      "canonicalSubject": "DBMS",
+      "subjects": [
+        "DBMS"
+      ],
+      "semesters": [
+        3
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "45% OFF",
       "price": "₹549",
@@ -327,6 +425,14 @@
     },
     {
       "title": "IMS Mid-Sem Course (Theory + Questions Practice)",
+      "canonicalSubject": "DBMS",
+      "subjects": [
+        "DBMS"
+      ],
+      "semesters": [
+        3
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "40% OFF",
       "price": "₹299",
@@ -336,6 +442,15 @@
     },
     {
       "title": "Microprocessors & Computer Architecture (Mid+End) Term Express Crash Course",
+      "canonicalSubject": "Microprocessors & CA",
+      "subjects": [
+        "Microprocessors & CA"
+      ],
+      "semesters": [
+        3,
+        4
+      ],
+      "isPackage": false,
       "educator": "Vansh Malhotra",
       "discount": "21% OFF",
       "price": "₹549",
@@ -345,6 +460,14 @@
     },
     {
       "title": "Design and Analysis of Algorithms - FULL SYLLABUS - Placement & Exam Prep",
+      "canonicalSubject": "DAA (Algorithms)",
+      "subjects": [
+        "DAA (Algorithms)"
+      ],
+      "semesters": [
+        4
+      ],
+      "isPackage": false,
       "educator": "Hrehaan Ahuja",
       "discount": "69% OFF",
       "price": "₹499",
@@ -354,6 +477,14 @@
     },
     {
       "title": "Operating Systems (Mid + End) Term Express Crash Course",
+      "canonicalSubject": "Operating Systems",
+      "subjects": [
+        "Operating Systems"
+      ],
+      "semesters": [
+        4
+      ],
+      "isPackage": false,
       "educator": "Vansh Malhotra",
       "discount": "27% OFF",
       "price": "₹549",
@@ -363,6 +494,14 @@
     },
     {
       "title": "Computer Network Mid + End-Sem Course (Theory + Practice + PYQs)",
+      "canonicalSubject": "Computer Networks",
+      "subjects": [
+        "Computer Networks"
+      ],
+      "semesters": [
+        4
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "50% OFF",
       "price": "₹499",
@@ -372,7 +511,16 @@
     },
     {
       "title": "Artificial Intelligence & Machine Learning (AI-ML) (Core) End Term Express Crash Course",
-      "educator": "Pratham Kocher",
+      "canonicalSubject": "AI & ML",
+      "subjects": [
+        "AI & ML"
+      ],
+      "semesters": [
+        5,
+        4
+      ],
+      "isPackage": false,
+      "educator": "Pratham Kocher & Vansh Malhotra",
       "discount": "31% OFF",
       "price": "₹549",
       "description": "Comprehensive BU syllabus crash course covering search strategies, supervised/unsupervised machine learning, deep neural nets, loss functions, and verified end-term question papers.",
@@ -381,6 +529,15 @@
     },
     {
       "title": "Intelligent Model Design using AI (Mid + End) Term Express Crash Course",
+      "canonicalSubject": "Intelligent Model Design",
+      "subjects": [
+        "Intelligent Model Design"
+      ],
+      "semesters": [
+        5,
+        4
+      ],
+      "isPackage": false,
       "educator": "Vansh Malhotra",
       "discount": "8% OFF",
       "price": "₹549",
@@ -390,6 +547,15 @@
     },
     {
       "title": "CSET 312 - AI/ML End SEM Prep",
+      "canonicalSubject": "AI & ML",
+      "subjects": [
+        "AI & ML"
+      ],
+      "semesters": [
+        5,
+        4
+      ],
+      "isPackage": false,
       "educator": "Vinayak Gupta",
       "discount": "17% OFF",
       "price": "₹499",
@@ -399,6 +565,14 @@
     },
     {
       "title": "Automata Theory and Computability (Mid + End-Sem Sprint)",
+      "canonicalSubject": "Automata / Theory of Computation",
+      "subjects": [
+        "Automata / Theory of Computation"
+      ],
+      "semesters": [
+        5
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "45% OFF",
       "price": "₹549",
@@ -408,6 +582,14 @@
     },
     {
       "title": "Automata Theory and Computability (Mid-Sem Sprint)",
+      "canonicalSubject": "Automata / Theory of Computation",
+      "subjects": [
+        "Automata / Theory of Computation"
+      ],
+      "semesters": [
+        5
+      ],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "40% OFF",
       "price": "₹299",
@@ -417,6 +599,12 @@
     },
     {
       "title": "1 - 1 Live Class (Personal Mentorship & Doubt Clearing)",
+      "canonicalSubject": "1 - 1 Live Class (Personal Mentorship & Doubt Clearing)",
+      "subjects": [
+        "1 - 1 Live Class (Personal Mentorship & Doubt Clearing)"
+      ],
+      "semesters": [],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "25% OFF",
       "price": "₹14999",
@@ -426,345 +614,1069 @@
     },
     {
       "title": "One to One Live Class (Academic & Placement Coaching)",
+      "canonicalSubject": "One to One Live Class (Academic & Placement Coaching)",
+      "subjects": [
+        "One to One Live Class (Academic & Placement Coaching)"
+      ],
+      "semesters": [],
+      "isPackage": false,
       "educator": "Pratham Kocher",
       "discount": "25% OFF",
       "price": "₹14999",
       "description": "Premium interactive mentorship session with expert instructors for in-depth mastery of core engineering subjects, placement readiness, and guaranteed conceptual clarity.",
       "url": "https://www.skillsseekers.com/courses/One-to-One-Live-Class-698449f7522d9c0cbe02e9be",
       "fullText": "25% OFF Pratham Kocher One to One Live Class (Academic & Placement Coaching) Premium interactive mentorship session with expert instructors for in-depth mastery of core engineering subjects, placement readiness, and guaranteed conceptual clarity. Live 1-on-1 Interactive Tutoring Comprehensive Subject Review Tailored Strategy & Feedback ₹14999 ₹19999 Enroll"
+    },
+    {
+      "title": "Linear Algebra END-SEM Theory + Tutorial Sheets + PYQ",
+      "canonicalSubject": "Linear Algebra & ODE",
+      "subjects": [
+        "Linear Algebra & ODE"
+      ],
+      "semesters": [
+        2
+      ],
+      "isPackage": false,
+      "educator": "Skills Seekers Faculty",
+      "discount": "Special Offer",
+      "price": "",
+      "description": "Complete BU syllabus coverage for Linear Algebra & ODE (Vector spaces, matrix decompositions, eigenvalues, and ordinary differential equations.) with theory lectures, tutorial sheets, and solved PYQs.",
+      "url": "https://www.skillsseekers.com/courses/Linear-Algebra-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2025-69c506916b8037fc81a925f6",
+      "fullText": "Linear Algebra END-SEM Theory + Tutorial Sheets + PYQ Linear Algebra & ODE Linear Algebra & ODE Vector spaces, matrix decompositions, eigenvalues, and ordinary differential equations. Skills Seekers Faculty"
+    },
+    {
+      "title": "Discrete Mathematics END-SEM Theory + Tutorial Sheets + PYQ",
+      "canonicalSubject": "Discrete Mathematics",
+      "subjects": [
+        "Discrete Mathematics"
+      ],
+      "semesters": [
+        2
+      ],
+      "isPackage": false,
+      "educator": "Skills Seekers Faculty",
+      "discount": "Special Offer",
+      "price": "",
+      "description": "Complete BU syllabus coverage for Discrete Mathematics (Set theory, formal propositional logic, graph theory, combinatorics, and recurrence relations.) with theory lectures, tutorial sheets, and solved PYQs.",
+      "url": "https://www.skillsseekers.com/courses/Discrete-Mathematics-END-SEM-THEORY-LECTURE-TUTORIAL-SHEETS--PYQ-2026-69c50b274d4eacd62847e3ad",
+      "fullText": "Discrete Mathematics END-SEM Theory + Tutorial Sheets + PYQ Discrete Mathematics Discrete Mathematics Set theory, formal propositional logic, graph theory, combinatorics, and recurrence relations. Skills Seekers Faculty"
     }
   ],
   "library": [
     {
-      "subject": "Engineering Calculus",
+      "subject": "Computational Thinking",
+      "displaySubject": "Computational Thinking",
       "semester": 1,
-      "type": "Midsem",
-      "year": "2024",
-      "title": "Midsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1G7kTYB2ltfbacOX7oZ2SONjCZHeRx8Ic/view?usp=drivesdk"
-    },
-    {
-      "subject": "Engineering Calculus",
-      "semester": 1,
+      "semesters": [
+        1
+      ],
       "type": "Endsem",
       "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1DzjJG5-6xhz7j9cLQQnK8rUSUXU1N_7q/view?usp=drivesdk"
-    },
-    {
-      "subject": "Engineering Calculus",
-      "semester": 1,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1Xe82-7_5BJOEz4NdQSGBqHQJJVtHjCxp/view?usp=sharing"
-    },
-    {
-      "subject": "Electronics",
-      "semester": 1,
-      "type": "Midsem",
-      "year": "2024",
-      "title": "Midsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1Ml3dKyHPQBlWB3jP4qx6EGES0qBx-IyF/view?usp=drivesdk"
-    },
-    {
-      "subject": "Electronics",
-      "semester": 1,
-      "type": "Endsem",
-      "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1CM6ttww-zcjEqPNeqMOOFF3Bj7V7XYDt/view?usp=drivesdk"
-    },
-    {
-      "subject": "Mechanics & Electromagnetism",
-      "semester": 1,
-      "type": "Midsem",
-      "year": "2024",
-      "title": "Midsem 2024 (Odd Sem)",
-      "url": "https://drive.google.com/file/d/1MgC1o9PMD7c1GwXKlLSHMdzEWkgmALrg/view?usp=sharing"
-    },
-    {
-      "subject": "Mechanics & Electromagnetism",
-      "semester": 1,
-      "type": "Endsem",
-      "year": "2024",
-      "title": "Endsem 2024 (Odd Sem)",
-      "url": "https://drive.google.com/file/d/1buhBRDH5djgNx3tQII4sqC9I4GnopLUq/view?usp=drivesdk"
-    },
-    {
-      "subject": "Mechanics & Electromagnetism",
-      "semester": 1,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem 2025 (Odd Sem)",
-      "url": "https://drive.google.com/file/d/1UWf5gaybZCcKtpskBGFPwIugUyA9boDd/view?usp=sharing"
+      "title": "Computational Thinking — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1Cbq7R0_-KIqCVwqC4ZqorlfBo80XLct8/view?usp=sharing",
+      "driveId": "1Cbq7R0_-KIqCVwqC4ZqorlfBo80XLct8"
     },
     {
       "subject": "Computational Thinking",
+      "displaySubject": "Computational Thinking",
       "semester": 1,
+      "semesters": [
+        1
+      ],
       "type": "Midsem",
       "year": "2024",
-      "title": "Midsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1Pke5DVHy7qIniFMi55JAy6AmK8eWEU4E/view?usp=drive_link"
+      "title": "Computational Thinking — Midsem 2024",
+      "paperTitle": "Midsem 2024",
+      "url": "https://drive.google.com/file/d/1Pke5DVHy7qIniFMi55JAy6AmK8eWEU4E/view?usp=drive_link",
+      "driveId": "1Pke5DVHy7qIniFMi55JAy6AmK8eWEU4E"
     },
     {
       "subject": "Computational Thinking",
+      "displaySubject": "Computational Thinking",
       "semester": 1,
-      "type": "Endsem",
-      "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1Cbq7R0_-KIqCVwqC4ZqorlfBo80XLct8/view?usp=sharing"
-    },
-    {
-      "subject": "Linear Algebra & ODE",
-      "semester": 2,
-      "type": "Midsem",
-      "year": "2025",
-      "title": "Midsem Examination 2025",
-      "url": "https://drive.google.com/file/d/15CNwqP5J05qldXExn55SuVtj2VbrcnyI/view?usp=sharing"
-    },
-    {
-      "subject": "Linear Algebra & ODE",
-      "semester": 2,
+      "semesters": [
+        1
+      ],
       "type": "Endsem",
       "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1CmXBWHDVf-Op_GciNYj25-azKBALmszM/view?usp=sharing"
-    },
-    {
-      "subject": "OOP (Java)",
-      "semester": 2,
-      "type": "Endsem",
-      "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1oJvzswQH_DC-DSmRapfQKke3hc-b3lW0/view?usp=sharing"
-    },
-    {
-      "subject": "OOP (Java)",
-      "semester": 2,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/10KvtV3E2rOIo6W7nUgUyaQDYm2kq0tcF/view?usp=sharing"
-    },
-    {
-      "subject": "Discrete Mathematics",
-      "semester": 2,
-      "type": "Midsem",
-      "year": "2025",
-      "title": "Midsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1r1XboDX46bJAZzneDSZvVb9Fry_MWQPm/view?usp=sharing"
-    },
-    {
-      "subject": "Discrete Mathematics",
-      "semester": 2,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1_gly7-DpAawLIXP2ww8JIzREj_Nivs4_/view?usp=sharing"
+      "title": "Computational Thinking — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1HuFUwJ8cvv1Kp_VnCw-ikW01U8XKj0GE/view?usp=sharing",
+      "driveId": "1HuFUwJ8cvv1Kp_VnCw-ikW01U8XKj0GE"
     },
     {
       "subject": "Digital Design",
-      "semester": 2,
+      "displaySubject": "Digital Design",
+      "semester": 1,
+      "semesters": [
+        1,
+        2
+      ],
       "type": "Endsem",
       "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1DKzexsBewTV76jxaXU37a9OuSk8idAAz/view?usp=sharing"
+      "title": "Digital Design — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1DKzexsBewTV76jxaXU37a9OuSk8idAAz/view?usp=sharing",
+      "driveId": "1DKzexsBewTV76jxaXU37a9OuSk8idAAz"
+    },
+    {
+      "subject": "Digital Design",
+      "displaySubject": "Digital Design",
+      "semester": 1,
+      "semesters": [
+        1,
+        2
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Digital Design — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1vjMd4MCW-zTtIYiHhhWVeyhMEd6Yvj-T/view?usp=sharing",
+      "driveId": "1vjMd4MCW-zTtIYiHhhWVeyhMEd6Yvj-T"
+    },
+    {
+      "subject": "Digital Design",
+      "displaySubject": "Digital Design",
+      "semester": 1,
+      "semesters": [
+        1,
+        2
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "Digital Design — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1n6-tERlti9IYtHL4dswtZOv9tGGFg2D4/view?usp=sharing",
+      "driveId": "1n6-tERlti9IYtHL4dswtZOv9tGGFg2D4"
+    },
+    {
+      "subject": "Electronics",
+      "displaySubject": "Electronics",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "Electronics — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1CM6ttww-zcjEqPNeqMOOFF3Bj7V7XYDt/view?usp=drivesdk",
+      "driveId": "1CM6ttww-zcjEqPNeqMOOFF3Bj7V7XYDt"
+    },
+    {
+      "subject": "Electronics",
+      "displaySubject": "Electronics",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Midsem",
+      "year": "2024",
+      "title": "Electronics — Midsem 2024",
+      "paperTitle": "Midsem 2024",
+      "url": "https://drive.google.com/file/d/1Ml3dKyHPQBlWB3jP4qx6EGES0qBx-IyF/view?usp=drivesdk",
+      "driveId": "1Ml3dKyHPQBlWB3jP4qx6EGES0qBx-IyF"
+    },
+    {
+      "subject": "Engineering Calculus",
+      "displaySubject": "Engineering Calculus",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "Engineering Calculus — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1DzjJG5-6xhz7j9cLQQnK8rUSUXU1N_7q/view?usp=drivesdk",
+      "driveId": "1DzjJG5-6xhz7j9cLQQnK8rUSUXU1N_7q"
+    },
+    {
+      "subject": "Engineering Calculus",
+      "displaySubject": "Engineering Calculus",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Midsem",
+      "year": "2024",
+      "title": "Engineering Calculus — Midsem 2024",
+      "paperTitle": "Midsem 2024",
+      "url": "https://drive.google.com/file/d/1G7kTYB2ltfbacOX7oZ2SONjCZHeRx8Ic/view?usp=drivesdk",
+      "driveId": "1G7kTYB2ltfbacOX7oZ2SONjCZHeRx8Ic"
+    },
+    {
+      "subject": "Engineering Calculus",
+      "displaySubject": "Engineering Calculus",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Engineering Calculus — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1Xe82-7_5BJOEz4NdQSGBqHQJJVtHjCxp/view?usp=sharing",
+      "driveId": "1Xe82-7_5BJOEz4NdQSGBqHQJJVtHjCxp"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "Mechanics & Electromagnetism — Endsem 2024 (Odd Sem)",
+      "paperTitle": "Endsem 2024 (Odd Sem)",
+      "url": "https://drive.google.com/file/d/1buhBRDH5djgNx3tQII4sqC9I4GnopLUq/view?usp=drivesdk",
+      "driveId": "1buhBRDH5djgNx3tQII4sqC9I4GnopLUq"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Midsem",
+      "year": "2024",
+      "title": "Mechanics & Electromagnetism — Midsem 2024 (Odd Sem)",
+      "paperTitle": "Midsem 2024 (Odd Sem)",
+      "url": "https://drive.google.com/file/d/1MgC1o9PMD7c1GwXKlLSHMdzEWkgmALrg/view?usp=sharing",
+      "driveId": "1MgC1o9PMD7c1GwXKlLSHMdzEWkgmALrg"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Mechanics & Electromagnetism — End Sem 2025 (Even Sem)",
+      "paperTitle": "End Sem 2025 (Even Sem)",
+      "url": "https://drive.google.com/file/d/1rprKwmB0OCkahjtfK9d76bT1uzVyt4O_/view?usp=sharing",
+      "driveId": "1rprKwmB0OCkahjtfK9d76bT1uzVyt4O_"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Mechanics & Electromagnetism — Endsem 2025 (Odd Sem)",
+      "paperTitle": "Endsem 2025 (Odd Sem)",
+      "url": "https://drive.google.com/file/d/1UWf5gaybZCcKtpskBGFPwIugUyA9boDd/view?usp=sharing",
+      "driveId": "1UWf5gaybZCcKtpskBGFPwIugUyA9boDd"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Mechanics & Electromagnetism — Mid Sem 2025 (Even Sem)",
+      "paperTitle": "Mid Sem 2025 (Even Sem)",
+      "url": "https://drive.google.com/file/d/1QOClSCi5Om52XD_q0PGB4hIw6fLEb1L3/view?usp=sharing",
+      "driveId": "1QOClSCi5Om52XD_q0PGB4hIw6fLEb1L3"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Mechanics & Electromagnetism — Midsem 2025 (Odd Sem)",
+      "paperTitle": "Midsem 2025 (Odd Sem)",
+      "url": "https://drive.google.com/file/d/1Id_Ekv-DUxUG024g-MkrLRubGjaime2Q/view?usp=sharing",
+      "driveId": "1Id_Ekv-DUxUG024g-MkrLRubGjaime2Q"
+    },
+    {
+      "subject": "Mechanics & Electromagnetism",
+      "displaySubject": "Mechanics & Electromagnetism",
+      "semester": 1,
+      "semesters": [
+        1
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "Mechanics & Electromagnetism — End Sem 2026 (Even Sem)",
+      "paperTitle": "End Sem 2026 (Even Sem)",
+      "url": "https://drive.google.com/file/d/1Q7eYBs1Ho59uLGFvKchWIQ1ubDUHfk6d/view?usp=sharing",
+      "driveId": "1Q7eYBs1Ho59uLGFvKchWIQ1ubDUHfk6d"
+    },
+    {
+      "subject": "Discrete Mathematics",
+      "displaySubject": "Discrete Mathematics",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Discrete Mathematics — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1_gly7-DpAawLIXP2ww8JIzREj_Nivs4_/view?usp=sharing",
+      "driveId": "1_gly7-DpAawLIXP2ww8JIzREj_Nivs4_"
+    },
+    {
+      "subject": "Discrete Mathematics",
+      "displaySubject": "Discrete Mathematics",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Discrete Mathematics — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1r1XboDX46bJAZzneDSZvVb9Fry_MWQPm/view?usp=sharing",
+      "driveId": "1r1XboDX46bJAZzneDSZvVb9Fry_MWQPm"
+    },
+    {
+      "subject": "Discrete Mathematics",
+      "displaySubject": "Discrete Mathematics",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "Discrete Mathematics — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1Gqj5Otz3WURQLrSRG2DMsv2E4cD3JbfE/view?usp=sharing",
+      "driveId": "1Gqj5Otz3WURQLrSRG2DMsv2E4cD3JbfE"
     },
     {
       "subject": "Environment",
+      "displaySubject": "Environment",
       "semester": 2,
+      "semesters": [
+        2
+      ],
       "type": "Endsem",
       "year": "2025",
-      "title": "Endsem 2025 (Even Sem)",
-      "url": "https://drive.google.com/file/d/1UzcSvKVfFLgzh5JMG4H1oVvKV3aCkoGd/view?usp=sharing"
+      "title": "Environment — Endsem 2025 (Even Sem)",
+      "paperTitle": "Endsem 2025 (Even Sem)",
+      "url": "https://drive.google.com/file/d/1UzcSvKVfFLgzh5JMG4H1oVvKV3aCkoGd/view?usp=sharing",
+      "driveId": "1UzcSvKVfFLgzh5JMG4H1oVvKV3aCkoGd"
+    },
+    {
+      "subject": "Linear Algebra & ODE",
+      "displaySubject": "Linear Algebra & ODE",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Linear Algebra & ODE — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1CmXBWHDVf-Op_GciNYj25-azKBALmszM/view?usp=sharing",
+      "driveId": "1CmXBWHDVf-Op_GciNYj25-azKBALmszM"
+    },
+    {
+      "subject": "Linear Algebra & ODE",
+      "displaySubject": "Linear Algebra & ODE",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Linear Algebra & ODE — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/15CNwqP5J05qldXExn55SuVtj2VbrcnyI/view?usp=sharing",
+      "driveId": "15CNwqP5J05qldXExn55SuVtj2VbrcnyI"
+    },
+    {
+      "subject": "Linear Algebra & ODE",
+      "displaySubject": "Linear Algebra & ODE",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "Linear Algebra & ODE — Endsem 2026",
+      "paperTitle": "Endsem 2026",
+      "url": "https://drive.google.com/file/d/1k2jCLTIFOwLTY5zr-qyLH_orGYshrA7k/view?usp=sharing",
+      "driveId": "1k2jCLTIFOwLTY5zr-qyLH_orGYshrA7k"
+    },
+    {
+      "subject": "OOP (Java)",
+      "displaySubject": "OOP (Java)",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2022",
+      "title": "OOP (Java) — Endsem 2022",
+      "paperTitle": "Endsem 2022",
+      "url": "https://drive.google.com/file/d/1G5LglKzccvjlnjF2Ny4rzJrDsvkHPL3d/view?usp=sharing",
+      "driveId": "1G5LglKzccvjlnjF2Ny4rzJrDsvkHPL3d"
+    },
+    {
+      "subject": "OOP (Java)",
+      "displaySubject": "OOP (Java)",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "OOP (Java) — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1oJvzswQH_DC-DSmRapfQKke3hc-b3lW0/view?usp=sharing",
+      "driveId": "1oJvzswQH_DC-DSmRapfQKke3hc-b3lW0"
+    },
+    {
+      "subject": "OOP (Java)",
+      "displaySubject": "OOP (Java)",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Midsem",
+      "year": "2024",
+      "title": "OOP (Java) — Midsem 2024",
+      "paperTitle": "Midsem 2024",
+      "url": "https://drive.google.com/file/d/1q4Obylb2K5HdqMWKiHBVoQyWuv4GUAc4/view?usp=sharing",
+      "driveId": "1q4Obylb2K5HdqMWKiHBVoQyWuv4GUAc4"
+    },
+    {
+      "subject": "OOP (Java)",
+      "displaySubject": "OOP (Java)",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "OOP (Java) — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/10KvtV3E2rOIo6W7nUgUyaQDYm2kq0tcF/view?usp=sharing",
+      "driveId": "10KvtV3E2rOIo6W7nUgUyaQDYm2kq0tcF"
+    },
+    {
+      "subject": "OOP (Java)",
+      "displaySubject": "OOP (Java)",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "OOP (Java) — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1yTouWtGyNqnBKW-UqJQvLyXNeBF1HIpM/view?usp=sharing",
+      "driveId": "1yTouWtGyNqnBKW-UqJQvLyXNeBF1HIpM"
+    },
+    {
+      "subject": "OOP (Java)",
+      "displaySubject": "OOP (Java)",
+      "semester": 2,
+      "semesters": [
+        2
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "OOP (Java) — Endsem 2026",
+      "paperTitle": "Endsem 2026",
+      "url": "https://drive.google.com/file/d/1XDh1JohF5X1p5J9UrjMbdIZbchmtOsBz/view?usp=sharing",
+      "driveId": "1XDh1JohF5X1p5J9UrjMbdIZbchmtOsBz"
+    },
+    {
+      "subject": "DBMS",
+      "displaySubject": "DBMS",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2023",
+      "title": "DBMS — Endsem 2023",
+      "paperTitle": "Endsem 2023",
+      "url": "https://drive.google.com/file/d/1FwAqbJQHQqxKSe_ECr22tGqrdbnml7ZH/view?usp=sharing",
+      "driveId": "1FwAqbJQHQqxKSe_ECr22tGqrdbnml7ZH"
+    },
+    {
+      "subject": "DBMS",
+      "displaySubject": "DBMS",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "DBMS — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1fTS5rRy1XAGfM3PlvxqTDTN1hLT7vj_s/view?usp=sharing",
+      "driveId": "1fTS5rRy1XAGfM3PlvxqTDTN1hLT7vj_s"
+    },
+    {
+      "subject": "DBMS",
+      "displaySubject": "DBMS",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "DBMS — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1SrKFLVaqVcxe1XtE9P369_AfdO8v6WiN/view?usp=sharing",
+      "driveId": "1SrKFLVaqVcxe1XtE9P369_AfdO8v6WiN"
+    },
+    {
+      "subject": "Data Analysis (Python)",
+      "displaySubject": "Data Analysis (Python)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "Data Analysis (Python) — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1lFRhQCmM50S-yMpFPa_nNH995EJtnrVf/view?usp=sharing",
+      "driveId": "1lFRhQCmM50S-yMpFPa_nNH995EJtnrVf"
     },
     {
       "subject": "Data Structures (C++)",
+      "displaySubject": "Data Structures (C++)",
       "semester": 3,
-      "type": "Midsem",
-      "year": "2024",
-      "title": "Midsem Examination 2024",
-      "url": "https://drive.google.com/file/d/10rEneAEOVP-wKHaIU_Pk0G0RWDMW6p6N/view?usp=sharing"
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2023",
+      "title": "Data Structures (C++) — Endsem 2023",
+      "paperTitle": "Endsem 2023",
+      "url": "https://drive.google.com/file/d/1uCOQrQEfoHrUS3B5taPsQ4Tw_noEEx7t/view?usp=sharing",
+      "driveId": "1uCOQrQEfoHrUS3B5taPsQ4Tw_noEEx7t"
     },
     {
       "subject": "Data Structures (C++)",
+      "displaySubject": "Data Structures (C++)",
       "semester": 3,
+      "semesters": [
+        3
+      ],
       "type": "Endsem",
       "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/11Eap3PBtVLqDbGxg5vnMG6DGrHCHfx7X/view?usp=sharing"
+      "title": "Data Structures (C++) — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/11Eap3PBtVLqDbGxg5vnMG6DGrHCHfx7X/view?usp=sharing",
+      "driveId": "11Eap3PBtVLqDbGxg5vnMG6DGrHCHfx7X"
     },
     {
       "subject": "Data Structures (C++)",
+      "displaySubject": "Data Structures (C++)",
       "semester": 3,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1L7wssCE1dwLPfqUROTE9MMkDVzSjeAiJ/view?usp=sharing"
-    },
-    {
-      "subject": "SML (Machine Learning)",
-      "semester": 3,
+      "semesters": [
+        3
+      ],
       "type": "Midsem",
       "year": "2024",
-      "title": "Midsem Examination 2024",
-      "url": "https://drive.google.com/file/d/11A2Wtm_Bwli_8ovEcMbcLcJYMebwkBfc/view?usp=sharing"
+      "title": "Data Structures (C++) — Midsem 2024",
+      "paperTitle": "Midsem 2024",
+      "url": "https://drive.google.com/file/d/10rEneAEOVP-wKHaIU_Pk0G0RWDMW6p6N/view?usp=sharing",
+      "driveId": "10rEneAEOVP-wKHaIU_Pk0G0RWDMW6p6N"
     },
     {
-      "subject": "SML (Machine Learning)",
+      "subject": "Data Structures (C++)",
+      "displaySubject": "Data Structures (C++)",
       "semester": 3,
+      "semesters": [
+        3
+      ],
       "type": "Endsem",
       "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1Rrh0qLWPu2QzioSMjUWieqLb3G7arwqt/view?usp=sharing"
+      "title": "Data Structures (C++) — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1L7wssCE1dwLPfqUROTE9MMkDVzSjeAiJ/view?usp=sharing",
+      "driveId": "1L7wssCE1dwLPfqUROTE9MMkDVzSjeAiJ"
     },
     {
-      "subject": "Design & Analysis of Algorithms",
-      "semester": 4,
-      "type": "Endsem",
-      "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1PVAItD43AyObK3AiawS81vTaHfG3esI3/view?usp=sharing"
-    },
-    {
-      "subject": "Design & Analysis of Algorithms",
-      "semester": 4,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1UAHDHrSzsIjdrEqXJ7Hgb2Vm1zisqil_/view?usp=sharing"
-    },
-    {
-      "subject": "Operating Systems",
-      "semester": 4,
+      "subject": "Data Structures (C++)",
+      "displaySubject": "Data Structures (C++)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
       "type": "Midsem",
       "year": "2025",
-      "title": "Midsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1hBUt2Q60kvYlU4pjlaLTNVkYKkYu-ES4/view?usp=sharing"
+      "title": "Data Structures (C++) — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1-O748iAfoXZ2_-oXyok-nlm6Ftbz_RBS/view?usp=sharing",
+      "driveId": "1-O748iAfoXZ2_-oXyok-nlm6Ftbz_RBS"
     },
     {
-      "subject": "Operating Systems",
-      "semester": 4,
+      "subject": "Microprocessors & CA",
+      "displaySubject": "Microprocessors & CA",
+      "semester": 3,
+      "semesters": [
+        3,
+        4
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "Microprocessors & CA — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1LWsyMtQCvoksa-k-39JomyNYNapLJp73/view?usp=sharing",
+      "driveId": "1LWsyMtQCvoksa-k-39JomyNYNapLJp73"
+    },
+    {
+      "subject": "Probability & Statistics",
+      "displaySubject": "Probability & Statistics",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2023",
+      "title": "Probability & Statistics — Endsem 2023",
+      "paperTitle": "Endsem 2023",
+      "url": "https://drive.google.com/file/d/1Oh2HJtIoFri-A0wyicq5wA4yG5S8G8x6/view?usp=sharing",
+      "driveId": "1Oh2HJtIoFri-A0wyicq5wA4yG5S8G8x6"
+    },
+    {
+      "subject": "Probability & Statistics",
+      "displaySubject": "Probability & Statistics",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
       "type": "Endsem",
       "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1TZtoSwUg7jL0wZ3OFNHMCR6SZx9D9zxS/view?usp=sharing"
+      "title": "Probability & Statistics — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1imLBE8EBO7L_uJwY9NDYFY7j2gjhWU3C/view?usp=sharing",
+      "driveId": "1imLBE8EBO7L_uJwY9NDYFY7j2gjhWU3C"
+    },
+    {
+      "subject": "Probability & Statistics",
+      "displaySubject": "Probability & Statistics",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Probability & Statistics — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1U8e7TExeu7m0b3Dg7GPfTwjNQeEB0U_U/view?usp=sharing",
+      "driveId": "1U8e7TExeu7m0b3Dg7GPfTwjNQeEB0U_U"
+    },
+    {
+      "subject": "Probability & Statistics",
+      "displaySubject": "Probability & Statistics",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Probability & Statistics — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1WDe8cIwQRBrPo1jwi8xtVNUtmWvENg6C/view?usp=sharing",
+      "driveId": "1WDe8cIwQRBrPo1jwi8xtVNUtmWvENg6C"
+    },
+    {
+      "subject": "Statistical Machine Learning (SML)",
+      "displaySubject": "SML (Machine Learning)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Midsem",
+      "year": "2023",
+      "title": "SML (Machine Learning) — Midsem 2023",
+      "paperTitle": "Midsem 2023",
+      "url": "https://drive.google.com/file/d/10cGKB3K0xUcnFiRBHzD2I2f7dkl8yMJV/view?usp=sharing",
+      "driveId": "10cGKB3K0xUcnFiRBHzD2I2f7dkl8yMJV"
+    },
+    {
+      "subject": "Statistical Machine Learning (SML)",
+      "displaySubject": "SML (Machine Learning)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "SML (Machine Learning) — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1F9TsTDMAQfjn4WPN830HOfCU-xWJNiSZ/view?usp=sharing",
+      "driveId": "1F9TsTDMAQfjn4WPN830HOfCU-xWJNiSZ"
+    },
+    {
+      "subject": "Statistical Machine Learning (SML)",
+      "displaySubject": "SML (Machine Learning)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Midsem",
+      "year": "2024",
+      "title": "SML (Machine Learning) — Midsem 2024",
+      "paperTitle": "Midsem 2024",
+      "url": "https://drive.google.com/file/d/11A2Wtm_Bwli_8ovEcMbcLcJYMebwkBfc/view?usp=sharing",
+      "driveId": "11A2Wtm_Bwli_8ovEcMbcLcJYMebwkBfc"
+    },
+    {
+      "subject": "Statistical Machine Learning (SML)",
+      "displaySubject": "SML (Machine Learning)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "SML (Machine Learning) — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1Rrh0qLWPu2QzioSMjUWieqLb3G7arwqt/view?usp=sharing",
+      "driveId": "1Rrh0qLWPu2QzioSMjUWieqLb3G7arwqt"
+    },
+    {
+      "subject": "Statistical Machine Learning (SML)",
+      "displaySubject": "SML (Machine Learning)",
+      "semester": 3,
+      "semesters": [
+        3
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "SML (Machine Learning) — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1epuRQ9YcexCGA3MtUi-u0mnlv352_291/view?usp=sharing",
+      "driveId": "1epuRQ9YcexCGA3MtUi-u0mnlv352_291"
+    },
+    {
+      "subject": "AI & ML",
+      "displaySubject": "AI & ML",
+      "semester": 4,
+      "semesters": [
+        4,
+        5
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "AI & ML — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1dTHrJ9yhpnMNJo6A21wVUlBeIwvFu5il/view?usp=sharing",
+      "driveId": "1dTHrJ9yhpnMNJo6A21wVUlBeIwvFu5il"
+    },
+    {
+      "subject": "AI & ML",
+      "displaySubject": "AI & ML",
+      "semester": 4,
+      "semesters": [
+        4,
+        5
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "AI & ML — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1sAXT5qoytXRol2tzBbhjNY3UTzUuhgPa/view?usp=sharing",
+      "driveId": "1sAXT5qoytXRol2tzBbhjNY3UTzUuhgPa"
     },
     {
       "subject": "Computer Networks",
+      "displaySubject": "Computer Networks",
       "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
       "year": "2024",
-      "title": "Endsem Examination 2024",
-      "url": "https://drive.google.com/file/d/1SHJgwwiGQuNXJkuwyQkjut6tW1VzV2tK/view?usp=sharing"
+      "title": "Computer Networks — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1SHJgwwiGQuNXJkuwyQkjut6tW1VzV2tK/view?usp=sharing",
+      "driveId": "1SHJgwwiGQuNXJkuwyQkjut6tW1VzV2tK"
     },
     {
       "subject": "Computer Networks",
+      "displaySubject": "Computer Networks",
       "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
       "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1U2-B5376Q6-N8LgSGYV6u2BTbUvzk7Pk/view?usp=sharing"
+      "title": "Computer Networks — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1U2-B5376Q6-N8LgSGYV6u2BTbUvzk7Pk/view?usp=sharing",
+      "driveId": "1U2-B5376Q6-N8LgSGYV6u2BTbUvzk7Pk"
     },
     {
-      "subject": "Artificial Intelligence & ML",
+      "subject": "Computer Networks",
+      "displaySubject": "Computer Networks",
       "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1dTHrJ9yhpnMNJo6A21wVUlBeIwvFu5il/view?usp=sharing"
+      "year": "2026",
+      "title": "Computer Networks — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1qQDvtyUuQVG0hKlxbWJRdeD5aVEhlBNJ/view?usp=sharing",
+      "driveId": "1qQDvtyUuQVG0hKlxbWJRdeD5aVEhlBNJ"
     },
     {
-      "subject": "Intelligent Model Design IMD",
-      "semester": 5,
+      "subject": "DAA (Algorithms)",
+      "displaySubject": "DAA (Algorithms)",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx/view?usp=sharing"
+      "year": "2022",
+      "title": "DAA (Algorithms) — Endsem 2022",
+      "paperTitle": "Endsem 2022",
+      "url": "https://drive.google.com/file/d/1yNlqHDXXRdIPY6Qr-EjMYuU_HDgD9YFL/view?usp=sharing",
+      "driveId": "1yNlqHDXXRdIPY6Qr-EjMYuU_HDgD9YFL"
     },
     {
-      "subject": "Automata Theory of Computation TOC",
-      "semester": 5,
+      "subject": "DAA (Algorithms)",
+      "displaySubject": "DAA (Algorithms)",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
       "year": "2024",
-      "title": "Make-up Examination 2024",
-      "url": "https://drive.google.com/file/d/1u8XCY6Sf5WFQKjTqbubhNXRossb8PgKM/view?usp=sharing"
+      "title": "DAA (Algorithms) — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1PVAItD43AyObK3AiawS81vTaHfG3esI3/view?usp=sharing",
+      "driveId": "1PVAItD43AyObK3AiawS81vTaHfG3esI3"
     },
     {
-      "subject": "Automata Theory of Computation TOC",
-      "semester": 5,
+      "subject": "DAA (Algorithms)",
+      "displaySubject": "DAA (Algorithms)",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
       "year": "2025",
-      "title": "Endsem (Make-up) Examination 2025",
-      "url": "https://drive.google.com/file/d/19TLWwUraBxzcfVXLM8JOQ0LLQMBQHkHy/view?usp=sharing"
+      "title": "DAA (Algorithms) — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1UAHDHrSzsIjdrEqXJ7Hgb2Vm1zisqil_/view?usp=sharing",
+      "driveId": "1UAHDHrSzsIjdrEqXJ7Hgb2Vm1zisqil_"
     },
     {
-      "subject": "Software Project Management SPM",
-      "semester": 5,
-      "type": "Endsem",
+      "subject": "DAA (Algorithms)",
+      "displaySubject": "DAA (Algorithms)",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
+      "type": "Midsem",
       "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1J0OxjiHK8XAQ766XuYZiB8Or-QFKvbuG/view?usp=sharing"
+      "title": "DAA (Algorithms) — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/18ETcd7jKEqxBbxtZoANfeJmPpsJ4Apun/view?usp=sharing",
+      "driveId": "18ETcd7jKEqxBbxtZoANfeJmPpsJ4Apun"
     },
     {
-      "subject": "AI and Society AI Ethics",
-      "semester": 5,
+      "subject": "DAA (Algorithms)",
+      "displaySubject": "DAA (Algorithms)",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
       "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1dLTKHuVJXyuihGFqqCODWG1sjIIki-43/view?usp=sharing"
-    },
-    {
-      "subject": "Natural Language Processing NLP",
-      "semester": 5,
-      "type": "Endsem",
-      "year": "2025",
-      "title": "Endsem Examination 2025",
-      "url": "https://drive.google.com/file/d/1HTUo1APE9vdvpR9wAskpVN_rF5jUnuo_/view?usp=sharing"
-    },
-    {
-      "subject": "Image Video Processing IVP",
-      "semester": 5,
-      "type": "Midsem Endsem",
       "year": "2026",
-      "title": "3 Credits • Spatial/Frequency Filters, Motion & OpenCV",
-      "url": "/sem5"
+      "title": "DAA (Algorithms) — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1Nvqp4hiuyNzVmfBA5fAB2SCoTQY02aGI/view?usp=sharing",
+      "driveId": "1Nvqp4hiuyNzVmfBA5fAB2SCoTQY02aGI"
     },
     {
-      "subject": "Agile Software Development Scrum Kanban",
-      "semester": 5,
-      "type": "Midsem Endsem",
-      "year": "2026",
-      "title": "3 Credits • Scrum, Sprints, User Stories, TDD & CI/CD",
-      "url": "/sem5"
+      "subject": "Operating Systems",
+      "displaySubject": "Operating Systems",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "Operating Systems — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1TZtoSwUg7jL0wZ3OFNHMCR6SZx9D9zxS/view?usp=sharing",
+      "driveId": "1TZtoSwUg7jL0wZ3OFNHMCR6SZx9D9zxS"
     },
     {
-      "subject": "MLOps Machine Learning Operations",
-      "semester": 5,
-      "type": "Midsem Endsem",
+      "subject": "Operating Systems",
+      "displaySubject": "Operating Systems",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Operating Systems — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1rvJEAu89tVDL9LwRdXkfrCBN46guXdPj/view?usp=sharing",
+      "driveId": "1rvJEAu89tVDL9LwRdXkfrCBN46guXdPj"
+    },
+    {
+      "subject": "Operating Systems",
+      "displaySubject": "Operating Systems",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
+      "type": "Midsem",
+      "year": "2025",
+      "title": "Operating Systems — Midsem 2025",
+      "paperTitle": "Midsem 2025",
+      "url": "https://drive.google.com/file/d/1hBUt2Q60kvYlU4pjlaLTNVkYKkYu-ES4/view?usp=sharing",
+      "driveId": "1hBUt2Q60kvYlU4pjlaLTNVkYKkYu-ES4"
+    },
+    {
+      "subject": "Operating Systems",
+      "displaySubject": "Operating Systems",
+      "semester": 4,
+      "semesters": [
+        4
+      ],
+      "type": "Endsem",
       "year": "2026",
-      "title": "3 Credits • ML Pipelines, Model Registry, Docker & Monitoring",
-      "url": "/sem5"
+      "title": "Operating Systems — End term 2026",
+      "paperTitle": "End term 2026",
+      "url": "https://drive.google.com/file/d/1kSwk8vuuqFWTG-Q1-mKxGb5xp9XVxdM0/view?usp=sharing",
+      "driveId": "1kSwk8vuuqFWTG-Q1-mKxGb5xp9XVxdM0"
+    },
+    {
+      "subject": "AI and Society",
+      "displaySubject": "AI and Society",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "AI and Society — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1dLTKHuVJXyuihGFqqCODWG1sjIIki-43/view?usp=sharing",
+      "driveId": "1dLTKHuVJXyuihGFqqCODWG1sjIIki-43"
+    },
+    {
+      "subject": "Automata / Theory of Computation",
+      "displaySubject": "Automata / Theory of Computation",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem (Make-up)",
+      "year": "2024",
+      "title": "Automata / Theory of Computation — Make-up 2024",
+      "paperTitle": "Make-up 2024",
+      "url": "https://drive.google.com/file/d/1u8XCY6Sf5WFQKjTqbubhNXRossb8PgKM/view?usp=sharing",
+      "driveId": "1u8XCY6Sf5WFQKjTqbubhNXRossb8PgKM"
+    },
+    {
+      "subject": "Automata / Theory of Computation",
+      "displaySubject": "Automata / Theory of Computation",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem (Make-up)",
+      "year": "2025",
+      "title": "Automata / Theory of Computation — Endsem (Make-up 2025)",
+      "paperTitle": "Endsem (Make-up 2025)",
+      "url": "https://drive.google.com/file/d/19TLWwUraBxzcfVXLM8JOQ0LLQMBQHkHy/view?usp=sharing",
+      "driveId": "19TLWwUraBxzcfVXLM8JOQ0LLQMBQHkHy"
+    },
+    {
+      "subject": "Intelligent Model Design",
+      "displaySubject": "Intelligent Model Design",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Intelligent Model Design — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx/view?usp=sharing",
+      "driveId": "1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx"
+    },
+    {
+      "subject": "Natural Language Processing",
+      "displaySubject": "Natural Language Processing",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Natural Language Processing — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1HTUo1APE9vdvpR9wAskpVN_rF5jUnuo_/view?usp=sharing",
+      "driveId": "1HTUo1APE9vdvpR9wAskpVN_rF5jUnuo_"
+    },
+    {
+      "subject": "Software Project Management",
+      "displaySubject": "Software Project Management",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2025",
+      "title": "Software Project Management — Endsem 2025",
+      "paperTitle": "Endsem 2025",
+      "url": "https://drive.google.com/file/d/1J0OxjiHK8XAQ766XuYZiB8Or-QFKvbuG/view?usp=sharing",
+      "driveId": "1J0OxjiHK8XAQ766XuYZiB8Or-QFKvbuG"
     }
   ],
   "semesters": {
     "sem1": [
       {
         "name": "Engineering Calculus",
+        "canonicalSubject": "Engineering Calculus",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Limits, derivatives, single and multivariable integrals, and their rigorous engineering applications.",
         "semester": 1,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2024",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1G7kTYB2ltfbacOX7oZ2SONjCZHeRx8Ic/view?usp=drivesdk"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1DzjJG5-6xhz7j9cLQQnK8rUSUXU1N_7q/view?usp=drivesdk"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1Xe82-7_5BJOEz4NdQSGBqHQJJVtHjCxp/view?usp=sharing"
           }
         ],
@@ -772,15 +1684,23 @@
       },
       {
         "name": "Electronics",
+        "canonicalSubject": "Electronics",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Fundamental circuit theory, diode circuits, BJT/MOSFET transistors, and logic gate architectures.",
         "semester": 1,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2024",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1Ml3dKyHPQBlWB3jP4qx6EGES0qBx-IyF/view?usp=drivesdk"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1CM6ttww-zcjEqPNeqMOOFF3Bj7V7XYDt/view?usp=drivesdk"
           }
         ],
@@ -788,35 +1708,53 @@
       },
       {
         "name": "Mechanics & Electromagnetism",
+        "canonicalSubject": "Mechanics & Electromagnetism",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Newtonian dynamics, Maxwell's field equations, wave mechanics, and oscillatory systems.",
         "semester": 1,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2024 (Odd Sem)",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1MgC1o9PMD7c1GwXKlLSHMdzEWkgmALrg/view?usp=sharing"
           },
           {
             "title": "Endsem 2024 (Odd Sem)",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1buhBRDH5djgNx3tQII4sqC9I4GnopLUq/view?usp=drivesdk"
           },
           {
             "title": "Mid Sem 2025 (Even Sem)",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1QOClSCi5Om52XD_q0PGB4hIw6fLEb1L3/view?usp=sharing"
           },
           {
             "title": "End Sem 2025 (Even Sem)",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1rprKwmB0OCkahjtfK9d76bT1uzVyt4O_/view?usp=sharing"
           },
           {
             "title": "Midsem 2025 (Odd Sem)",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1Id_Ekv-DUxUG024g-MkrLRubGjaime2Q/view?usp=sharing"
           },
           {
             "title": "Endsem 2025 (Odd Sem)",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1UWf5gaybZCcKtpskBGFPwIugUyA9boDd/view?usp=sharing"
           },
           {
             "title": "End Sem 2026 (Even Sem)",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1Q7eYBs1Ho59uLGFvKchWIQ1ubDUHfk6d/view?usp=sharing"
           }
         ],
@@ -824,19 +1762,29 @@
       },
       {
         "name": "Computational Thinking",
+        "canonicalSubject": "Computational Thinking",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Algorithmic logic, control flow, functions, OOP concepts, and Python problem solving.",
         "semester": 1,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2024",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1Pke5DVHy7qIniFMi55JAy6AmK8eWEU4E/view?usp=drive_link"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1Cbq7R0_-KIqCVwqC4ZqorlfBo80XLct8/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1HuFUwJ8cvv1Kp_VnCw-ikW01U8XKj0GE/view?usp=sharing"
           }
         ],
@@ -844,19 +1792,29 @@
       },
       {
         "name": "Digital Design",
+        "canonicalSubject": "Digital Design",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Boolean algebra, K-maps, combinational logic, flip-flops, and sequential state machines.",
         "semester": 1,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1vjMd4MCW-zTtIYiHhhWVeyhMEd6Yvj-T/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1DKzexsBewTV76jxaXU37a9OuSk8idAAz/view?usp=sharing"
           },
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1n6-tERlti9IYtHL4dswtZOv9tGGFg2D4/view?usp=sharing"
           }
         ],
@@ -866,19 +1824,29 @@
     "sem2": [
       {
         "name": "Linear Algebra & ODE",
+        "canonicalSubject": "Linear Algebra & ODE",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Vector spaces, matrix decompositions, eigenvalues, and ordinary differential equations.",
         "semester": 2,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/15CNwqP5J05qldXExn55SuVtj2VbrcnyI/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1CmXBWHDVf-Op_GciNYj25-azKBALmszM/view?usp=sharing"
           },
           {
             "title": "Endsem 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1k2jCLTIFOwLTY5zr-qyLH_orGYshrA7k/view?usp=sharing"
           }
         ],
@@ -886,31 +1854,47 @@
       },
       {
         "name": "OOP (Java)",
+        "canonicalSubject": "OOP (Java)",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Object-Oriented Programming, Polymorphism, Abstract classes, Interfaces, and Exception Handling.",
         "semester": 2,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2022",
+            "type": "Endsem",
+            "year": "2022",
             "url": "https://drive.google.com/file/d/1G5LglKzccvjlnjF2Ny4rzJrDsvkHPL3d/view?usp=sharing"
           },
           {
             "title": "Midsem 2024",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1q4Obylb2K5HdqMWKiHBVoQyWuv4GUAc4/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1oJvzswQH_DC-DSmRapfQKke3hc-b3lW0/view?usp=sharing"
           },
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1yTouWtGyNqnBKW-UqJQvLyXNeBF1HIpM/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/10KvtV3E2rOIo6W7nUgUyaQDYm2kq0tcF/view?usp=sharing"
           },
           {
             "title": "Endsem 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1XDh1JohF5X1p5J9UrjMbdIZbchmtOsBz/view?usp=sharing"
           }
         ],
@@ -918,19 +1902,29 @@
       },
       {
         "name": "Discrete Mathematics",
+        "canonicalSubject": "Discrete Mathematics",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Set theory, formal propositional logic, graph theory, combinatorics, and recurrence relations.",
         "semester": 2,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1r1XboDX46bJAZzneDSZvVb9Fry_MWQPm/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1_gly7-DpAawLIXP2ww8JIzREj_Nivs4_/view?usp=sharing"
           },
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1Gqj5Otz3WURQLrSRG2DMsv2E4cD3JbfE/view?usp=sharing"
           }
         ],
@@ -938,11 +1932,17 @@
       },
       {
         "name": "Environment",
+        "canonicalSubject": "Environment",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Ecology, biodiversity conservation, pollution control technologies, and sustainable development.",
         "semester": 2,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2025 (Even Sem)",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1UzcSvKVfFLgzh5JMG4H1oVvKV3aCkoGd/view?usp=sharing"
           }
         ],
@@ -952,27 +1952,41 @@
     "sem3": [
       {
         "name": "Data Structures (C++)",
+        "canonicalSubject": "Data Structures (C++)",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Arrays, Linked Lists, Stacks, Queues, Binary Trees, AVL Trees, Heaps, and Graph Traversals.",
         "semester": 3,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2023",
+            "type": "Endsem",
+            "year": "2023",
             "url": "https://drive.google.com/file/d/1uCOQrQEfoHrUS3B5taPsQ4Tw_noEEx7t/view?usp=sharing"
           },
           {
             "title": "Midsem 2024",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/10rEneAEOVP-wKHaIU_Pk0G0RWDMW6p6N/view?usp=sharing"
           },
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1-O748iAfoXZ2_-oXyok-nlm6Ftbz_RBS/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/11Eap3PBtVLqDbGxg5vnMG6DGrHCHfx7X/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1L7wssCE1dwLPfqUROTE9MMkDVzSjeAiJ/view?usp=sharing"
           }
         ],
@@ -980,27 +1994,41 @@
       },
       {
         "name": "SML (Machine Learning)",
+        "canonicalSubject": "Statistical Machine Learning (SML)",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Statistical learning theory, regression models, classification, clustering, and PCA dimensionality reduction.",
         "semester": 3,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2023",
+            "type": "Midsem",
+            "year": "2023",
             "url": "https://drive.google.com/file/d/10cGKB3K0xUcnFiRBHzD2I2f7dkl8yMJV/view?usp=sharing"
           },
           {
             "title": "Midsem 2024",
+            "type": "Midsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/11A2Wtm_Bwli_8ovEcMbcLcJYMebwkBfc/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1F9TsTDMAQfjn4WPN830HOfCU-xWJNiSZ/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1Rrh0qLWPu2QzioSMjUWieqLb3G7arwqt/view?usp=sharing"
           },
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1epuRQ9YcexCGA3MtUi-u0mnlv352_291/view?usp=sharing"
           }
         ],
@@ -1008,23 +2036,35 @@
       },
       {
         "name": "Probability & Statistics",
+        "canonicalSubject": "Probability & Statistics",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Discrete and continuous probability, Bayes theorem, hypothesis testing, and confidence intervals.",
         "semester": 3,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1WDe8cIwQRBrPo1jwi8xtVNUtmWvENg6C/view?usp=sharing"
           },
           {
             "title": "Endsem 2023",
+            "type": "Endsem",
+            "year": "2023",
             "url": "https://drive.google.com/file/d/1Oh2HJtIoFri-A0wyicq5wA4yG5S8G8x6/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1imLBE8EBO7L_uJwY9NDYFY7j2gjhWU3C/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1U8e7TExeu7m0b3Dg7GPfTwjNQeEB0U_U/view?usp=sharing"
           }
         ],
@@ -1032,11 +2072,17 @@
       },
       {
         "name": "Data Analysis (Python)",
+        "canonicalSubject": "Data Analysis (Python)",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Pandas, NumPy, Matplotlib, exploratory data analysis, data wrangling, and statistical pipelines.",
         "semester": 3,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1lFRhQCmM50S-yMpFPa_nNH995EJtnrVf/view?usp=sharing"
           }
         ],
@@ -1044,19 +2090,29 @@
       },
       {
         "name": "DBMS",
+        "canonicalSubject": "DBMS",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Relational databases, SQL queries, normalization, ER diagrams, and information security models.",
         "semester": 3,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2023",
+            "type": "Endsem",
+            "year": "2023",
             "url": "https://drive.google.com/file/d/1FwAqbJQHQqxKSe_ECr22tGqrdbnml7ZH/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1fTS5rRy1XAGfM3PlvxqTDTN1hLT7vj_s/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1SrKFLVaqVcxe1XtE9P369_AfdO8v6WiN/view?usp=sharing"
           }
         ],
@@ -1064,11 +2120,17 @@
       },
       {
         "name": "Microprocessors & CA",
+        "canonicalSubject": "Microprocessors & CA",
         "code": "",
+        "credits": "4 Credits",
+        "description": "8086 micro-architecture, assembly programming, pipelining, cache memory, and hardware interfacing.",
         "semester": 3,
+        "status": "Available",
         "papers": [
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1LWsyMtQCvoksa-k-39JomyNYNapLJp73/view?usp=sharing"
           }
         ],
@@ -1078,27 +2140,41 @@
     "sem4": [
       {
         "name": "DAA (Algorithms)",
+        "canonicalSubject": "DAA (Algorithms)",
         "code": "",
+        "credits": "7 Credits",
+        "description": "Divide & Conquer, Dynamic Programming, Greedy approaches, Backtracking, and NP-Completeness.",
         "semester": 4,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2022",
+            "type": "Endsem",
+            "year": "2022",
             "url": "https://drive.google.com/file/d/1yNlqHDXXRdIPY6Qr-EjMYuU_HDgD9YFL/view?usp=sharing"
           },
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/18ETcd7jKEqxBbxtZoANfeJmPpsJ4Apun/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1PVAItD43AyObK3AiawS81vTaHfG3esI3/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1UAHDHrSzsIjdrEqXJ7Hgb2Vm1zisqil_/view?usp=sharing"
           },
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1Nvqp4hiuyNzVmfBA5fAB2SCoTQY02aGI/view?usp=sharing"
           }
         ],
@@ -1106,23 +2182,35 @@
       },
       {
         "name": "Operating Systems",
+        "canonicalSubject": "Operating Systems",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Process synchronization, Semaphores, CPU scheduling algorithms, Deadlocks, and Paging.",
         "semester": 4,
+        "status": "Available",
         "papers": [
           {
             "title": "Midsem 2025",
+            "type": "Midsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1hBUt2Q60kvYlU4pjlaLTNVkYKkYu-ES4/view?usp=sharing"
           },
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1TZtoSwUg7jL0wZ3OFNHMCR6SZx9D9zxS/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1rvJEAu89tVDL9LwRdXkfrCBN46guXdPj/view?usp=sharing"
           },
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1kSwk8vuuqFWTG-Q1-mKxGb5xp9XVxdM0/view?usp=sharing"
           }
         ],
@@ -1130,19 +2218,29 @@
       },
       {
         "name": "Computer Networks",
+        "canonicalSubject": "Computer Networks",
         "code": "",
+        "credits": "4 Credits",
+        "description": "OSI & TCP/IP stack, Data link framing, IP subnetting, Distance Vector & Link State routing.",
         "semester": 4,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1SHJgwwiGQuNXJkuwyQkjut6tW1VzV2tK/view?usp=sharing"
           },
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1U2-B5376Q6-N8LgSGYV6u2BTbUvzk7Pk/view?usp=sharing"
           },
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1qQDvtyUuQVG0hKlxbWJRdeD5aVEhlBNJ/view?usp=sharing"
           }
         ],
@@ -1150,15 +2248,23 @@
       },
       {
         "name": "AI & ML",
+        "canonicalSubject": "AI & ML",
         "code": "",
+        "credits": "4 Credits",
+        "description": "State space search, A* heuristic, minimax game theory, neural networks, and decision trees.",
         "semester": 4,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1dTHrJ9yhpnMNJo6A21wVUlBeIwvFu5il/view?usp=sharing"
           },
           {
             "title": "End term 2026",
+            "type": "Endsem",
+            "year": "2026",
             "url": "https://drive.google.com/file/d/1sAXT5qoytXRol2tzBbhjNY3UTzUuhgPa/view?usp=sharing"
           }
         ],
@@ -1168,11 +2274,17 @@
     "sem5": [
       {
         "name": "Intelligent Model Design",
+        "canonicalSubject": "Intelligent Model Design",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Deep learning architectures, neural model design patterns, transfer learning, fine-tuning, hyperparameter optimization & model compression.",
         "semester": 5,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx/view?usp=sharing"
           }
         ],
@@ -1180,15 +2292,23 @@
       },
       {
         "name": "Automata / Theory of Computation",
+        "canonicalSubject": "Automata / Theory of Computation",
         "code": "",
+        "credits": "4 Credits",
+        "description": "Finite Automata (DFA/NFA), Regular Expressions, Context-Free Grammars, Pushdown Automata, Turing Machines & Decidability.",
         "semester": 5,
+        "status": "Available",
         "papers": [
           {
             "title": "Make-up 2024",
+            "type": "Endsem (Make-up)",
+            "year": "2024",
             "url": "https://drive.google.com/file/d/1u8XCY6Sf5WFQKjTqbubhNXRossb8PgKM/view?usp=sharing"
           },
           {
             "title": "Endsem (Make-up 2025)",
+            "type": "Endsem (Make-up)",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/19TLWwUraBxzcfVXLM8JOQ0LLQMBQHkHy/view?usp=sharing"
           }
         ],
@@ -1196,11 +2316,17 @@
       },
       {
         "name": "Natural Language Processing",
+        "canonicalSubject": "Natural Language Processing",
         "code": "",
+        "credits": "3 Credits",
+        "description": "Tokenization, Word Embeddings (Word2Vec, GloVe), RNN/LSTM sequence models, Attention mechanisms & Transformer architectures.",
         "semester": 5,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1HTUo1APE9vdvpR9wAskpVN_rF5jUnuo_/view?usp=sharing"
           }
         ],
@@ -1208,18 +2334,28 @@
       },
       {
         "name": "Image Video Processing",
+        "canonicalSubject": "Image Video Processing",
         "code": "",
+        "credits": "3 Credits",
+        "description": "Spatial & frequency filtering, edge detection, morphological transforms, video compression, motion estimation & OpenCV vision.",
         "semester": 5,
+        "status": "Coming Soon",
         "papers": [],
         "courseLink": null
       },
       {
         "name": "Software Project Management",
+        "canonicalSubject": "Software Project Management",
         "code": "",
+        "credits": "3 Credits",
+        "description": "Project planning, cost estimation (COCOMO), CPM/PERT critical path scheduling, risk mitigation & software quality metrics.",
         "semester": 5,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1J0OxjiHK8XAQ766XuYZiB8Or-QFKvbuG/view?usp=sharing"
           }
         ],
@@ -1227,11 +2363,17 @@
       },
       {
         "name": "AI and Society",
+        "canonicalSubject": "AI and Society",
         "code": "",
+        "credits": "3 Credits",
+        "description": "Ethical AI governance, algorithmic fairness, bias mitigation, differential privacy, intellectual property & policy frameworks.",
         "semester": 5,
+        "status": "Available",
         "papers": [
           {
             "title": "Endsem 2025",
+            "type": "Endsem",
+            "year": "2025",
             "url": "https://drive.google.com/file/d/1dLTKHuVJXyuihGFqqCODWG1sjIIki-43/view?usp=sharing"
           }
         ],
@@ -1239,22 +2381,34 @@
       },
       {
         "name": "Agile Software Development",
+        "canonicalSubject": "Agile Software Development",
         "code": "",
+        "credits": "3 Credits",
+        "description": "Scrum & Kanban methodologies, sprint planning, user stories, Test-Driven Development (TDD), CI/CD pipelines & agile velocity.",
         "semester": 5,
+        "status": "Coming Soon",
         "papers": [],
         "courseLink": null
       },
       {
         "name": "MLOps",
+        "canonicalSubject": "MLOps",
         "code": "",
+        "credits": "3 Credits",
+        "description": "End-to-end ML lifecycle, model registries & versioning (MLflow/DVC), feature stores, Docker containerization & production monitoring.",
         "semester": 5,
+        "status": "Coming Soon",
         "papers": [],
         "courseLink": null
       },
       {
         "name": "Artificial Intelligence & ML (Core)",
+        "canonicalSubject": "AI & ML",
         "code": "",
+        "credits": "4 Credits",
+        "description": "State-space search, heuristic evaluations, supervised & unsupervised machine learning, deep learning foundations, neural network architectures, and loss optimization (CSET 312 mapped).",
         "semester": 5,
+        "status": "Coming Soon",
         "papers": [],
         "courseLink": "https://www.skillsseekers.com/courses/Artificial-Intelligence-and-Machine-Learning-AI-ML-End-Term-Express-Crash-Course-6a95a23c75430a992a01d943"
       }
@@ -1579,7 +2733,7 @@
     },
     {
       "question": "What are Skills Seekers' achievements and learner stats?",
-      "answer": "Skills Seekers has supported over 25,000+ happy learners, garnered 180,000+ views on its educational YouTube channel, and published 24+ semester crash courses and 39+ verified Bennett University question papers.",
+      "answer": "Skills Seekers has supported over 25,000+ happy learners, garnered 180,000+ views on its educational YouTube channel, and published 26+ semester crash courses and 50+ verified Bennett University question papers across all 5 semesters.",
       "keywords": [
         "stats",
         "achievements",
@@ -1669,7 +2823,7 @@
     },
     {
       "question": "How do I download or view Previous Year Questions (PYQs)?",
-      "answer": "You can browse all 39+ verified papers in the Universal PYQ Library (/library) or by semester (/sem1 through /sem5). Every question paper has a direct 1-click preview link powered by Google Drive.",
+      "answer": "You can browse verified papers across all 5 semesters in the Universal PYQ Library (/library) or by semester (/sem1 through /sem5). Every question paper has a direct 1-click preview link powered by Google Drive.",
       "keywords": [
         "download pyq",
         "view pyq",
