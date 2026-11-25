@@ -352,6 +352,33 @@ app.post('/api/track', requireSupabase, async (req, res) => {
     }
 });
 
+// ── Isolated Per-Session Chatbot Context Store ─────
+const chatSessions = new Map();
+const CHAT_SESSION_TTL_MS = 30 * 60 * 1000;
+
+function getOrCreateChatContext(sessionId, reset = false) {
+    if (!serverNlpEngine) return null;
+    if (!sessionId) {
+        return serverNlpEngine.createEmptyContext();
+    }
+    const now = Date.now();
+    if (reset || !chatSessions.has(sessionId)) {
+        if (chatSessions.size >= 500) {
+            const oldestKey = chatSessions.keys().next().value;
+            chatSessions.delete(oldestKey);
+        }
+        const fresh = { context: serverNlpEngine.createEmptyContext(), updatedAt: now };
+        chatSessions.set(sessionId, fresh);
+        return fresh.context;
+    }
+    const entry = chatSessions.get(sessionId);
+    if (now - entry.updatedAt > CHAT_SESSION_TTL_MS) {
+        entry.context = serverNlpEngine.createEmptyContext();
+    }
+    entry.updatedAt = now;
+    return entry.context;
+}
+
 // POST /api/chat - Custom NLP Chatbot Query Endpoint
 app.post('/api/chat', (req, res) => {
     const message = sanitizeString(req.body?.message, 500);
@@ -364,10 +391,14 @@ app.post('/api/chat', (req, res) => {
     }
 
     try {
-        const response = serverNlpEngine.processQuery(message);
+        const sessionId = sanitizeString(req.body?.sessionId, 100);
+        const reset = Boolean(req.body?.resetContext);
+        const sessionCtx = getOrCreateChatContext(sessionId, reset);
+        const response = serverNlpEngine.processQuery(message, { context: sessionCtx });
         return res.json({
             success: true,
-            response
+            response,
+            sessionId: sessionId || null
         });
     } catch (err) {
         console.error(`[Chat API Error] ${req.requestId}:`, err.message);

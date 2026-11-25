@@ -14,6 +14,7 @@
     'use strict';
 
     const STORAGE_KEY = 'ss_chatbot_history_v2';
+    const CONTEXT_KEY = 'ss_chatbot_context_v2';
     const VOICE_KEY = 'ss_chatbot_voice_v2';
     const CALLOUT_KEY = 'ss_chatbot_callout_dismissed_v2';
 
@@ -255,6 +256,12 @@
                 }
                 this.nlpEngine = new window.ChatbotNLP(window.CHATBOT_KB);
                 this.nlpEngine.initialize();
+                try {
+                    const savedCtx = sessionStorage.getItem(CONTEXT_KEY);
+                    if (savedCtx && typeof this.nlpEngine.importContext === 'function') {
+                        this.nlpEngine.importContext(JSON.parse(savedCtx));
+                    }
+                } catch (e) {}
                 this.isInitialized = true;
 
                 if (this.messages.length === 0) {
@@ -342,6 +349,11 @@
             let response;
             try {
                 response = this.nlpEngine.processQuery(text);
+                try {
+                    if (typeof this.nlpEngine.exportContext === 'function') {
+                        sessionStorage.setItem(CONTEXT_KEY, JSON.stringify(this.nlpEngine.exportContext()));
+                    }
+                } catch (e) {}
             } catch (e) {
                 console.error('[Chatbot] Query processing error:', e);
                 response = {
@@ -828,8 +840,12 @@
                 this.activeStreamInterval = null;
             }
             this.messages = [];
+            if (this.nlpEngine && typeof this.nlpEngine.resetContext === 'function') {
+                this.nlpEngine.resetContext();
+            }
             try {
                 sessionStorage.removeItem(STORAGE_KEY);
+                sessionStorage.removeItem(CONTEXT_KEY);
             } catch (e) {}
 
             this.elements.messages.innerHTML = '';
