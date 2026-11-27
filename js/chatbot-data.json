@@ -19,7 +19,7 @@
       "learners": "25,000+ Happy Learners",
       "youtubeViews": "180,000+ Views on YouTube",
       "coursesCount": "26 Comprehensive Crash Courses & Bundles",
-      "pyqPapers": "76 Verified Exam Papers (Semesters 1 to 5)"
+      "pyqPapers": "77 Verified Exam Papers (Semesters 1 to 5)"
     }
   },
   "routes": [
@@ -1664,6 +1664,20 @@
       "driveId": "1F5NlNx3lCaYZui5DRtPTYWTLtaXjq4Pa"
     },
     {
+      "subject": "Image Video Processing",
+      "displaySubject": "Image Video Processing",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem (Make-up)",
+      "year": "2025",
+      "title": "Image Video Processing — Endsem Makeup (2025)",
+      "paperTitle": "Endsem Makeup (2025)",
+      "url": "https://drive.google.com/file/d/1GELxbzSnpqhWrTk9PNX83kcd-l-ASk0k/view?usp=sharing",
+      "driveId": "1GELxbzSnpqhWrTk9PNX83kcd-l-ASk0k"
+    },
+    {
       "subject": "Intelligent Model Design",
       "displaySubject": "Intelligent Model Design",
       "semester": 5,
@@ -2460,6 +2474,12 @@
             "type": "Endsem",
             "year": "2024",
             "url": "https://drive.google.com/file/d/1F5NlNx3lCaYZui5DRtPTYWTLtaXjq4Pa/view?usp=sharing"
+          },
+          {
+            "title": "Endsem Makeup (2025)",
+            "type": "Endsem (Make-up)",
+            "year": "2025",
+            "url": "https://drive.google.com/file/d/1GELxbzSnpqhWrTk9PNX83kcd-l-ASk0k/view?usp=sharing"
           }
         ],
         "courseLink": null
