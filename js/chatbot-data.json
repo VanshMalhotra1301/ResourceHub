@@ -19,7 +19,7 @@
       "learners": "25,000+ Happy Learners",
       "youtubeViews": "180,000+ Views on YouTube",
       "coursesCount": "26 Comprehensive Crash Courses & Bundles",
-      "pyqPapers": "73 Verified Exam Papers (Semesters 1 to 5)"
+      "pyqPapers": "76 Verified Exam Papers (Semesters 1 to 5)"
     }
   },
   "routes": [
@@ -1622,6 +1622,48 @@
       "driveId": "19TLWwUraBxzcfVXLM8JOQ0LLQMBQHkHy"
     },
     {
+      "subject": "Automata / Theory of Computation",
+      "displaySubject": "Automata / Theory of Computation",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem (Make-up)",
+      "year": "2025",
+      "title": "Automata / Theory of Computation — Endsem Makeup (2025)",
+      "paperTitle": "Endsem Makeup (2025)",
+      "url": "https://drive.google.com/file/d/1dBE6i66r0QHmnWakzENjhoYAVlEwzPea/view?usp=sharing",
+      "driveId": "1dBE6i66r0QHmnWakzENjhoYAVlEwzPea"
+    },
+    {
+      "subject": "Automata / Theory of Computation",
+      "displaySubject": "Automata / Theory of Computation",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2026",
+      "title": "Automata / Theory of Computation — End Sem Suppli (2026)",
+      "paperTitle": "End Sem Suppli (2026)",
+      "url": "https://drive.google.com/file/d/1nHSCIy8B4AYvLyKOrEKk8OdcgJHBf2p_/view?usp=sharing",
+      "driveId": "1nHSCIy8B4AYvLyKOrEKk8OdcgJHBf2p_"
+    },
+    {
+      "subject": "Image Video Processing",
+      "displaySubject": "Image Video Processing",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2024",
+      "title": "Image Video Processing — Endsem 2024",
+      "paperTitle": "Endsem 2024",
+      "url": "https://drive.google.com/file/d/1F5NlNx3lCaYZui5DRtPTYWTLtaXjq4Pa/view?usp=sharing",
+      "driveId": "1F5NlNx3lCaYZui5DRtPTYWTLtaXjq4Pa"
+    },
+    {
       "subject": "Intelligent Model Design",
       "displaySubject": "Intelligent Model Design",
       "semester": 5,
@@ -2370,6 +2412,18 @@
             "type": "Endsem (Make-up)",
             "year": "2025",
             "url": "https://drive.google.com/file/d/19TLWwUraBxzcfVXLM8JOQ0LLQMBQHkHy/view?usp=sharing"
+          },
+          {
+            "title": "Endsem Makeup (2025)",
+            "type": "Endsem (Make-up)",
+            "year": "2025",
+            "url": "https://drive.google.com/file/d/1dBE6i66r0QHmnWakzENjhoYAVlEwzPea/view?usp=sharing"
+          },
+          {
+            "title": "End Sem Suppli (2026)",
+            "type": "Endsem",
+            "year": "2026",
+            "url": "https://drive.google.com/file/d/1nHSCIy8B4AYvLyKOrEKk8OdcgJHBf2p_/view?usp=sharing"
           }
         ],
         "courseLink": "https://www.skillsseekers.com/courses/Automata-Theory-and-Computability--End-Sem-Sprint--6912054225c39a250b05a0e2"
@@ -2399,8 +2453,15 @@
         "credits": "3 Credits",
         "description": "Spatial & frequency filtering, edge detection, morphological transforms, video compression, motion estimation & OpenCV vision.",
         "semester": 5,
-        "status": "Coming Soon",
-        "papers": [],
+        "status": "Available",
+        "papers": [
+          {
+            "title": "Endsem 2024",
+            "type": "Endsem",
+            "year": "2024",
+            "url": "https://drive.google.com/file/d/1F5NlNx3lCaYZui5DRtPTYWTLtaXjq4Pa/view?usp=sharing"
+          }
+        ],
         "courseLink": null
       },
       {
