@@ -24,7 +24,7 @@
       "learners": "25,000+ Happy Learners",
       "youtubeViews": "180,000+ Views on YouTube",
       "coursesCount": "26 Comprehensive Crash Courses & Bundles",
-      "pyqPapers": "72 Verified Exam Papers (Semesters 1 to 5)"
+      "pyqPapers": "73 Verified Exam Papers (Semesters 1 to 5)"
     }
   },
   "routes": [
@@ -1591,6 +1591,20 @@
       "semesters": [
         5
       ],
+      "type": "Endsem",
+      "year": "2023",
+      "title": "Automata / Theory of Computation — Endsem 2023",
+      "paperTitle": "Endsem 2023",
+      "url": "https://drive.google.com/file/d/1p5vDyW6TGMV7UJ4wjmmezP4y8Ob-r2jC/view?usp=sharing",
+      "driveId": "1p5vDyW6TGMV7UJ4wjmmezP4y8Ob-r2jC"
+    },
+    {
+      "subject": "Automata / Theory of Computation",
+      "displaySubject": "Automata / Theory of Computation",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
       "type": "Endsem (Make-up)",
       "year": "2024",
       "title": "Automata / Theory of Computation — Make-up 2024",
@@ -2344,6 +2358,12 @@
         "semester": 5,
         "status": "Available",
         "papers": [
+          {
+            "title": "Endsem 2023",
+            "type": "Endsem",
+            "year": "2023",
+            "url": "https://drive.google.com/file/d/1p5vDyW6TGMV7UJ4wjmmezP4y8Ob-r2jC/view?usp=sharing"
+          },
           {
             "title": "Make-up 2024",
             "type": "Endsem (Make-up)",
