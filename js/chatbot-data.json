@@ -19,7 +19,7 @@
       "learners": "25,000+ Happy Learners",
       "youtubeViews": "180,000+ Views on YouTube",
       "coursesCount": "26 Comprehensive Crash Courses & Bundles",
-      "pyqPapers": "71 Verified Exam Papers (Semesters 1 to 5)"
+      "pyqPapers": "72 Verified Exam Papers (Semesters 1 to 5)"
     }
   },
   "routes": [
@@ -1616,6 +1616,20 @@
       ],
       "type": "Endsem",
       "year": "2025",
+      "title": "Intelligent Model Design — End Sem Suppli (2025)",
+      "paperTitle": "End Sem Suppli (2025)",
+      "url": "https://drive.google.com/file/d/1dGzjZ4eHzMH6tGS0848TDJ8sEjLOS9zY/view?usp=sharing",
+      "driveId": "1dGzjZ4eHzMH6tGS0848TDJ8sEjLOS9zY"
+    },
+    {
+      "subject": "Intelligent Model Design",
+      "displaySubject": "Intelligent Model Design",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem",
+      "year": "2025",
       "title": "Intelligent Model Design — Endsem 2025",
       "paperTitle": "Endsem 2025",
       "url": "https://drive.google.com/file/d/1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx/view?usp=sharing",
@@ -2306,6 +2320,12 @@
             "type": "Endsem (Make-up)",
             "year": "2026",
             "url": "https://drive.google.com/file/d/1-DAKfGhCfiJ5Wbeb47Rejj2G0i2CzrIc/view?usp=sharing"
+          },
+          {
+            "title": "End Sem Suppli (2025)",
+            "type": "Endsem",
+            "year": "2025",
+            "url": "https://drive.google.com/file/d/1dGzjZ4eHzMH6tGS0848TDJ8sEjLOS9zY/view?usp=sharing"
           }
         ],
         "courseLink": "https://www.skillsseekers.com/courses/Intelligent-Model-Design-using-AI-Mid--End-Term-Express-Crash-Course-6a842303a33bff187396bfde"
