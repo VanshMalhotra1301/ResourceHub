@@ -24,7 +24,7 @@
       "learners": "25,000+ Happy Learners",
       "youtubeViews": "180,000+ Views on YouTube",
       "coursesCount": "26 Comprehensive Crash Courses & Bundles",
-      "pyqPapers": "70 Verified Exam Papers (Semesters 1 to 5)"
+      "pyqPapers": "71 Verified Exam Papers (Semesters 1 to 5)"
     }
   },
   "routes": [
@@ -1627,6 +1627,20 @@
       "driveId": "1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx"
     },
     {
+      "subject": "Intelligent Model Design",
+      "displaySubject": "Intelligent Model Design",
+      "semester": 5,
+      "semesters": [
+        5
+      ],
+      "type": "Endsem (Make-up)",
+      "year": "2026",
+      "title": "Intelligent Model Design — End Term Makeup (2026)",
+      "paperTitle": "End Term Makeup (2026)",
+      "url": "https://drive.google.com/file/d/1-DAKfGhCfiJ5Wbeb47Rejj2G0i2CzrIc/view?usp=sharing",
+      "driveId": "1-DAKfGhCfiJ5Wbeb47Rejj2G0i2CzrIc"
+    },
+    {
       "subject": "Natural Language Processing",
       "displaySubject": "Natural Language Processing",
       "semester": 5,
@@ -2291,6 +2305,12 @@
             "type": "Endsem",
             "year": "2025",
             "url": "https://drive.google.com/file/d/1xisrO46-NtE5IErXG9dOZdmWDhhLHkRx/view?usp=sharing"
+          },
+          {
+            "title": "End Term Makeup (2026)",
+            "type": "Endsem (Make-up)",
+            "year": "2026",
+            "url": "https://drive.google.com/file/d/1-DAKfGhCfiJ5Wbeb47Rejj2G0i2CzrIc/view?usp=sharing"
           }
         ],
         "courseLink": "https://www.skillsseekers.com/courses/Intelligent-Model-Design-using-AI-Mid--End-Term-Express-Crash-Course-6a842303a33bff187396bfde"
